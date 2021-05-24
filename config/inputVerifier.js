@@ -8,7 +8,7 @@ const regexEmail = require("regex-email");
 const regexNum= /^[0-9]+$/;
 const regexMobile = /(01[016789])([1-9]{1}[0-9]{2,3})([0-9]{4})$/;
 
-// 1. 휴대폰 번호 검증
+// 휴대폰 번호 검증
 exports.verifyMobile = function(mobile) {
     // 빈 값
     if (!mobile) {
@@ -24,7 +24,7 @@ exports.verifyMobile = function(mobile) {
     }
 }
 
-// 2. 휴대폰 인증번호 검증
+// 휴대폰 인증번호 검증
 exports.verifyCode = function(verificationCode) {
     // 빈 값
     if (!verificationCode) {
@@ -40,13 +40,13 @@ exports.verifyCode = function(verificationCode) {
     }
 }
 
-// 2. NickName 검증
-exports.verifyNickName = function(nickName) {
-    // 3-1. 빈 값
-    if (!nickName) {
+// NickName 검증
+exports.verifyNickname = function(nickname) {
+    // 빈 값
+    if (!nickname) {
         return {isValid: false, errorMessage: baseResponse.NICKNAME_EMPTY};
-    // 3-2. 길이 (30자 미만)
-    } else if (nickName.length > 30) {
+    // 길이 (10자 미만)
+    } else if (nickname.length > 10) {
         return {isValid: false, errorMessage: baseResponse.NICKNAME_LENGTH};
     } else {
         return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};

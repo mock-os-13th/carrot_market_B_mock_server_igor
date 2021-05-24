@@ -8,7 +8,7 @@ module.exports = function(app){
     // 2. 회원가입 휴대폰 인증번호 확인 API (임시)
     app.post('/app/users/mobile-check-signup', user.postMobileCheckSignUp);
 
-    // 3. 회원가입 휴대폰 인증번호 확인 API (임시)
-    app.post('/app/users/mobile-check-signup', user.postMobileCheckSignUp);
+    // 3. 회원가입 API (닉네임 등록)
+    app.post('/app/users', user.postUser);
 
 };

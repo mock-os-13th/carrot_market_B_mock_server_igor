@@ -18,7 +18,7 @@ module.exports = {
     VERIFICATION_CODE_ERROR_TYPE : { "isSuccess": false, "code": 2006, "message":"휴대폰 인증번호를 숫자로만 입력해주세요." },
     VERIFICATION_CODE_NOT_MATCH : { "isSuccess": false, "code": 2007, "message":"휴대폰 인증번호가 일치하지 않습니다." },
     NICKNAME_EMPTY : { "isSuccess": false, "code": 2008, "message":"닉네임을 입력 해주세요." },
-    NICKNAME_LENGTH : { "isSuccess": false,"code": 2009,"message":"닉네임은 최대 20자리를 입력해주세요." },
+    NICKNAME_LENGTH : { "isSuccess": false,"code": 2009,"message":"닉네임은 최대 10자리를 입력해주세요." },
 
     USERIDX_EMPTY : { "isSuccess": false, "code": 2012, "message": "userIdx값이 없습니다." },
     USERIDX_NOT_EXIST : { "isSuccess": false, "code": 2013, "message": "해당 회원이 존재하지 않습니다." },
@@ -31,8 +31,8 @@ module.exports = {
     USER_STATUS_EMPTY : { "isSuccess": false, "code": 2018, "message": "회원 상태값을 입력해주세요" },
 
     // Response error
-    SIGNUP_REDUNDANT_EMAIL : { "isSuccess": false, "code": 3001, "message":"중복된 이메일입니다." },
-    SIGNUP_REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
+    REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 이메일입니다." },
+    REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
 
     SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3003, "message": "아이디가 잘못 되었습니다." },
     SIGNIN_PASSWORD_WRONG : { "isSuccess": false, "code": 3004, "message": "비밀번호가 잘못 되었습니다." },

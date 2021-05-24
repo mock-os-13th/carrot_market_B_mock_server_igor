@@ -5,112 +5,51 @@ const userDao = require("./userDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
+require("dotenv").config();
 
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
 const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.createUser = async function (email, password, name, contact) {
+exports.createUser = async function (mobile, nickname) {
     try {
-        // 이메일 중복 확인
-        const emailRows = await userProvider.emailCheck(email);
-        if (emailRows.length > 0)
-            return errResponse(baseResponse.SIGNUP_REDUNDANT_EMAIL);
+        // 휴대폰 번호 중복 확인
+        const mobileRows = await userProvider.checkMobile(mobile);
+        if (mobileRows.length > 0)
+            return errResponse(baseResponse.REDUNDANT_MOBILE); // 에러 메시지
 
-        // 연락처 중복 확인
-        const contactRows = await userProvider.contactCheck(contact);
-        if (contactRows.length > 0)
-            return errResponse(baseResponse.SIGNUP_REDUNDANT_CONTACT);
+        // 닉네임 중복 확인
+        const nicknameRows = await userProvider.checkNickname(nickname);
+        if (nicknameRows.length > 0)
+            return errResponse(baseResponse.REDUNDANT_NICKNAME); // 에러 메시지
 
-        // 비밀번호 암호화
-        const hashedPassword = await crypto
-            .createHash("sha512")
-            .update(password)
-            .digest("hex");
-
-        const insertUserInfoParams = [email, hashedPassword, name, contact];
-
+        // DB에 회원정보 입력
+        const insertUserInfoParams = [mobile, nickname];
         const connection = await pool.getConnection(async (conn) => conn);
-
-        const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
+        const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams); // 함수
         console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
         connection.release();
-        return response(baseResponse.SUCCESS);
 
+        // user idx 구하고 jwt 토큰 반환
+        const getNewUserIdx = await userProvider.checkMobile(mobile);
+        const newUserIdx = getNewUserIdx[0].idx
 
-    } catch (err) {
-        logger.error(`App - createUser Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
-    }
-};
-
-
-// TODO: After 로그인 인증 방법 (JWT)
-exports.postSignIn = async function (email, password) {
-    try {
-        // 이메일 여부 확인
-        const emailRows = await userProvider.emailCheck(email);
-        if (emailRows.length < 1) return errResponse(baseResponse.SIGNIN_EMAIL_WRONG);
-
-        const selectEmail = emailRows[0].email
-
-        // 비밀번호 확인
-        const hashedPassword = await crypto
-            .createHash("sha512")
-            .update(password)
-            .digest("hex");
-
-        const selectUserPasswordParams = [selectEmail, hashedPassword];
-        const passwordRows = await userProvider.passwordCheck(selectUserPasswordParams);
-
-        if (passwordRows[0].password !== hashedPassword) {
-            return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG);
-        }
-
-        // 계정 상태 확인
-        const userInfoRows = await userProvider.accountCheck(email);
-
-        if (userInfoRows[0].status === "INACTIVE") {
-            return errResponse(baseResponse.SIGNIN_INACTIVE_ACCOUNT);
-        } else if (userInfoRows[0].status === "DELETED") {
-            return errResponse(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT);
-        }
-
-        console.log(userInfoRows[0].id) // DB의 userId
-
-        //토큰 생성 Service
         let token = await jwt.sign(
             {
-                userId: userInfoRows[0].id,
+                userIdx: newUserIdx
             }, // 토큰의 내용(payload)
-            secret_config.jwtsecret, // 비밀키
+            process.env.JWT_SECRET_KEY, // 비밀키
             {
                 expiresIn: "365d",
                 subject: "userInfo",
             } // 유효 기간 365일
         );
 
-        return response(baseResponse.SUCCESS, {'userId': userInfoRows[0].id, 'jwt': token});
+        return response(baseResponse.SUCCESS, token)
 
     } catch (err) {
-        logger.error(`App - postSignIn Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        logger.error(`App - createUser Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };
-
-exports.editUser = async function (id, nickname) {
-    try {
-        console.log(id)
-        const connection = await pool.getConnection(async (conn) => conn);
-        const editUserResult = await userDao.updateUserInfo(connection, id, nickname)
-        connection.release();
-
-        return response(baseResponse.SUCCESS);
-
-    } catch (err) {
-        logger.error(`App - editUser Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
-    }
-}

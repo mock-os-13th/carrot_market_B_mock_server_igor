@@ -5,54 +5,20 @@ const userDao = require("./userDao");
 
 // Provider: Read 비즈니스 로직 처리
 
-exports.retrieveUserList = async function (email) {
-  if (!email) {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const userListResult = await userDao.selectUser(connection);
-    connection.release();
-
-    return userListResult;
-
-  } else {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const userListResult = await userDao.selectUserEmail(connection, email);
-    connection.release();
-
-    return userListResult;
-  }
-};
-
-exports.retrieveUser = async function (userId) {
+// 동일한 휴대폰 번호이 있는지 체크 
+exports.checkMobile = async function (mobile) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const userResult = await userDao.selectUserId(connection, userId);
-
+  const checkMobileResult = await userDao.selectUserMobile(connection, mobile);
   connection.release();
 
-  return userResult[0];
+  return checkMobileResult;
 };
 
-exports.emailCheck = async function (email) {
+//  동일한 닉네임이 있는지 체크 
+exports.checkNickname = async function (nickname) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const emailCheckResult = await userDao.selectUserEmail(connection, email);
+  const checkNicknameResult = await userDao.selectUserNickname(connection, nickname);
   connection.release();
 
-  return emailCheckResult;
-};
-
-exports.passwordCheck = async function (selectUserPasswordParams) {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const passwordCheckResult = await userDao.selectUserPassword(
-      connection,
-      selectUserPasswordParams
-  );
-  connection.release();
-  return passwordCheckResult[0];
-};
-
-exports.accountCheck = async function (email) {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const userAccountResult = await userDao.selectUserAccount(connection, email);
-  connection.release();
-
-  return userAccountResult;
+  return checkNicknameResult;
 };
