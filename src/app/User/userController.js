@@ -24,15 +24,38 @@ exports.getMobileCheck = async function (req, res) {
 
     // 휴대전화 형식적 검증
     const mobileVerification = inputverifier.verifyMobile(mobile);
-    if (!mobileVerification.isValid) return res.send(response(mobileVerification.errorMessage));
+    if (!mobileVerification.isValid) return res.send(errResponse(mobileVerification.errorMessage));
 
     const interimResult = { "interimMessage" : "개발용 임시 인증코드는 1234입니다."}
 
     return res.send(response(baseResponse.SUCCESS, interimResult));
+
 };
 
+/**
+ * API No. 2
+ * API Name : 휴대폰 인증번호 확인 API (임시)
+ * [POST] /users/mobile-check
+ */
 
+ exports.postMobileCheckSignUp = async function (req, res) {
 
+    /**
+     * Body: verificationCode
+     */
 
+    const { verificationCode } = req.body;
+
+    // 인증번호 형식적 확인
+    const verificationCodeVerification = inputverifier.verifyCode(verificationCode);
+    if (!verificationCodeVerification.isValid) return res.send(errResponse(verificationCodeVerification.errorMessage));
+
+    if (verificationCode === "1234") {
+        return res.send(response(baseResponse.SUCCESS)); 
+    } else {
+        return res.send(errResponse(baseResponse.VERIFICATION_CODE_NOT_MATCH))
+    }
+
+};
 
 
