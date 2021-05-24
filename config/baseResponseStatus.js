@@ -31,7 +31,7 @@ module.exports = {
     USER_STATUS_EMPTY : { "isSuccess": false, "code": 2018, "message": "회원 상태값을 입력해주세요" },
 
     // Response error
-    REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 이메일입니다." },
+    REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 휴대폰 번호입니다." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
 
     SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3003, "message": "아이디가 잘못 되었습니다." },
