@@ -1,4 +1,4 @@
-// 이메일로 회원 조회
+// 휴대 전화로 회원 조회
 async function selectUserMobile(connection, mobile) {
   const selectUserMobileQuery = `
                 SELECT idx
@@ -20,6 +20,34 @@ async function selectUserNickname(connection, nickname) {
   return nicknameRows;
 }
 
+// 휴대 전화로 회원 조회 (로그인용)
+async function selectUserDetailMobile(connection, mobile) {
+  const selectUserDetailMobileQuery = `
+                SELECT idx, status
+                FROM User
+                WHERE mobileNum = ?;
+                `;
+  const [mobileRows] = await connection.query(selectUserDetailMobileQuery, mobile);
+  return mobileRows;
+}
+
+// 반환할 회원 위치 조회
+async function selectUserLocation(connection, userIdx) {
+  const selectUserLocationQuery = `
+        SELECT a.idx,
+          a.villageIdx,
+          b.dong,
+          a.villageRangeLevel,
+          a.isAuthorized
+        FROM UserLocation a
+        INNER JOIN Village b ON a.villageIdx = b.idx
+        WHERE a.userIdx = ?;
+                `;
+  const [userLocationRows] = await connection.query(selectUserLocationQuery, userIdx);
+  return userLocationRows;
+}
+
+
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
@@ -38,5 +66,7 @@ async function insertUserInfo(connection, insertUserInfoParams) {
 module.exports = {
   selectUserMobile,
   selectUserNickname,
-  insertUserInfo
+  insertUserInfo,
+  selectUserDetailMobile,
+  selectUserLocation
 };

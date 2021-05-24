@@ -96,7 +96,7 @@ exports.getMobileCheck = async function (req, res) {
 
 /**
  * API No. 4
- * API Name : 휴대폰 인증번호 확인 API (임시)
+ * API Name : 로그인 API
  * [POST] app/login
  */
 
@@ -117,11 +117,13 @@ exports.getMobileCheck = async function (req, res) {
     if (!verificationCodeVerification.isValid) return res.send(errResponse(verificationCodeVerification.errorMessage));
 
     // 인증번호 일치여부 확인
-    if (verificationCode === "1234") {
-        return res.send(response(baseResponse.SUCCESS)); 
-    } else {
-        return res.send(errResponse(baseResponse.VERIFICATION_CODE_NOT_MATCH))
-    }
+    if (verificationCode != "1234") return res.send(errResponse(baseResponse.VERIFICATION_CODE_NOT_MATCH))
+
+    // DB에서 userIdx 확인하고 jwt 토큰 및 회원 위치 반환
+    const getUserResponse = await userProvider.getUser(mobile);
+
+    return res.send(getUserResponse);
+
 
 };
 

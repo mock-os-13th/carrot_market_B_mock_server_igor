@@ -17,12 +17,12 @@ exports.createUser = async function (mobile, nickname) {
         // 휴대폰 번호 중복 확인
         const mobileRows = await userProvider.checkMobile(mobile);
         if (mobileRows.length > 0)
-            return errResponse(baseResponse.REDUNDANT_MOBILE); // 에러 메시지
+            return errResponse(baseResponse.REDUNDANT_MOBILE); 
 
         // 닉네임 중복 확인
         const nicknameRows = await userProvider.checkNickname(nickname);
         if (nicknameRows.length > 0)
-            return errResponse(baseResponse.REDUNDANT_NICKNAME); // 에러 메시지
+            return errResponse(baseResponse.REDUNDANT_NICKNAME); 
 
         // DB에 회원정보 입력
         const insertUserInfoParams = [mobile, nickname];
