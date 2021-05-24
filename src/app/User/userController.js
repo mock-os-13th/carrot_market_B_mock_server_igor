@@ -17,10 +17,10 @@ const {emit} = require("nodemon");
 exports.getMobileCheck = async function (req, res) {
 
     /**
-     * Body: mobile
+     * Query String: mobile
      */
 
-    const { mobile } = req.body;
+     const mobile = req.query.mobile;
 
     // 휴대전화 형식적 검증
     const mobileVerification = inputverifier.verifyMobile(mobile);
