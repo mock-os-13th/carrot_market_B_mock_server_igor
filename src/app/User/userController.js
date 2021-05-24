@@ -41,10 +41,14 @@ exports.getMobileCheck = async function (req, res) {
  exports.postMobileCheckSignUp = async function (req, res) {
 
     /**
-     * Body: verificationCode
+     * Body: mobile, verificationCode
      */
 
-    const { verificationCode } = req.body;
+    const { mobile, verificationCode } = req.body;
+
+    // 휴대폰 번호 형식적 검증
+    const mobileVerification = inputverifier.verifyMobile(mobile);
+    if (!mobileVerification.isValid) return res.send(errResponse(mobileVerification.errorMessage));
 
     // 인증번호 형식적 검증
     const verificationCodeVerification = inputverifier.verifyCode(verificationCode);
