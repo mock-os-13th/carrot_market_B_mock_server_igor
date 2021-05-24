@@ -1,8 +1,8 @@
 // 이 모듈은 request에 포함된 데이터의 형식적 검증을 위한 것임.
 
 // 외부 모듈
-    // response 메시지
-    const baseResponse = require("./baseResponseStatus");
+// response 메시지
+const baseResponse = require("./baseResponseStatus");
     // 입력값 검증용 정규표현식
 const regexEmail = require("regex-email");
 const regexNum= /^[0-9]+$/;
@@ -57,13 +57,13 @@ exports.verifyNickname = function(nickname) {
 // idx 검증
 
 // 1. userIdx 검증
-exports.verifyUserIdx = async function(userIdx) {
+exports.verifyIdx = function(userIdx) {
     // 1-1. 빈 값
     if (!userIdx) {
-        return {isValid: false, errorMessage: baseResponse.USER_USERIDX_EMPTY};
+        return {isValid: false, errorMessage: baseResponse.USERIDX_EMPTY};
     // 1-2. 숫자 여부
     } else if (!regexNum.test(userIdx)) {
-        return {isValid: false, errorMessage: baseResponse.USER_USERIDX_NaN};
+        return {isValid: false, errorMessage: baseResponse.USERIDX_NaN};
     } else {
         return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
     }

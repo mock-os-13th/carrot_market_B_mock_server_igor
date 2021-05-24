@@ -28,6 +28,15 @@ exports.checkNickname = async function (nickname) {
   return checkNicknameResult;
 };
 
+// 회원 상태 체크
+exports.checkUserStatus = async function (userIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const checkUserStatusResult = await userDao.selectUserStatusIdx(connection, userIdx);
+  connection.release();
+
+  return checkUserStatusResult;
+};
+
 // 휴대폰 번호로 userIdx 가져오기
 exports.getUser = async function (mobile) {
 
@@ -38,11 +47,11 @@ exports.getUser = async function (mobile) {
   
     // 휴대폰 번호 중복여부 확인
     if (getUserResult.length > 1)
-      return errResponse(baseResponse.OVERLAPPING_MOBILE); // 에러 메시지
+      return errResponse(baseResponse.OVERLAPPING_MOBILE); 
   
     // VALID한 회원인지 확인
     if (getUserResult[0].status != "VALID") 
-      return errResponse(baseResponse.INVALID_USER); //에러 메시지
+      return errResponse(baseResponse.INVALID_USER); 
   
     // jwt 토큰 생성
     const userIdx = getUserResult[0].idx

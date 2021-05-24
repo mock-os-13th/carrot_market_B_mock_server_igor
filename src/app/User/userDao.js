@@ -3,7 +3,7 @@ async function selectUserMobile(connection, mobile) {
   const selectUserMobileQuery = `
                 SELECT idx
                 FROM User
-                WHERE mobileNum = ?;
+                WHERE mobileNum = ? AND status = "VALID";
                 `;
   const [mobileRows] = await connection.query(selectUserMobileQuery, mobile);
   return mobileRows;
@@ -14,7 +14,7 @@ async function selectUserNickname(connection, nickname) {
   const selectUserNicknameQuery = `
                 SELECT idx
                 FROM User
-                WHERE nickName = ?;
+                WHERE nickName = ? AND status = "VALID";
                 `;
   const [nicknameRows] = await connection.query(selectUserNicknameQuery, nickname);
   return nicknameRows;
@@ -25,9 +25,20 @@ async function selectUserDetailMobile(connection, mobile) {
   const selectUserDetailMobileQuery = `
                 SELECT idx, status
                 FROM User
-                WHERE mobileNum = ?;
+                WHERE mobileNum = ? AND status = "VALID";
                 `;
   const [mobileRows] = await connection.query(selectUserDetailMobileQuery, mobile);
+  return mobileRows;
+}
+
+// userIdx로 회원 상태 조회 (회원 탈퇴용)
+async function selectUserStatusIdx(connection, userIdx) {
+  const selectUserStatusIdxQuery = `
+                SELECT status
+                FROM User
+                WHERE idx = ? AND status = "VALID";
+                `;
+  const [mobileRows] = await connection.query(selectUserStatusIdxQuery, userIdx);
   return mobileRows;
 }
 
@@ -62,11 +73,28 @@ async function insertUserInfo(connection, insertUserInfoParams) {
   return insertUserInfoRow;
 }
 
+// 유저 생성
+async function updateUserStatus(connection, updateUserStatusParams) {
+  const updateUserStatusQuery = `
+      UPDATE User
+      SET status = ?
+      WHERE idx = ?;
+    `;
+  const insertUserInfoRow = await connection.query(
+    updateUserStatusQuery,
+    updateUserStatusParams
+  );
+
+  return insertUserInfoRow;
+}
+
 
 module.exports = {
   selectUserMobile,
   selectUserNickname,
   insertUserInfo,
   selectUserDetailMobile,
-  selectUserLocation
+  selectUserLocation,
+  selectUserStatusIdx,
+  updateUserStatus
 };

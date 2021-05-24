@@ -14,4 +14,7 @@ module.exports = function(app){
     // 4. 로그인 API
     app.post('/app/login', user.login)
 
+    // 5. 회원 탈퇴 API
+    app.patch('/app/users', jwtMiddleware, user.patchUser);
+
 };

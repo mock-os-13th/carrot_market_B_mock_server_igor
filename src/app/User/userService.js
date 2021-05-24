@@ -12,6 +12,7 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
+// 회원 가입
 exports.createUser = async function (mobile, nickname) {
     try {
         // 휴대폰 번호 중복 확인
@@ -27,7 +28,7 @@ exports.createUser = async function (mobile, nickname) {
         // DB에 회원정보 입력
         const insertUserInfoParams = [mobile, nickname];
         const connection = await pool.getConnection(async (conn) => conn);
-        const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams); // 함수
+        const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
         console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
         connection.release();
 
@@ -51,6 +52,28 @@ exports.createUser = async function (mobile, nickname) {
 
     } catch (err) {
         logger.error(`App - createUser Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+// 회원 탈퇴
+exports.deleteUser = async function (userIdx) {
+    try {
+        // 존재하는 회원인지 확인
+        const userStatusRows = await userProvider.checkUserStatus(userIdx);
+        if (userStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+
+        // DB에 회원정보 수정
+        const updateUserStatusParams = ["DELETED", userIdx];
+        const connection = await pool.getConnection(async (conn) => conn);
+        const updateUserStatusResult = await userDao.updateUserStatus(connection, updateUserStatusParams); 
+        console.log(`삭제된 회원 : ${updateUserStatusResult[0].insertId}`);
+        connection.release();
+        return response(baseResponse.SUCCESS)
+
+    } catch (err) {
+        logger.error(`App - patchUser Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

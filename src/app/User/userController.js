@@ -123,8 +123,28 @@ exports.getMobileCheck = async function (req, res) {
     const getUserResponse = await userProvider.getUser(mobile);
 
     return res.send(getUserResponse);
+};
 
+/**
+ * API No. 5
+ * API Name : 회원 탈퇴 API
+ * [PATCH] app/users
+ */
+ exports.patchUser = async function (req, res) {
 
+    /*
+     * header: jwt token
+     */
+
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    // DB에 회원상태 삭제로
+    const deleteUserResponse = await userService.deleteUser(userIdx);
+    return res.send(deleteUserResponse);
 };
 
 
