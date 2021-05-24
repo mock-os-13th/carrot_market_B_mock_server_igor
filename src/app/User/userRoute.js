@@ -11,4 +11,7 @@ module.exports = function(app){
     // 3. 회원가입 API (닉네임 등록)
     app.post('/app/users', user.postUser);
 
+    // 4. 로그인 API
+    app.post('/app/login', user.login)
+
 };

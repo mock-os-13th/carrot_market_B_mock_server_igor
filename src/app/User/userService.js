@@ -45,8 +45,9 @@ exports.createUser = async function (mobile, nickname) {
                 subject: "userInfo",
             } // 유효 기간 365일
         );
-
-        return response(baseResponse.SUCCESS, token)
+        
+        jwtResult = { "jwt": token }
+        return response(baseResponse.SUCCESS, jwtResult)
 
     } catch (err) {
         logger.error(`App - createUser Service error\n: ${err.message}`);

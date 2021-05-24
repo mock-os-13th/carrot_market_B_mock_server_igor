@@ -72,7 +72,7 @@ exports.getMobileCheck = async function (req, res) {
  exports.postUser = async function (req, res) {
 
     /**
-     * Body: nickName
+     * Body: mobile, nickName
      */
 
     const { mobile, nickname } = req.body;
@@ -92,6 +92,37 @@ exports.getMobileCheck = async function (req, res) {
     );
 
     return res.send(signUpResponse);
+};
+
+/**
+ * API No. 4
+ * API Name : 휴대폰 인증번호 확인 API (임시)
+ * [POST] app/login
+ */
+
+ exports.login = async function (req, res) {
+
+    /**
+     * Body: mobile, verificationCode
+     */
+
+    const { mobile, verificationCode } = req.body;
+
+    // 휴대폰 번호 형식적 검증
+    const mobileVerification = inputverifier.verifyMobile(mobile);
+    if (!mobileVerification.isValid) return res.send(errResponse(mobileVerification.errorMessage));
+
+    // 인증번호 형식적 검증
+    const verificationCodeVerification = inputverifier.verifyCode(verificationCode);
+    if (!verificationCodeVerification.isValid) return res.send(errResponse(verificationCodeVerification.errorMessage));
+
+    // 인증번호 일치여부 확인
+    if (verificationCode === "1234") {
+        return res.send(response(baseResponse.SUCCESS)); 
+    } else {
+        return res.send(errResponse(baseResponse.VERIFICATION_CODE_NOT_MATCH))
+    }
+
 };
 
 
