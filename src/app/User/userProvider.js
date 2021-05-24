@@ -49,9 +49,9 @@ exports.getUser = async function (mobile) {
     if (getUserResult.length > 1)
       return errResponse(baseResponse.OVERLAPPING_MOBILE); 
   
-    // VALID한 회원인지 확인
-    if (getUserResult[0].status != "VALID") 
-      return errResponse(baseResponse.INVALID_USER); 
+    // 존재하지 않는 회원인지 확인
+    if (getUserResult.length < 1)
+    return errResponse(baseResponse.USER_NOT_EXIST); 
   
     // jwt 토큰 생성
     const userIdx = getUserResult[0].idx
