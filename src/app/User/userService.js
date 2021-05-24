@@ -1,6 +1,5 @@
 const {logger} = require("../../../config/winston");
 const {pool} = require("../../../config/database");
-const secret_config = require("../../../config/secret");
 const userProvider = require("./userProvider");
 const userDao = require("./userDao");
 const baseResponse = require("../../../config/baseResponseStatus");
@@ -13,11 +12,17 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-+
+exports.createUser = async function (email, password, name, contact) {
+    try {
         // 이메일 중복 확인
         const emailRows = await userProvider.emailCheck(email);
         if (emailRows.length > 0)
             return errResponse(baseResponse.SIGNUP_REDUNDANT_EMAIL);
+
+        // 연락처 중복 확인
+        const contactRows = await userProvider.contactCheck(contact);
+        if (contactRows.length > 0)
+            return errResponse(baseResponse.SIGNUP_REDUNDANT_CONTACT);
 
         // 비밀번호 암호화
         const hashedPassword = await crypto
@@ -25,7 +30,7 @@ const {connect} = require("http2");
             .update(password)
             .digest("hex");
 
-        const insertUserInfoParams = [email, hashedPassword, nickname];
+        const insertUserInfoParams = [email, hashedPassword, name, contact];
 
         const connection = await pool.getConnection(async (conn) => conn);
 
