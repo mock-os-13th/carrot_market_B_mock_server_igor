@@ -2,6 +2,7 @@ const {logger} = require("../../../config/winston");
 const {pool} = require("../../../config/database");
 const itemProvider = require("./itemProvider");
 const itemDao = require("./itemDao");
+const userProvider = require('../User/userProvider')
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
@@ -36,6 +37,37 @@ exports.createItem = async function (userIdx, title, category, price, isNegotiab
 
     } catch (err) {
         logger.error(`App - createItem Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+// 상세상품 조회하면 클릭 등록
+exports.createClick = async function (userIdx, itemIdx) {
+    try {
+        // userIdx DB에 존재하는지 확인
+        const userStatusRows = await userProvider.checkUserStatus(userIdx);
+        if (userStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+
+        // itemIdx DB에 존재하는지 확인
+        const checkItemResult = await itemProvider.checkItemIdx(itemIdx)
+        if (checkItemResult.length < 1) 
+            return errResponse(baseResponse.ITEM_NOT_EXIST);
+
+        // 아이템 상세 정보 가져오기
+        const retrieveItemResult = await itemProvider.retrieveItem(userIdx, itemIdx)
+
+        // DB에 클릭 저장
+        const insertClick = [userIdx, itemIdx]
+        const connection = await pool.getConnection(async (conn) => conn);
+        const clickResult = await itemDao.insertClick(connection, insertClick);
+        console.log(`추가된 클릭 (조회) : ${clickResult[0].insertId}`)
+        connection.release();
+        
+        return response(baseResponse.SUCCESS, retrieveItemResult)
+
+    } catch (err) {
+        logger.error(`App - createClick Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

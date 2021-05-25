@@ -37,6 +37,9 @@ module.exports = {
     VILLAGE_IDX_NAN : { "isSuccess": false,"code": 2023,"message":"동네 idx를 숫자로 입력해주세요." },
     RANGE_LEVEL_EMPTY : { "isSuccess": false,"code": 2024,"message":"동네 범위를 입력해주세요." },
     RANGE_LEVEL_ERROR_TYPE : { "isSuccess": false,"code": 2025,"message":"동네 범위는 1, 2, 3, 4 중에 하나의 값으로 입력해주세요." },
+
+    ITEM_IDX_EMPTY : { "isSuccess": false,"code": 2026,"message":"상품 idx를 입력해주세요." },
+    ITEM_IDX_NAN : { "isSuccess": false,"code": 2027,"message":"상품 idx를 숫자로 입력해주세요." },
     
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 휴대폰 번호입니다." },
@@ -50,6 +53,8 @@ module.exports = {
     ITEM_REDUNDANT : { "isSuccess": false, "code": 3006, "message": "같은 제목의 글을 다시 쓸 수 없습니다." },
 
     VILLAGE_NOT_EXIST : { "isSuccess": false, "code": 3007, "message": "존재하지 않는 동네입니다." },
+
+    ITEM_NOT_EXIST : { "isSuccess": false, "code": 3008, "message": "존재하지 않는 상품입니다." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

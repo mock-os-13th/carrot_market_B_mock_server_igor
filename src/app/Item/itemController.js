@@ -3,7 +3,6 @@ const itemService = require("../../app/Item/itemService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const inputverifier = require("../../../config/inputVerifier");
 const {response, errResponse} = require("../../../config/response");
-
 const {emit} = require("nodemon");
 
 
@@ -26,7 +25,7 @@ const {emit} = require("nodemon");
     if (!ItemPostBodyVerification.isValid) return res.send(errResponse(ItemPostBodyVerification.errorMessage));
 
     // userIdx 형식적 검증
-    const idxVerification = inputverifier.verifyIdx(userIdx);
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
     if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
 
     // DB에 글 등록
@@ -42,4 +41,35 @@ const {emit} = require("nodemon");
     );
 
     return res.send(postItemResponse);
+};
+
+/**
+ * API No. 8
+ * API Name : 물품 상세 조회 API (일부 더미 데이터)
+ * [GET] /app/items/:itemIdx
+ */
+ exports.getItem = async function (req, res) {
+
+    /**
+     * Path Variable: itemIdx
+     * header: jwt token
+     */
+    const itemIdx = req.params.itemIdx;
+    const userIdx = req.verifiedToken.userIdx;
+
+    // itemIdx 형식적 검증
+    const itemIdxVerification = inputverifier.verifyItemIdx(itemIdx);
+    if (!itemIdxVerification.isValid) return res.send(errResponse(itemIdxVerification.errorMessage));
+
+    // userIdx 형식적 검증
+    const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // DB에 글 등록
+    const createClickResponse = await itemService.createClick(
+        userIdx, 
+        itemIdx
+    );
+
+    return res.send(createClickResponse);
 };

@@ -74,16 +74,27 @@ exports.verifyNickname = function(nickname) {
 }
 
 
-// idx 검증
-
-// 1. userIdx 검증
-exports.verifyIdx = function(userIdx) {
-    // 1-1. 빈 값
+// userIdx 검증
+exports.verifyUserIdx = function(userIdx) {
+    // 빈 값
     if (!userIdx) {
         return {isValid: false, errorMessage: baseResponse.USERIDX_EMPTY};
-    // 1-2. 숫자 여부
+    // 숫자 여부
     } else if (!regexNum.test(userIdx)) {
         return {isValid: false, errorMessage: baseResponse.USERIDX_NaN};
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// itemIdx 검증
+exports.verifyItemIdx = function(itemIdx) {
+    // 빈 값
+    if (!itemIdx) {
+        return {isValid: false, errorMessage: baseResponse.ITEM_IDX_EMPTY};
+    // 숫자 여부
+    } else if (!regexNum.test(itemIdx)) {
+        return {isValid: false, errorMessage: baseResponse.ITEM_IDX_NAN};
     } else {
         return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
     }

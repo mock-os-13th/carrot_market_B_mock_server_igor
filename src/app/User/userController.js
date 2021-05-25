@@ -138,7 +138,7 @@ exports.getMobileCheck = async function (req, res) {
     const userIdx = req.verifiedToken.userIdx;
 
     // userIdx 형식적 검증
-    const idxVerification = inputverifier.verifyIdx(userIdx);
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
     if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
 
     // DB에 회원상태 삭제로
