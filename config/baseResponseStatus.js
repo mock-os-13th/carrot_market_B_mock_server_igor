@@ -22,6 +22,22 @@ module.exports = {
     USERIDX_EMPTY : { "isSuccess": false, "code": 2010, "message":"JWT 토큰에 userIdx가 존재하지 않습니다." },
     USERIDX_NaN : { "isSuccess": false,"code": 2011,"message":"JWT 토큰의 userIdx가 숫자가 아닙니다." },
 
+    ITEM_TITLE_EMPTY : { "isSuccess": false,"code": 2012,"message":"중고거래 글 제목을 입력해주세요." },
+    ITEM_TITLE_LENGTH : { "isSuccess": false,"code": 2013,"message":"중고거래 글 제목은 100자 이내로 써주세요." },
+    ITEM_CATEGORY_EMPTY : { "isSuccess": false,"code": 2014,"message":"카테고리를 입력해주세요." },
+    ITEM_CATEGORY_ERROR_TYPE : { "isSuccess": false,"code": 2015,"message":"존재하지 않는 카테고리 종류입니다." },
+    ITEM_PRICE_NAN : { "isSuccess": false,"code": 2016,"message":"가격은 숫자로 입력해주세요." },
+    ITEM_PRICE_UNDER_ZERO : { "isSuccess": false,"code": 2017,"message":"가격을 0 이상의 값으로 입력해주세요." },
+    ITEM_IS_NEGOTIABLE_EMPTY : { "isSuccess": false,"code": 2018,"message":"가격제안 가능한지 입력해주세요." },
+    ITEM_IS_NEGOTIABLE_ERROR_TYPE : { "isSuccess": false,"code": 2019,"message":"가격제안 가능여부는 YES 혹은 NO로 입력해주세요." },
+    ITEM_CONTENT_EMPTY : { "isSuccess": false,"code": 2020,"message":"중고거래 글 내용을 입력해주세요." },
+    ITEM_CONTENT_LENGTH : { "isSuccess": false,"code": 2021,"message":"중고거래 글 내용을 2000자 이내로 써주세요." },
+    
+    VILLAGE_IDX_EMPTY : { "isSuccess": false,"code": 2022,"message":"동네 idx를 입력해주세요." },
+    VILLAGE_IDX_NAN : { "isSuccess": false,"code": 2023,"message":"동네 idx를 숫자로 입력해주세요." },
+    RANGE_LEVEL_EMPTY : { "isSuccess": false,"code": 2024,"message":"동네 범위를 입력해주세요." },
+    RANGE_LEVEL_ERROR_TYPE : { "isSuccess": false,"code": 2025,"message":"동네 범위는 1, 2, 3, 4 중에 하나의 값으로 입력해주세요." },
+    
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 휴대폰 번호입니다." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
@@ -30,6 +46,10 @@ module.exports = {
     INVALID_USER : { "isSuccess": false, "code": 3004, "message": "유효하지 않은 계정입니다. 고객센터에 문의하세요." },
 
     USER_NOT_EXIST : { "isSuccess": false, "code": 3005, "message": "존재하지 않는 회원입니다." },
+
+    ITEM_REDUNDANT : { "isSuccess": false, "code": 3006, "message": "같은 제목의 글을 다시 쓸 수 없습니다." },
+
+    VILLAGE_NOT_EXIST : { "isSuccess": false, "code": 3007, "message": "존재하지 않는 동네입니다." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

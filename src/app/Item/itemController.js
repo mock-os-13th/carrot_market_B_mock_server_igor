@@ -1,3 +1,12 @@
+const itemProvider = require("../../app/Item/itemProvider");
+const itemService = require("../../app/Item/itemService");
+const baseResponse = require("../../../config/baseResponseStatus");
+const inputverifier = require("../../../config/inputVerifier");
+const {response, errResponse} = require("../../../config/response");
+
+const {emit} = require("nodemon");
+
+
 /**
  * API No. 7
  * API Name : 물품 등록 API (사진 미구현)
@@ -6,25 +15,31 @@
  exports.postItem = async function (req, res) {
 
     /**
-     * Body: title
+     * Body: title, category, price, isNegotiable, content, villageIdx, rangeLevel
      * header: jwt token
      */
+    const { title, category, price, isNegotiable, content, villageIdx, rangeLevel } = req.body;
+    const userIdx = req.verifiedToken.userIdx;
 
-    const { mobile, nickname } = req.body;
+    // body 형식적 검증
+    const ItemPostBodyVerification = inputverifier.verifyItemPostBody(req.body);
+    if (!ItemPostBodyVerification.isValid) return res.send(errResponse(ItemPostBodyVerification.errorMessage));
 
-    // 휴대전화 형식적 검증
-    const mobileVerification = inputverifier.verifyMobile(mobile);
-    if (!mobileVerification.isValid) return res.send(errResponse(mobileVerification.errorMessage));
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
 
-    // 닉네임 형식적 검증
-    const nicknameVerification = inputverifier.verifyNickname(nickname);
-    if (!nicknameVerification.isValid) return res.send(errResponse(nicknameVerification.errorMessage));
-
-    // DB에 회원정보 등록
-    const signUpResponse = await userService.createUser(
-        mobile,
-        nickname
+    // DB에 글 등록
+    const postItemResponse = await itemService.createItem(
+        userIdx,
+        title, 
+        category, 
+        price, 
+        isNegotiable, 
+        content, 
+        villageIdx, 
+        rangeLevel
     );
 
-    return res.send(signUpResponse);
+    return res.send(postItemResponse);
 };

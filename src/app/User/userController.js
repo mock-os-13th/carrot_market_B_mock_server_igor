@@ -5,7 +5,6 @@ const baseResponse = require("../../../config/baseResponseStatus");
 const inputverifier = require("../../../config/inputVerifier");
 const {response, errResponse} = require("../../../config/response");
 
-const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 
 
