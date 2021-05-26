@@ -14,8 +14,11 @@ const {connect} = require("http2");
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
 // 중고거래 물건 등록
-exports.createItem = async function (userIdx, title, category, price, isNegotiable, content, villageIdx, rangeLevel) {
+exports.createItem = async function (userIdx, title, category, price, isNegotiable, content, villageIdx, rangeLevel, pictures) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
     try {
+        await connection.beginTransaction()
         // 자기가 쓴 글 제목이랑 동일한게 있는지 확인 (도배 방지)
         const itemRows = await itemProvider.checkSameItem(userIdx, title);
         if (itemRows.length > 0)
@@ -28,16 +31,28 @@ exports.createItem = async function (userIdx, title, category, price, isNegotiab
 
         // DB에 글 등록
         const insertItemParams = [userIdx, title, category, price, isNegotiable, content, villageIdx, rangeLevel]
-        const connection = await pool.getConnection(async (conn) => conn);
         const itemIdResult = await itemDao.insertItem(connection, insertItemParams);
-        console.log(`추가된 중고거래 : ${itemIdResult[0].insertId}`)
-        connection.release();
         
-        return response(baseResponse.SUCCESS)
+        const currentItemIdx = itemIdResult[0].insertId
 
+        // insertId 사용해서 사진들 등록
+        if (pictures.length > 0) {
+            for (picture of pictures) {
+                const insertItemPicturesPrams = [currentItemIdx, picture.fileUrl, picture.fileId];
+                const insertItemPicturesResult = await itemDao.insertItemPictures(connection, insertItemPicturesPrams);
+                console.log(`추가된 중고거래 사진 : ${insertItemPicturesResult[0].insertId}`)
+            }
+        }
+        
+        connection.commit()
+        console.log(`추가된 중고거래 : ${itemIdResult[0].insertId}`)
+        return response(baseResponse.SUCCESS)
     } catch (err) {
+        connection.rollback()
         logger.error(`App - createItem Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
     }
 };
 

@@ -128,7 +128,7 @@ async function selectItemsBySeller(connection, sellerIdx) {
   return sellerItemRows;
 }
 
-// itemIdx로 대표사진 1개씩만 가져오기
+// 사용자 판매 상품 4개 가져오기
 async function selectItemsBySeller(connection, sellerIdx) {
   const selectPicturesItemIdxQuery = `
           SELECT a.idx AS idx,
@@ -173,6 +173,20 @@ async function insertClick(connection, insertClick) {
   return insertClickRow;
   }
 
+// 사진 등록 (수정필요)
+async function insertItemPictures(connection, insertItemPicturesParams) {
+  const insertItemPicturesQuery = `
+          INSERT INTO ItemPictures(itemIdx, pictureUrl, pictureId)
+          VALUES (?, ?, ?);
+      `;
+  const insertItemPicturesRow = await connection.query(
+    insertItemPicturesQuery,
+    insertItemPicturesParams
+  );
+  
+  return insertItemPicturesRow;
+  }
+
 
     
   
@@ -186,6 +200,7 @@ async function insertClick(connection, insertClick) {
     selectItemsBySeller,
     selectOnePictureItemIdx,
     selectItemIdx,
-    insertClick
+    insertClick,
+    insertItemPictures
   };
   

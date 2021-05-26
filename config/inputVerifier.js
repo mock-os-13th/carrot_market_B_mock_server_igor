@@ -174,3 +174,19 @@ exports.verifyItemIdx = function(itemIdx) {
     return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR}; 
 
 };
+
+// pictures 검증
+exports.verifyPictures = function(pictures) {
+    // 사진 10장 이상이면 에러
+    if (pictures.length > 10) return {isValid: false, errorMessage: baseResponse.PICTURES_TOO_MANY}; 
+
+    // 각각의 파일을 한번씩 돌면서 검증한다.
+    for (picture of pictures) {
+        if (!picture.fileId) { // fileId 누락
+            return {isValid: false, errorMessage: baseResponse.PICTURE_NO_FILE_ID};
+        } else if (!picture.fileUrl) { //fileUrl 누락
+            return {isValid: false, errorMessage: baseResponse.PICTURE_NO_FILE_URL};
+        } 
+    }
+    return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR}; 
+};

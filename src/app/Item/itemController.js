@@ -14,10 +14,11 @@ const {emit} = require("nodemon");
  exports.postItem = async function (req, res) {
 
     /**
-     * Body: title, category, price, isNegotiable, content, villageIdx, rangeLevel
+     * Body: title, category, price, isNegotiable, content, villageIdx, rangeLevel, pictures
      * header: jwt token
      */
-    const { title, category, price, isNegotiable, content, villageIdx, rangeLevel } = req.body;
+
+    const { title, category, price, isNegotiable, content, villageIdx, rangeLevel, pictures } = req.body;
     const userIdx = req.verifiedToken.userIdx;
 
     // body 형식적 검증
@@ -28,6 +29,17 @@ const {emit} = require("nodemon");
     const idxVerification = inputverifier.verifyUserIdx(userIdx);
     if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
 
+    // pictures 형식적 검증
+    try {
+        if (pictures.length > 0) {
+            const picturesVerification = inputverifier.verifyPictures(pictures); 
+            if (!picturesVerification.isValid) return res.send(errResponse(picturesVerification.errorMessage)) 
+        }
+    } catch (err) {
+        console.log(err)
+        return res.send(errResponse(baseResponse.PICTURE_MAY_NO_FILED));
+    }    
+
     // DB에 글 등록
     const postItemResponse = await itemService.createItem(
         userIdx,
@@ -37,7 +49,8 @@ const {emit} = require("nodemon");
         isNegotiable, 
         content, 
         villageIdx, 
-        rangeLevel
+        rangeLevel,
+        pictures
     );
 
     return res.send(postItemResponse);
@@ -65,11 +78,13 @@ const {emit} = require("nodemon");
     const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
     if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
 
-    // DB에 글 등록
+    // DB에 클릭 등록
     const createClickResponse = await itemService.createClick(
         userIdx, 
         itemIdx
     );
 
     return res.send(createClickResponse);
+
+    
 };
