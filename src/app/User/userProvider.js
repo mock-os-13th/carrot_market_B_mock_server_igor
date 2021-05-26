@@ -85,21 +85,14 @@ exports.retrieveUser = async function (userIdx) {
 
   try {
     const connection = await pool.getConnection(async (conn) => conn);
-    const selectUser
+    const selectUserIdxResult = await userDao.selectUserIdx(connection, userIdx);
+    connection.release();
 
     // 존재하지 않는 회원인지 확인
-    if (getUserResult.length < 1)
+    if (selectUserIdxResult.length < 1)
       return errResponse(baseResponse.USER_NOT_EXIST); 
-  
-
-  
-    // 반환할 회원 위치 조회 (idx, villageIdx, dong, villageRangeLevel, isAuthorized)
-    const userLocations = await userDao.selectUserLocation(connection, userIdx);
-    connection.release();
-  
-    const loginResult = {"jwt": token, "userLocations": userLocations}
     
-    return response(baseResponse.SUCCESS, loginResult)
+    return response(baseResponse.SUCCESS, selectUserIdxResult[0])
   
   } catch(error) {
     logger.error(`App - getUser Service error\n: ${error.message}`);

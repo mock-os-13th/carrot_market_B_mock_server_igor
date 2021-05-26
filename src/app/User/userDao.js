@@ -38,8 +38,27 @@ async function selectUserStatusIdx(connection, userIdx) {
                 FROM User
                 WHERE idx = ? AND status = "VALID";
                 `;
-  const [mobileRows] = await connection.query(selectUserStatusIdxQuery, userIdx);
-  return mobileRows;
+  const [statusRows] = await connection.query(selectUserStatusIdxQuery, userIdx);
+  return statusRows;
+}
+
+// userIdx로 회원 간단 정보 조회 (나의 당근 메인페이지용)
+async function selectUserIdx(connection, userIdx) {
+  const selectUserIdxQuery = `
+                  SELECT a.idx AS userIdx,
+                  a.profilePictureUrl,
+                  a.nickName,
+                  b.dong
+                FROM User a
+                LEFT JOIN (SELECT UL.userIdx,
+                      V.dong
+                  FROM UserLocation UL
+                  INNER JOIN Village V ON UL.villageIdx = V.idx
+                  GROUP BY userIdx) b ON a.idx = b.userIdx
+                WHERE a.idx = ? AND a.status = "VALID";
+                `;
+  const [userRow] = await connection.query(selectUserIdxQuery, userIdx);
+  return userRow;
 }
 
 // 반환할 회원 위치 조회
@@ -96,5 +115,6 @@ module.exports = {
   selectUserDetailMobile,
   selectUserLocation,
   selectUserStatusIdx,
-  updateUserStatus
+  updateUserStatus,
+  selectUserIdx
 };

@@ -164,7 +164,7 @@ exports.getMobileCheck = async function (req, res) {
     if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
 
     // DB에 회원상태 삭제로
-    const retrieveUserResponse = await userService.retrieveUser(userIdx);
+    const retrieveUserResponse = await userProvider.retrieveUser(userIdx);
     return res.send(retrieveUserResponse);
 };
 
