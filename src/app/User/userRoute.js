@@ -17,4 +17,7 @@ module.exports = function(app){
     // 5. 회원 탈퇴 API
     app.patch('/app/users', jwtMiddleware, user.patchUser);
 
+    // 6. 나의 당근 메인페이지 API
+    app.get('/app/users', jwtMiddleware, user.getUser)
+
 };

@@ -39,11 +39,10 @@ exports.checkUserStatus = async function (userIdx) {
 
 // 휴대폰 번호로 userIdx 가져오기
 exports.getUser = async function (mobile) {
-
+  const connection = await pool.getConnection(async (conn) => conn);
+  
   try {
-    const connection = await pool.getConnection(async (conn) => conn);
     const getUserResult = await userDao.selectUserDetailMobile(connection, mobile);
-    connection.release();
   
     // 휴대폰 번호 중복여부 확인
     if (getUserResult.length > 1)
@@ -51,7 +50,7 @@ exports.getUser = async function (mobile) {
   
     // 존재하지 않는 회원인지 확인
     if (getUserResult.length < 1)
-    return errResponse(baseResponse.USER_NOT_EXIST); 
+     return errResponse(baseResponse.USER_NOT_EXIST); 
   
     // jwt 토큰 생성
     const userIdx = getUserResult[0].idx
@@ -66,6 +65,33 @@ exports.getUser = async function (mobile) {
           subject: "userInfo",
       } // 유효 기간 365일
       );
+  
+    // 반환할 회원 위치 조회 (idx, villageIdx, dong, villageRangeLevel, isAuthorized)
+    const userLocations = await userDao.selectUserLocation(connection, userIdx);
+    const loginResult = {"jwt": token, "userLocations": userLocations}
+    
+    return response(baseResponse.SUCCESS, loginResult)
+  
+  } catch(error) {
+    logger.error(`App - getUser Service error\n: ${error.message}`);
+    return errResponse(baseResponse.DB_ERROR);
+  } finally {
+    connection.release();
+  }
+};
+
+// userIdx로 간략한 회원정보 가져오기 (나의 당근 메인페이지용)
+exports.retrieveUser = async function (userIdx) {
+
+  try {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectUser
+
+    // 존재하지 않는 회원인지 확인
+    if (getUserResult.length < 1)
+      return errResponse(baseResponse.USER_NOT_EXIST); 
+  
+
   
     // 반환할 회원 위치 조회 (idx, villageIdx, dong, villageRangeLevel, isAuthorized)
     const userLocations = await userDao.selectUserLocation(connection, userIdx);

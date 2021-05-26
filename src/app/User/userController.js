@@ -146,4 +146,25 @@ exports.getMobileCheck = async function (req, res) {
     return res.send(deleteUserResponse);
 };
 
+/**
+ * API No. 6
+ * API Name : 나의 당근 메인페이지 API
+ * [GET] app/users
+ */
+ exports.getUser = async function (req, res) {
+
+    /*
+     * header: jwt token
+     */
+
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    // DB에 회원상태 삭제로
+    const retrieveUserResponse = await userService.retrieveUser(userIdx);
+    return res.send(retrieveUserResponse);
+};
 
