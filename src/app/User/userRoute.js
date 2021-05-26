@@ -20,4 +20,7 @@ module.exports = function(app){
     // 6. 나의 당근 메인페이지 API
     app.get('/app/users', jwtMiddleware, user.getUser)
 
+    // 10. 자동 로그인 API
+    app.post('/app/auto-login', jwtMiddleware, user.autoLogin)
+
 };

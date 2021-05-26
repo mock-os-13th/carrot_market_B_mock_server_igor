@@ -168,3 +168,21 @@ exports.getMobileCheck = async function (req, res) {
     return res.send(retrieveUserResponse);
 };
 
+/**
+ * API No. 10
+ * API Name : 자동 로그인 API
+ * [POST] app/auto-login
+ */
+
+ exports.autoLogin = async function (req, res) {
+
+    /**
+     * header: jwt token
+     */
+
+    const userIdx = req.verifiedToken.userIdx;
+
+    const getUserLocationsResponse = await userProvider.getUserLocations(userIdx);
+
+    return res.send(getUserLocationsResponse);
+};

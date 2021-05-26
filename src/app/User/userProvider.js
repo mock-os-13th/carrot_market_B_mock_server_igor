@@ -99,3 +99,26 @@ exports.retrieveUser = async function (userIdx) {
     return errResponse(baseResponse.DB_ERROR);
   }
 };
+
+// userIdx로 userLocation 정보 가져오기 (자동 로그인용)
+exports.getUserLocations = async function (userIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  
+  try {
+    const checkUserStatusResult = await userDao.selectUserStatusIdx(connection, userIdx);
+  
+    // 존재하지 않는 회원인지 확인
+    if (checkUserStatusResult.length < 1)
+     return errResponse(baseResponse.USER_NOT_EXIST); 
+    
+    // 반환할 회원 위치 조회 (idx, villageIdx, dong, villageRangeLevel, isAuthorized)
+    const userLocations = await userDao.selectUserLocation(connection, userIdx);    
+    return response(baseResponse.SUCCESS, userLocations)
+  
+  } catch(error) {
+    logger.error(`App - getUser Service error\n: ${error.message}`);
+    return errResponse(baseResponse.DB_ERROR);
+  } finally {
+    connection.release();
+  }
+};
