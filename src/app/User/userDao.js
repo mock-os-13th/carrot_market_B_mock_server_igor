@@ -92,7 +92,7 @@ async function insertUserInfo(connection, insertUserInfoParams) {
   return insertUserInfoRow;
 }
 
-// 유저 생성
+// 유저 상태 변경
 async function updateUserStatus(connection, updateUserStatusParams) {
   const updateUserStatusQuery = `
       UPDATE User
