@@ -24,17 +24,22 @@ module.exports = {
 
     ITEM_TITLE_EMPTY : { "isSuccess": false,"code": 2012,"message":"중고거래 글 제목을 입력해주세요." },
     ITEM_TITLE_LENGTH : { "isSuccess": false,"code": 2013,"message":"중고거래 글 제목은 100자 이내로 써주세요." },
+    
     ITEM_CATEGORY_EMPTY : { "isSuccess": false,"code": 2014,"message":"카테고리를 입력해주세요." },
     ITEM_CATEGORY_ERROR_TYPE : { "isSuccess": false,"code": 2015,"message":"존재하지 않는 카테고리 종류입니다." },
+
     ITEM_PRICE_NAN : { "isSuccess": false,"code": 2016,"message":"가격은 숫자로 입력해주세요." },
     ITEM_PRICE_UNDER_ZERO : { "isSuccess": false,"code": 2017,"message":"가격을 0 이상의 값으로 입력해주세요." },
+
     ITEM_IS_NEGOTIABLE_EMPTY : { "isSuccess": false,"code": 2018,"message":"가격제안 가능한지 입력해주세요." },
     ITEM_IS_NEGOTIABLE_ERROR_TYPE : { "isSuccess": false,"code": 2019,"message":"가격제안 가능여부는 YES 혹은 NO로 입력해주세요." },
+
     ITEM_CONTENT_EMPTY : { "isSuccess": false,"code": 2020,"message":"중고거래 글 내용을 입력해주세요." },
     ITEM_CONTENT_LENGTH : { "isSuccess": false,"code": 2021,"message":"중고거래 글 내용을 2000자 이내로 써주세요." },
     
     VILLAGE_IDX_EMPTY : { "isSuccess": false,"code": 2022,"message":"동네 idx를 입력해주세요." },
     VILLAGE_IDX_NAN : { "isSuccess": false,"code": 2023,"message":"동네 idx를 숫자로 입력해주세요." },
+
     RANGE_LEVEL_EMPTY : { "isSuccess": false,"code": 2024,"message":"동네 범위를 입력해주세요." },
     RANGE_LEVEL_ERROR_TYPE : { "isSuccess": false,"code": 2025,"message":"동네 범위는 1, 2, 3, 4 중에 하나의 값으로 입력해주세요." },
 
@@ -45,7 +50,13 @@ module.exports = {
     PICTURE_NO_FILE_ID : { "isSuccess": false,"code": 2029,"message":"fileId가 누락된 사진이 있습니다." },
     PICTURE_NO_FILE_URL : { "isSuccess": false,"code": 2030,"message":"fileUrl이 누락된 사진이 있습니다." },
     PICTURE_MAY_NO_FILED : { "isSuccess": false,"code": 2031,"message":"pictures field가 누락된 것 같습니다. 첨부 사진이 없다면 빈배열을 보내야합니다. 해당없다면 서버개발자에게 연락주세요." },
+
+    CATEGORIES_EMPTY : { "isSuccess": false,"code": 2032,"message":"최소한 하나 이상의 카테고리를 입력해야 합니다." },
+    CATEGORIES_WITH_INVALID_CATEGORY : { "isSuccess": false,"code": 2033,"message":"잘못된 카테고리를 포함하고 있습니다." },
     
+    NUM_OF_PAGES_EMPTY : { "isSuccess": false,"code": 2034,"message":"페이지 수를 입력해주세요." },
+    NUM_OF_PAGES_UNDER_ONE : { "isSuccess": false,"code": 2035,"message":"페이지 수는 1 이상의 수를 입력해야 합니다." },
+
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 휴대폰 번호입니다." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
@@ -64,7 +75,6 @@ module.exports = {
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
     SERVER_ERROR : { "isSuccess": false, "code": 4001, "message": "서버 에러"},
-    
  
     // 형식적 검증 에러
     INPUT_VERIFIER_ERROR: { "isSuccess": false, "code": 5001, "message": "유효한 검증값이지만 에러가 발생했습니다. 서버개발자에게 연락주세요."},

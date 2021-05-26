@@ -8,4 +8,6 @@ module.exports = function(app){
     // 8. 물품 상세 조회 API (일부 더미 데이터)
     app.get('/app/items/:itemIdx', jwtMiddleware, item.getItem)
 
+    // 9. 물품 목록 조회 API (홈화면)
+    app.get('/app/items', item.getItemList)
 };

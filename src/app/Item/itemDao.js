@@ -36,6 +36,17 @@ async function selectItemIdx(connection, itemIdx) {
   return itemRow;
 }
 
+// idx로 끌올시간 유닉스 타임스탬프로 변환해서 가져오기
+async function selectOnTopAt(connection, lastItemIdx) {
+  const selectOnTopAtQuery = `
+            SELECT UNIX_TIMESTAMP(onTopAt) AS onTopAtCursor
+            FROM Item
+            WHERE idx = ?
+                `;
+  const [onTopAtRow] = await connection.query(selectOnTopAtQuery, lastItemIdx);
+  return onTopAtRow;
+}
+
 // idx로 item 상세정보 가져오기
 async function selectItemdetails(connection, itemIdx) {
     const selectItemdetailsTitleQuery = `
@@ -144,6 +155,32 @@ async function selectItemsBySeller(connection, sellerIdx) {
   return sellerItemRows;
 }
 
+// 상품 목록 가져오기 (무한 스크롤)
+async function selectItemsForList(connection, selectItemsForListParams) {
+  const selectItemsForListQuery = `
+                  SELECT a.title,
+                    b.dong,
+                    a.isOnTop,
+                    CASE
+                        WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(second, a.onTopAt, NOW()), "초 전")
+                        WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(minute, a.onTopAt, NOW()), "분 전")
+                        WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1440 THEN CONCAT(TIMESTAMPDIFF(hour,  a.onTopAt, NOW()), "시간 전")
+                        WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 2880 THEN "어제"
+                        ELSE CONCAT(DATEDIFF(a.onTopAt, NOW()), "일 전")
+                    END AS passedTime,
+                    a.status,
+                    a.price
+                FROM Item a
+                INNER JOIN Village b ON a.villageIdx = b.idx
+                WHERE category IN (${selectItemsForListParams[0]})
+                  AND CONCAT(LPAD(UNIX_TIMESTAMP(onTopAt), 15, 0), LPAD(a.idx, 15, 0)) < ${selectItemsForListParams[1]}
+                ORDER BY a.onTopAt DESC, a.idx DESC
+                LIMIT ${selectItemsForListParams[2]};
+                `;
+  const [itemsRows] = await connection.query(selectItemsForListQuery);
+  return itemsRows;
+}
+
 
 // item 등록
 async function insertItem(connection, insertItemInfoParams) {
@@ -173,7 +210,7 @@ async function insertClick(connection, insertClick) {
   return insertClickRow;
   }
 
-// 사진 등록 (수정필요)
+// 사진 등록
 async function insertItemPictures(connection, insertItemPicturesParams) {
   const insertItemPicturesQuery = `
           INSERT INTO ItemPictures(itemIdx, pictureUrl, pictureId)
@@ -186,6 +223,7 @@ async function insertItemPictures(connection, insertItemPicturesParams) {
   
   return insertItemPicturesRow;
   }
+
 
 
     
@@ -201,6 +239,8 @@ async function insertItemPictures(connection, insertItemPicturesParams) {
     selectOnePictureItemIdx,
     selectItemIdx,
     insertClick,
-    insertItemPictures
+    insertItemPictures,
+    selectOnTopAt,
+    selectItemsForList
   };
   
