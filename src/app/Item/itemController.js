@@ -37,7 +37,7 @@ const {emit} = require("nodemon");
         }
     } catch (err) {
         console.log(err)
-        return res.send(errResponse(baseResponse.PICTURE_MAY_NO_FILED));
+        return res.send(errResponse(baseResponse.PICTURE_MAY_NO_FILIED));
     }    
 
     // DB에 글 등록

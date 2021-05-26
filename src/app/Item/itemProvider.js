@@ -85,7 +85,7 @@ exports.retrieveItem = async function (userIdx, itemIdx) {
     return itemDetails;
   };  
 
-  // 글 가져오기
+  // 홈 화면용 상품 목록 가져오기
   exports.retrieveItemList = async function (villageIdx, rangeLevel, categories, lastItemIdx, numOfPages) {
     // villageIdx 의미적 검증 (있는것인지!)
       // 나중에 villageProvider 생기면 구현!
@@ -98,7 +98,7 @@ exports.retrieveItem = async function (userIdx, itemIdx) {
     const selectOnTopAtResult = await itemDao.selectOnTopAt(connection, lastItemIdx);
       // 혹시 마지막 item이 존재 하지 않는지 검증
     if (selectOnTopAtResult.length < 1)
-      return errResponse(baseResponse.ITEM_NOT_EXIST); 
+      return errResponse(baseResponse.LAST_ITEM_NOT_EXIST); 
       // cursor에 해당하는 문자열 만들기
     const onTopAtCursor = selectOnTopAtResult[0].onTopAtCursor
     const cursor = util.lpad(onTopAtCursor, 15, 0) + util.lpad(lastItemIdx, 15, 0)

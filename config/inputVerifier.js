@@ -128,14 +128,20 @@ exports.verifyRangeLevel = function(rangeLevel) {
 
 // categories (배열) 검증
 exports.verifyCategories = function(categories) {
-    if (categories.length < 0)
-        return {isValid: false, errorMessage: baseResponse.CATEGORIES_EMPTY}; // 에러 메시지
-    for (category of categories) {
-        if (!allCategories.includes(category)) {
-            return {isValid: false, errorMessage: baseResponse.CATEGORIES_WITH_INVALID_CATEGORY}; // 에러 메시지
+    try {
+        if (categories.length < 0)
+            return {isValid: false, errorMessage: baseResponse.CATEGORIES_EMPTY}; // 에러 메시지
+        for (category of categories) {
+            if (!allCategories.includes(category)) {
+                return {isValid: false, errorMessage: baseResponse.CATEGORIES_WITH_INVALID_CATEGORY}; // 에러 메시지
+            }
         }
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    } catch (err) {
+        console.log(`InputVerifier error at verifyCategories`)
+        return {isValid: false, errorMessage: baseResponse.CATEGORIES_MAY_NO_FILIED};
     }
-    return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    
 };
 
 // numOfPages 검증

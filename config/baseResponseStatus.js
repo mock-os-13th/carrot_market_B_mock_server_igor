@@ -49,13 +49,15 @@ module.exports = {
     PICTURES_TOO_MANY : { "isSuccess": false,"code": 2028,"message":"사진은 최대 10장까지만 업로드할 수 있습니다." },
     PICTURE_NO_FILE_ID : { "isSuccess": false,"code": 2029,"message":"fileId가 누락된 사진이 있습니다." },
     PICTURE_NO_FILE_URL : { "isSuccess": false,"code": 2030,"message":"fileUrl이 누락된 사진이 있습니다." },
-    PICTURE_MAY_NO_FILED : { "isSuccess": false,"code": 2031,"message":"pictures field가 누락된 것 같습니다. 첨부 사진이 없다면 빈배열을 보내야합니다. 해당없다면 서버개발자에게 연락주세요." },
+    PICTURE_MAY_NO_FILIED : { "isSuccess": false,"code": 2031,"message":"pictures field가 누락된 것 같습니다. 첨부 사진이 없다면 빈배열을 보내야합니다. 해당없다면 서버개발자에게 연락주세요." },
 
     CATEGORIES_EMPTY : { "isSuccess": false,"code": 2032,"message":"최소한 하나 이상의 카테고리를 입력해야 합니다." },
     CATEGORIES_WITH_INVALID_CATEGORY : { "isSuccess": false,"code": 2033,"message":"잘못된 카테고리를 포함하고 있습니다." },
     
     NUM_OF_PAGES_EMPTY : { "isSuccess": false,"code": 2034,"message":"페이지 수를 입력해주세요." },
     NUM_OF_PAGES_UNDER_ONE : { "isSuccess": false,"code": 2035,"message":"페이지 수는 1 이상의 수를 입력해야 합니다." },
+
+    CATEGORIES_MAY_NO_FILIED : { "isSuccess": false,"code": 2036,"message":"categories field가 누락된 것 같습니다. 최소한 1개의 카테고리를 포함한 배열을 보내야합니다. 해당없다면 서버개발자에게 연락주세요." },
 
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 휴대폰 번호입니다." },
@@ -71,6 +73,9 @@ module.exports = {
     VILLAGE_NOT_EXIST : { "isSuccess": false, "code": 3007, "message": "존재하지 않는 동네입니다." },
 
     ITEM_NOT_EXIST : { "isSuccess": false, "code": 3008, "message": "존재하지 않는 상품입니다." },
+
+    LAST_ITEM_NOT_EXIST : { "isSuccess": false, "code": 3009, "message": "마지막 상품이 존재하지 않습니다." },
+    
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
