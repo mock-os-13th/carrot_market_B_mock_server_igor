@@ -10,7 +10,7 @@ const {emit} = require("nodemon");
 /*
  * API No. 11
  * API Name : 관심상품 등록/취소 API
- * [POST] /app/likes/:itemIdx
+ * [POST] /app/likes/items/:itemIdx
  */
  exports.postItemLike = async function (req, res) {
 
