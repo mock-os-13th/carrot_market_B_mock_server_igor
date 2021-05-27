@@ -31,7 +31,7 @@ async function selectUserDetailMobile(connection, mobile) {
   return mobileRows;
 }
 
-// userIdx로 회원 상태 조회 (회원 탈퇴용)
+// userIdx로 회원 상태 조회 (회원 탈퇴 및 사용자 idx 의미적 검증용)
 async function selectUserStatusIdx(connection, userIdx) {
   const selectUserStatusIdxQuery = `
                 SELECT status

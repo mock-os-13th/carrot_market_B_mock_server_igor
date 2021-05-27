@@ -42,11 +42,57 @@ exports.createDeal = async function (userIdx, itemIdx) {
         connection.commit()
         
         console.log(`추가된 거래완료 : ${insertDealResult[0].insertId}`)
-        const createdDealIdx = { "dealIdx": insertDealResult[0].insertId }
-        return response(baseResponse.SUCCESS, createdDealIdx)
+        const itemIdxForReturn = { "itemIdx": itemIdx }
+        return response(baseResponse.SUCCESS, itemIdxForReturn)
     } catch (err) {
         connection.rollback()
         logger.error(`App - createDeal Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+};
+
+// 구매자 등록
+exports.insertBuyer = async function (userIdx, itemIdx, buyerIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    try {
+        await connection.beginTransaction()
+        // userIdx 의미적 검증
+        const userStatusRows = await userProvider.checkUserStatus(userIdx);
+        if (userStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+
+        // itemIdx 의미적 검증 (SOLDOUT인지 확인해야 함)
+        const checkSoldItemResult = await itemProvider.checkSoldItemIdx(itemIdx)
+            // item이 존재하는지 여부
+        if (checkSoldItemResult.length < 1) 
+            return errResponse(baseResponse.ITEM_NOT_EXIST); 
+            // 판매 완료된 상품인지
+        if (checkSoldItemResult[0].status != "SOLDOUT")
+            return errResponse(baseResponse.ITEM_NOT_SOLD_OUT);
+            // userIdx가 Item에 등록된 것과 동일한지 확인
+        const userIdxFromItemTable = checkSoldItemResult[0].userIdx
+        if (userIdx != userIdxFromItemTable)
+            return errResponse(baseResponse.USER_NOT_MATCH); 
+
+        // buyerIdx 의미적 검증
+        const buyerStatusRows = await userProvider.checkUserStatus(buyerIdx);
+        if (buyerStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+
+        // DB에 구매자 등록
+        const updateBuyerParams = [buyerIdx, itemIdx]
+        const updateBuyerResult = await dealDao.updateBuyer(connection, updateBuyerParams);
+        
+        connection.commit()
+        console.log(`등록된 구매자 : ${buyerIdx}`)
+
+        return response(baseResponse.SUCCESS)
+    } catch (err) {
+        connection.rollback()
+        logger.error(`App - insertBuyer Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     } finally {
         connection.release();

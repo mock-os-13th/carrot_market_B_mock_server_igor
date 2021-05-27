@@ -36,6 +36,17 @@ async function selectItemIdx(connection, itemIdx) {
   return itemRow;
 }
 
+// idx로 item 조회
+async function selectSoldItemIdx(connection, itemIdx) {
+  const selectSoldItemIdxQuery = `
+                SELECT idx, userIdx, status
+                FROM Item
+                WHERE idx = ?;
+                `;
+  const [SoldItemRow] = await connection.query(selectSoldItemIdxQuery, itemIdx);
+  return SoldItemRow;
+}
+
 // idx로 끌올시간 유닉스 타임스탬프로 변환해서 가져오기
 async function selectOnTopAt(connection, lastItemIdx) {
   const selectOnTopAtQuery = `
@@ -266,6 +277,7 @@ async function updateSoldItem(connection, itemIdx) {
     insertItemPictures,
     selectOnTopAt,
     selectItemsForList,
-    updateSoldItem
+    updateSoldItem,
+    selectSoldItemIdx
   };
   

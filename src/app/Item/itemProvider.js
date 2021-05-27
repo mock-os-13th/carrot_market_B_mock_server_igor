@@ -32,13 +32,22 @@ exports.checkVillageIdx = async function (villageIdx) {
     return checkMobileResult;
   };
 
-// idx로 존재하는 상품인지 확인
+// idx로 존재하는 상품인지 확인 (SOLDOUT 상품 제외)
 exports.checkItemIdx = async function (itemIdx) {
   const connection = await pool.getConnection(async (conn) => conn);
   const checkItemIdxResult = await itemDao.selectItemIdx(connection, itemIdx);
   connection.release();
 
   return checkItemIdxResult;
+};
+
+// 판매완료된 상품인지 조회
+exports.checkSoldItemIdx = async function (itemIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const checkSoldItemIdxResult = await itemDao.selectSoldItemIdx(connection, itemIdx);
+  connection.release();
+
+  return checkSoldItemIdxResult;
 };
 
 // 상품 상세정보 조회
@@ -72,7 +81,7 @@ exports.retrieveItem = async function (userIdx, itemIdx) {
     for (sellerItem of selectItemsBySellerResult) {
       const itemIdx = sellerItem.idx
       const sellerItemPicture = await itemDao.selectOnePictureItemIdx(connection, itemIdx);
-      if (sellerItemPicture.length > 0) {
+      if (sellerItemPicture.length > 0) { // 블로그에 정리하기! 일종의 optional binding
         sellerItem.pictureURL = sellerItemPicture[0].pictureUrl
       } else {
         sellerItem.pictureURL = null

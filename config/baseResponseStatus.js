@@ -59,6 +59,9 @@ module.exports = {
 
     CATEGORIES_MAY_NO_FILIED : { "isSuccess": false,"code": 2036,"message":"categories field가 누락된 것 같습니다. 최소한 1개의 카테고리를 포함한 배열을 보내야합니다. 해당없다면 서버개발자에게 연락주세요." },
 
+    BUYER_IDX_EMPTY : { "isSuccess": false,"code": 2037,"message":"구매자 idx를 입력해주세요." },
+    BUYER_IDX_NAN : { "isSuccess": false,"code": 2038,"message":"구매자 idx를 숫자로 입력해주세요." },
+
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 휴대폰 번호입니다." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
@@ -77,7 +80,8 @@ module.exports = {
     LAST_ITEM_NOT_EXIST : { "isSuccess": false, "code": 3009, "message": "마지막 상품이 존재하지 않습니다." },
 
     USER_NOT_MATCH: { "isSuccess": false, "code": 3010, "message": "상품을 등록한 사용자가 아닙니다." },
-    
+  
+    ITEM_NOT_SOLD_OUT: { "isSuccess": false, "code": 3011, "message": "거래 완료된 상품이 아닙니다." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

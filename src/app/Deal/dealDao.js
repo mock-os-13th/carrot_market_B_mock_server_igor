@@ -1,4 +1,4 @@
-// click 등록
+// 구매 등록
 async function insertDeal(connection, itemIdx) {
     const insertDealQuery = `
             INSERT INTO Deal(itemIdx)
@@ -11,6 +11,21 @@ async function insertDeal(connection, itemIdx) {
     return insertDealRow;
 };
 
+// 구매자 등록
+async function updateBuyer(connection, updateBuyerParams) {
+    const updateBuyerQuery = `
+                    UPDATE Deal
+                    SET buyerIdx = ?
+                    WHERE itemIdx = ?;
+                              `;
+    const updateBuyerRow = await connection.query(
+        updateBuyerQuery,
+        updateBuyerParams
+    );
+    return updateBuyerRow;
+};
+
 module.exports = {
-    insertDeal
+    insertDeal,
+    updateBuyer
     };

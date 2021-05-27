@@ -113,6 +113,19 @@ exports.verifyVillageIdx = function(villageIdx) {
     }
 };
 
+// buyerIdx 검증
+exports.verifyBuyerIdx = function(buyerIdx) {
+    // 빈 값
+    if (!buyerIdx) {
+        return {isValid: false, errorMessage: baseResponse.BUYER_IDX_EMPTY}; 
+    // 숫자 여부
+    } else if (!regexNum.test(buyerIdx)) {
+        return {isValid: false, errorMessage: baseResponse.BUYER_IDX_NAN}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
 // rangeLevel 검증
 exports.verifyRangeLevel = function(rangeLevel) {
     // 있는지 검증
