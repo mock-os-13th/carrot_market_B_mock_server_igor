@@ -30,12 +30,14 @@ async function selectItemLikesUser(connection, userIdx) {
                 b.status,
                 "YES" AS isliked,
                 b.price,
-                d.numOflikes
+                IFNULL(d.numOfLikes, 0) AS numOfLikes,
+                IFNULL(f.numOfChats, 0) AS numOfChats
                 FROM LikeItem a
                 INNER JOIN Item b ON a.itemIdx = b.idx
                 INNER JOIN Village c ON b.villageIdx = c.idx
                 LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOflikes FROM LikeItem GROUP BY itemIdx) d ON a.itemIdx = d.itemIdx
                 LEFT JOIN (SELECT itemIdx, pictureUrl FROM ItemPictures GROUP BY itemIdx) e ON a.itemIdx = e.itemIdx
+                LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOfChats FROM ChatRoom GROUP BY itemIdx) f ON a.itemIdx = f.itemIdx
                 WHERE a.userIdx = ?
                     AND a.status = "VALID"
                   `;
