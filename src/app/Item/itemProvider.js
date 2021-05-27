@@ -93,6 +93,12 @@ exports.retrieveItem = async function (userIdx, itemIdx) {
     // 추천 상품 가져오기 (더미 데이터)
     itemDetails.recommendedItems = selectItemsBySellerResult
 
+    // 조회하고 있는 사람 nickname
+    const viewerNicknameRow = await userProvider.retrieveUserNickname(userIdx)
+    const viewerNickname = viewerNicknameRow[0].nickName
+
+    itemDetails.userNickname = viewerNickname
+
     connection.release();
 
     return itemDetails;

@@ -80,6 +80,14 @@ exports.getUser = async function (mobile) {
   }
 };
 
+// userIdx로 닉네임 가져오기
+exports.retrieveUserNickname = async function(userIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const retrieveUserNicknameResult = await userDao.selectNicknameIdx(connection, userIdx);
+  connection.release();
+  return retrieveUserNicknameResult; 
+}
+
 // userIdx로 간략한 회원정보 가져오기 (나의 당근 메인페이지용)
 exports.retrieveUser = async function (userIdx) {
 

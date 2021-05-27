@@ -63,6 +63,7 @@ async function selectItemdetails(connection, itemIdx) {
     const selectItemdetailsTitleQuery = `
         SELECT a.idx AS idx,
             a.userIdx AS sellerIdx,
+            c.nickname AS sellerNickname,
             b.dong AS dong,
             c.mannerTemperature AS sellerMannerTemperature,
             a.title AS title,

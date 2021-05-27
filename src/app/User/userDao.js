@@ -20,6 +20,17 @@ async function selectUserNickname(connection, nickname) {
   return nicknameRows;
 }
 
+// userIdx로 닉네임 가져오기
+async function selectNicknameIdx(connection, userIdx) {
+  const selectUserNicknameQuery = `
+                SELECT nickName
+                FROM User
+                WHERE idx = ? AND status = "VALID";
+                `;
+  const [nicknameRows] = await connection.query(selectUserNicknameQuery, userIdx);
+  return nicknameRows;
+}
+
 // 휴대 전화로 회원 조회 (로그인용)
 async function selectUserDetailMobile(connection, mobile) {
   const selectUserDetailMobileQuery = `
@@ -41,6 +52,8 @@ async function selectUserStatusIdx(connection, userIdx) {
   const [statusRows] = await connection.query(selectUserStatusIdxQuery, userIdx);
   return statusRows;
 }
+
+// userIdx로 회원 이름 반환
 
 // userIdx로 회원 간단 정보 조회 (나의 당근 메인페이지용)
 async function selectUserIdx(connection, userIdx) {
@@ -116,5 +129,6 @@ module.exports = {
   selectUserLocation,
   selectUserStatusIdx,
   updateUserStatus,
-  selectUserIdx
+  selectUserIdx,
+  selectNicknameIdx
 };

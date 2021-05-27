@@ -39,7 +39,7 @@ exports.createDeal = async function (userIdx, itemIdx) {
         
         // Item에 Status "SOLDOUT"으로 수정
         const itemIdResult = await itemDao.updateSoldItem(connection, itemIdx);
-        connection.commit()
+        
         
         // 구매자 선택 목록 조회
         const buyerToBeList = await dealDao.selectChatRoomsItem(connection, itemIdx)
@@ -53,6 +53,7 @@ exports.createDeal = async function (userIdx, itemIdx) {
             buyerToBeList[0].didReview = "YES"
         }
 
+        connection.commit()
         console.log(`추가된 거래완료 : ${insertDealResult[0].insertId}`)
         return response(baseResponse.SUCCESS, buyerToBeList)
     } catch (err) {
