@@ -72,8 +72,12 @@ exports.retrieveItem = async function (userIdx, itemIdx) {
     for (sellerItem of selectItemsBySellerResult) {
       const itemIdx = sellerItem.idx
       const sellerItemPicture = await itemDao.selectOnePictureItemIdx(connection, itemIdx);
-      sellerItem.pictureURL = sellerItemPicture[0].pictureUrl
-    }
+      if (sellerItemPicture.length > 0) {
+        sellerItem.pictureURL = sellerItemPicture[0].pictureUrl
+      } else {
+        sellerItem.pictureURL = null
+      }
+    };
 
     itemDetails.sellerItems = selectItemsBySellerResult
 
