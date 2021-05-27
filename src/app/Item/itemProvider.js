@@ -111,12 +111,12 @@ exports.retrieveItemList = async function (villageIdx, rangeLevel, categories, l
   const retrieveItemListResult = await itemDao.selectItemsForList(connection, selectItemsForListParams);
 
   connection.release();
-  return retrieveItemListResult;
+  return response(baseResponse.SUCCESS, retrieveItemListResult)
 };
 
 // if (lastItemIdx) { // lastItemIdx 있을 때
 //   // 전 페이지의 마지막 상품의 cursor 구하기    
-  
+//   const selectOnTopAtResult = await itemDao.selectOnTopAt(connection, lastItemIdx);
 //   // 혹시 마지막 item이 존재 하지 않는지 검증
 //   if (selectOnTopAtResult.length < 1) {
 //     return errResponse(baseResponse.LAST_ITEM_NOT_EXIST); 
