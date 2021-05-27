@@ -5,4 +5,6 @@ module.exports = function(app){
     // 11. 관심상품 등록/취소 API
     app.post('/app/likes/items/:itemIdx', jwtMiddleware, like.postItemLike);
 
+    // 12. 관심상품 목록 조회 API
+    app.get('/app/likes/items', jwtMiddleware, like.getItemLikes);
 };
