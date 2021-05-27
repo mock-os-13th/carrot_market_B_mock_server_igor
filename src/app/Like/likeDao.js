@@ -24,7 +24,7 @@ async function selectItemLikesUser(connection, userIdx) {
                     WHEN TIMESTAMPDIFF(minute, b.onTopAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(minute, b.onTopAt, NOW()), "분 전")
                     WHEN TIMESTAMPDIFF(minute, b.onTopAt, NOW()) < 1440 THEN CONCAT(TIMESTAMPDIFF(hour,  b.onTopAt, NOW()), "시간 전")
                     WHEN TIMESTAMPDIFF(minute, b.onTopAt, NOW()) < 2880 THEN "어제"
-                ELSE CONCAT(DATEDIFF(b.onTopAt, NOW()), "일 전")
+                ELSE CONCAT(DATEDIFF(NOW(), b.onTopAt), "일 전")
                 END AS passedTime,
                 e.pictureUrl,
                 b.status,
