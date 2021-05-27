@@ -10,4 +10,7 @@ module.exports = function(app){
 
     // 14. 구매자 등록 API
     app.post('/app/deals/buyers', jwtMiddleware, deal.postBuyer);
+
+    // 15. 구매자 선택 목록 조회 API
+  //  app.get('/app/deals/buyers', jwtMiddleware, deal.getBuyerToBeList)
 };

@@ -41,9 +41,20 @@ exports.createDeal = async function (userIdx, itemIdx) {
         const itemIdResult = await itemDao.updateSoldItem(connection, itemIdx);
         connection.commit()
         
+        // 구매자 선택 목록 조회
+        const buyerToBeList = await dealDao.selectChatRoomsItem(connection, itemIdx)
+
+        // 리뷰 작성 여부 더미데이터 삽입
+        for (buyer of buyerToBeList) {
+            buyer.didReview = "NO"
+        }
+
+        if (buyerToBeList.length > 0) {
+            buyerToBeList[0].didReview = "YES"
+        }
+
         console.log(`추가된 거래완료 : ${insertDealResult[0].insertId}`)
-        const itemIdxForReturn = { "itemIdx": itemIdx }
-        return response(baseResponse.SUCCESS, itemIdxForReturn)
+        return response(baseResponse.SUCCESS, buyerToBeList)
     } catch (err) {
         connection.rollback()
         logger.error(`App - createDeal Service error\n: ${err.message}`);
