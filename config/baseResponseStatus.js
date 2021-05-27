@@ -75,6 +75,8 @@ module.exports = {
     ITEM_NOT_EXIST : { "isSuccess": false, "code": 3008, "message": "존재하지 않는 상품입니다." },
 
     LAST_ITEM_NOT_EXIST : { "isSuccess": false, "code": 3009, "message": "마지막 상품이 존재하지 않습니다." },
+
+    USER_NOT_MATCH: { "isSuccess": false, "code": 3010, "message": "상품을 등록한 사용자가 아닙니다." },
     
 
     //Connection, Transaction 등의 서버 오류

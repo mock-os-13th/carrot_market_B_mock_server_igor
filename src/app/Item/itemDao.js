@@ -26,7 +26,7 @@ async function selectVillageIdx(connection, villageIdx) {
 // idx로 item 유무 조회
 async function selectItemIdx(connection, itemIdx) {
   const selectItemIdxQuery = `
-                SELECT idx
+                SELECT idx, userIdx
                 FROM Item
                 WHERE idx = ?
                   AND (status = "ONSALE"
@@ -230,6 +230,20 @@ async function insertItemPictures(connection, insertItemPicturesParams) {
   return insertItemPicturesRow;
   }
 
+// item 상태 SOLDOUT으로 변경
+async function updateSoldItem(connection, itemIdx) {
+  const updateSoldItemQuery = `
+                                UPDATE Item
+                                SET status = "SOLDOUT"
+                                WHERE idx = ?;
+                              `;
+  const updateSoldItemRow = await connection.query(
+    updateSoldItemQuery,
+    itemIdx
+  );
+
+  return updateSoldItemRow;
+}
 
 
     
@@ -247,6 +261,7 @@ async function insertItemPictures(connection, insertItemPicturesParams) {
     insertClick,
     insertItemPictures,
     selectOnTopAt,
-    selectItemsForList
+    selectItemsForList,
+    updateSoldItem
   };
   
