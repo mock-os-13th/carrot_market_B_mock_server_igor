@@ -39,7 +39,7 @@ async function selectItemIdx(connection, itemIdx) {
 // idx로 끌올시간 유닉스 타임스탬프로 변환해서 가져오기
 async function selectOnTopAt(connection, lastItemIdx) {
   const selectOnTopAtQuery = `
-            SELECT UNIX_TIMESTAMP(onTopAt) AS onTopAtCursor
+            SELECT UNIX_TIMESTAMP(onTopAt) AS unixTimestamp
             FROM Item
             WHERE idx = ?
                 `;

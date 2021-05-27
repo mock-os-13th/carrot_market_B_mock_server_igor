@@ -100,7 +100,12 @@ const {emit} = require("nodemon");
      * Body: villageIdx, rangeLevel, categories, lastItemIdx, numOfPages
      */
 
-    const { villageIdx, rangeLevel, categories, lastItemIdx, numOfPages } = req.body;
+    const villageIdx = req.query.villageIdx
+    const rangeLevel = req.query.rangeLevel
+    const categoriesString = req.query.categories
+    const lastItemIdx = req.query.lastItemIdx
+    const numOfPages = req.query.numOfPages
+    const categories = categoriesString.split('&')
 
     // villageIdx 형식적 검증
     const villageIdxVerification = inputverifier.verifyVillageIdx(villageIdx);
@@ -115,10 +120,11 @@ const {emit} = require("nodemon");
     if (!categoriesVerification.isValid) return res.send(errResponse(categoriesVerification.errorMessage));
     
     // lastItemIdx 형식적 검증
-    const lastItemIdxVerification = inputverifier.verifyItemIdx(lastItemIdx);
-    if (!lastItemIdxVerification.isValid) return res.send(errResponse(lastItemIdxVerification.errorMessage));
+    if (lastItemIdx) {
+        const lastItemIdxVerification = inputverifier.verifyItemIdx(lastItemIdx);
+        if (!lastItemIdxVerification.isValid) return res.send(errResponse(lastItemIdxVerification.errorMessage));
+    }
     
-
     // numOfPages 형식적 검증
     const numOfPagesVerification = inputverifier.verifyItemIdx(numOfPages);
     if (!numOfPagesVerification.isValid) return res.send(errResponse(numOfPagesVerification.errorMessage));

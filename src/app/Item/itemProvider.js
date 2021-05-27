@@ -85,30 +85,46 @@ exports.retrieveItem = async function (userIdx, itemIdx) {
     return itemDetails;
   };  
 
+// 홈 화면용 상품 목록 가져오기
+
   // 홈 화면용 상품 목록 가져오기
-  exports.retrieveItemList = async function (villageIdx, rangeLevel, categories, lastItemIdx, numOfPages) {
-    // villageIdx 의미적 검증 (있는것인지!)
-      // 나중에 villageProvider 생기면 구현!
+exports.retrieveItemList = async function (villageIdx, rangeLevel, categories, lastItemIdx, numOfPages) {
+  // villageIdx 의미적 검증 (있는것인지!)
+    // 나중에 villageProvider 생기면 구현!
 
-    // 범위에 따른 screening process -> 나중에 villageRelation 구현되면 확인할 것
-    
+  // 범위에 따른 screening process -> 나중에 villageRelation 구현되면 확인할 것
 
-    // 전 페이지의 마지막 상품의 cursor 구하기
-    const connection = await pool.getConnection(async (conn) => conn);
-    const selectOnTopAtResult = await itemDao.selectOnTopAt(connection, lastItemIdx);
-      // 혹시 마지막 item이 존재 하지 않는지 검증
-    if (selectOnTopAtResult.length < 1)
-      return errResponse(baseResponse.LAST_ITEM_NOT_EXIST); 
-      // cursor에 해당하는 문자열 만들기
-    const onTopAtCursor = selectOnTopAtResult[0].onTopAtCursor
-    const cursor = util.lpad(onTopAtCursor, 15, 0) + util.lpad(lastItemIdx, 15, 0)
+  // 여기 코드 엉망임 자바스크립트 좀 더 배우고 나서 제대로 만들어 보기!!
+  const connection = await pool.getConnection(async (conn) => conn);
+  if (!lastItemIdx) {
+    lastItemIdx = 0
+  }
+  const selectOnTopAtResult = await itemDao.selectOnTopAt(connection, lastItemIdx);
+  const lastItemUnixTimestamp = selectOnTopAtResult[0]
 
-    // 카테고리 필터용 문자열로 만들기
-    const categoryFilter = util.arrayToString(categories)
-    // 리스트 가져오기
-    const selectItemsForListParams = [categoryFilter, cursor, numOfPages]
-    const retrieveItemListResult = await itemDao.selectItemsForList(connection, selectItemsForListParams);
+  const cursor = util.makeCursor(lastItemUnixTimestamp, lastItemIdx)
 
-    connection.release();
-    return retrieveItemListResult;
-  };
+  // 카테고리 필터용 문자열로 만들기
+  const categoryFilter = util.arrayToString(categories)
+  // 리스트 가져오기
+  const selectItemsForListParams = [categoryFilter, cursor, numOfPages]
+  const retrieveItemListResult = await itemDao.selectItemsForList(connection, selectItemsForListParams);
+
+  connection.release();
+  return retrieveItemListResult;
+};
+
+// if (lastItemIdx) { // lastItemIdx 있을 때
+//   // 전 페이지의 마지막 상품의 cursor 구하기    
+  
+//   // 혹시 마지막 item이 존재 하지 않는지 검증
+//   if (selectOnTopAtResult.length < 1) {
+//     return errResponse(baseResponse.LAST_ITEM_NOT_EXIST); 
+//   } else {
+//     // cursor에 해당하는 문자열 만들기
+//     const onTopAtCursor = selectOnTopAtResult[0].onTopAtCursor
+//     const cursor = util.lpad(onTopAtCursor, 15, 0) + util.lpad(lastItemIdx, 15, 0)
+//   }
+// } else {
+//   const cursor = "999999999999999999999999999999"
+// }
