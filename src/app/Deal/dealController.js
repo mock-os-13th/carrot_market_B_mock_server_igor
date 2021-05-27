@@ -17,7 +17,7 @@ const {emit} = require("nodemon");
      * header: jwt token
      */
 
-    const itemIdx = req.params.itemIdx
+     const { itemIdx } = req.body;
     const userIdx = req.verifiedToken.userIdx;
 
     // userIdx 형식적 검증
@@ -35,4 +35,41 @@ const {emit} = require("nodemon");
     );
 
     return res.send(postItemResponse);
+};
+
+/**
+ * API No. 14
+ * API Name : 구매자 등록 API
+ * [POST] /app/deals/buyers
+ */
+ exports.postBuyer = async function (req, res) {
+
+    /**
+     * Body : itemIdx, buyerIdx
+     * header: jwt token
+     */
+
+    const { itemIdx, buyerIdx } = req.body;
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    // itemIdx 형식적 검증
+    const itemIdxVerification = inputverifier.verifyItemIdx(itemIdx);
+    if (!itemIdxVerification.isValid) return res.send(errResponse(itemIdxVerification.errorMessage)); 
+
+    // buyerIdx 형식적 검증
+    const buyerIdxVerification = inputverifier.verifyBuyerIdx(buyerIdx);
+    if (!buyerIdxVerification.isValid) return res.send(errResponse(buyerIdxVerification.errorMessage)); 
+
+    // DB에 구매자 등록
+    const postBuyerResponse = await dealService.insertBuyer(
+        userIdx,
+        itemIdx,
+        buyerIdx
+    );
+
+    return res.send(postBuyerResponse);
 };
