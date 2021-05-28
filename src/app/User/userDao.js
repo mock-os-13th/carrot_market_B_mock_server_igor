@@ -106,6 +106,7 @@ async function selectSellingItemsUser(connection, userIdx) {
                     ELSE CONCAT(DATEDIFF(NOW(), a.onTopAt), "일 전")
                 END AS passedTime,
                 a.status,
+                a.price,
                 IFNULL(c.chats, 0) AS numOfChats,
                 IFNULL(d.likes, 0) AS numOfLikes
                 FROM Item a
@@ -121,7 +122,7 @@ async function selectSellingItemsUser(connection, userIdx) {
   return sellingItemRows;
 };
 
-// 판매 중인 물품 목록 조회
+// 판매 완료 물품 목록 조회
 async function selectSoldItemsUser(connection, userIdx) {
   const selectSoldItemsUserQuery = `
                 SELECT
