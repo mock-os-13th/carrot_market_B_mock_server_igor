@@ -12,5 +12,5 @@ module.exports = function(app){
     app.post('/app/deals/buyers', jwtMiddleware, deal.postBuyer);
 
     // 15. 구매자 선택 목록 조회 API
-  //  app.get('/app/deals/buyers', jwtMiddleware, deal.getBuyerToBeList)
+    app.get('/app/deals/buyers', jwtMiddleware, deal.getBuyerToBeList)
 };

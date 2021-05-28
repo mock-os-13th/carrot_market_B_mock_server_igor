@@ -13,7 +13,7 @@ const {emit} = require("nodemon");
  exports.postDeal = async function (req, res) {
 
     /**
-     * Path Variable: itemIdx
+     * body: itemIdx
      * header: jwt token
      */
 
@@ -72,4 +72,33 @@ const {emit} = require("nodemon");
     );
 
     return res.send(postBuyerResponse);
+};
+
+/**
+ * API No. 15
+ * API Name : 구매자 선택 목록 조회 API
+ * [GET] /app/deals/buyers
+ */
+ exports.getBuyerToBeList = async function (req, res) {
+
+    /**
+     * Query String : itemIdx
+     * header: jwt token
+     */
+
+    const itemIdx = req.query.itemIdx;
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    // itemIdx 형식적 검증
+    const itemIdxVerification = inputverifier.verifyItemIdx(itemIdx);
+    if (!itemIdxVerification.isValid) return res.send(errResponse(itemIdxVerification.errorMessage)); 
+
+    // DB에서 구매자 목록 조회
+    const getBuyerToBeListResponse = await dealProvider.retrieveBuyerToBeList(userIdx, itemIdx);
+
+    return res.send(getBuyerToBeListResponse);
 };
