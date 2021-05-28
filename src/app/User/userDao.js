@@ -42,6 +42,22 @@ async function selectUserDetailMobile(connection, mobile) {
   return mobileRows;
 }
 
+// userIdx로 회원 조회 (프로필 조회용)
+async function selectUserDetailIdx(connection, userIdx) {
+  const selectUserDetailIdxQuery = `
+              SELECT a.idx,
+                a.nickName,
+                a.mannerTemperature,
+                IFNULL(b.numOfItems, 0) AS numOfItems,
+                DATE_FORMAT(a.createdAt, '%Y년 %c월 %e일') AS registerDate
+              FROM User a
+              LEFT JOIN (SELECT userIdx, COUNT(*) AS numOfItems FROM Item WHERE status <> "DELETED" GROUP BY userIdx) b ON a.idx = b.userIdx
+              WHERE a.idx = ? AND status = "VALID";
+                `;
+  const [userDetailRows] = await connection.query(selectUserDetailIdxQuery, userIdx);
+  return userDetailRows;
+}
+
 // userIdx로 회원 상태 조회 (회원 탈퇴 및 사용자 idx 의미적 검증용)
 async function selectUserStatusIdx(connection, userIdx) {
   const selectUserStatusIdxQuery = `
@@ -87,6 +103,22 @@ async function selectUserLocation(connection, userIdx) {
         WHERE a.userIdx = ?;
                 `;
   const [userLocationRows] = await connection.query(selectUserLocationQuery, userIdx);
+  return userLocationRows;
+}
+
+// 현재 회원 위치와 총 인증 횟수 조회
+async function selectUserLocationNumOfAuthorization(connection, userIdx) {
+  const selectUserLocationNumOfAuthorizationQuery = `
+            SELECT a.siGunGu,
+              a.dong,
+              IFNULL(numOfAuthorization, 0) AS numOfAuthorization
+            FROM Village a
+            INNER JOIN (SELECT * FROM UserLocation WHERE userIdx = ${userIdx} AND status ="VALID") b ON a.idx = b.villageIdx
+            LEFT JOIN (SELECT villageIdx, COUNT(*) AS numOfAuthorization
+            FROM (SELECT * FROM UserLocation WHERE userIdx = ${userIdx} AND isAuthorized = "YES") as z
+            GROUP BY villageIdx) c ON b.villageIdx = c.villageIdx;
+                `;
+  const [userLocationRows] = await connection.query(selectUserLocationNumOfAuthorizationQuery, userIdx);
   return userLocationRows;
 }
 
@@ -235,5 +267,7 @@ module.exports = {
   selectNicknameIdx,
   selectSellingItemsUser,
   selectSoldItemsUser,
-  selectPurchasedItemsUser
+  selectPurchasedItemsUser,
+  selectUserDetailIdx,
+  selectUserLocationNumOfAuthorization
 };

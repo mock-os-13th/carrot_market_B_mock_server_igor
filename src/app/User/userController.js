@@ -255,3 +255,26 @@ exports.getMobileCheck = async function (req, res) {
 
     return res.send(getPurchasedItemListResponse);
 };
+
+/**
+ * API No. 21
+ * API Name : 프로필 조회 API (임시)
+ * [GET] /app/users/profiles/:userIdx
+ */
+
+ exports.getProfile = async function (req, res) {
+
+    /**
+     * path variable: userIdx
+     */
+
+    const userIdx = req.params.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyUserIdxNotFromJwt(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    const getProfileResponse = await userProvider.retrieveUserProfile(userIdx);
+
+    return res.send(getProfileResponse);
+};

@@ -19,8 +19,8 @@ module.exports = {
     NICKNAME_EMPTY : { "isSuccess": false, "code": 2008, "message":"닉네임을 입력 해주세요." },
     NICKNAME_LENGTH : { "isSuccess": false,"code": 2009,"message":"닉네임은 최대 10자리를 입력해주세요." },
 
-    USERIDX_EMPTY : { "isSuccess": false, "code": 2010, "message":"JWT 토큰에 userIdx가 존재하지 않습니다." },
-    USERIDX_NaN : { "isSuccess": false,"code": 2011,"message":"JWT 토큰의 userIdx가 숫자가 아닙니다." },
+    JWT_USERIDX_EMPTY : { "isSuccess": false, "code": 2010, "message":"JWT 토큰에 userIdx가 존재하지 않습니다." },
+    JWT_USERIDX_NaN : { "isSuccess": false,"code": 2011,"message":"JWT 토큰의 userIdx가 숫자가 아닙니다." },
 
     ITEM_TITLE_EMPTY : { "isSuccess": false,"code": 2012,"message":"중고거래 글 제목을 입력해주세요." },
     ITEM_TITLE_LENGTH : { "isSuccess": false,"code": 2013,"message":"중고거래 글 제목은 100자 이내로 써주세요." },
@@ -72,6 +72,9 @@ module.exports = {
     REVIEW_CHOICE_ERROR_TYPE : { "isSuccess": false,"code": 2044,"message":"거래 후기 문항은 YES 혹은 NO로 입력해야 합니다." },
     
     REVIEW_MESSAGE_LENGTH : { "isSuccess": false,"code": 2045,"message":"거래 후기 내용은 1000자 이내로 입력해야 합니다." },
+
+    USERIDX_EMPTY : { "isSuccess": false,"code": 2046,"message":"userIdx를 입력해주세요." },
+    USERIDX_NaN : { "isSuccess": false,"code": 2047,"message":"userIdx를 숫자로 입력해주세요." },
 
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 휴대폰 번호입니다." },

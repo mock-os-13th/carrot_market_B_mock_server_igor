@@ -74,8 +74,21 @@ exports.verifyNickname = function(nickname) {
 }
 
 
-// userIdx 검증
+// userIdx 검증 (jwt payload용)
 exports.verifyUserIdx = function(userIdx) {
+    // 빈 값
+    if (!userIdx) {
+        return {isValid: false, errorMessage: baseResponse.JWT_USERIDX_EMPTY};
+    // 숫자 여부
+    } else if (!regexNum.test(userIdx)) {
+        return {isValid: false, errorMessage: baseResponse.JWT_USERIDX_NaN};
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// userIdx 검증 (입력용)
+exports.verifyUserIdxNotFromJwt = function(userIdx) {
     // 빈 값
     if (!userIdx) {
         return {isValid: false, errorMessage: baseResponse.USERIDX_EMPTY};

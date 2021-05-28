@@ -176,3 +176,38 @@ exports.retrievePurchasedItem = async function (userIdx) {
 
   return response(baseResponse.SUCCESS, retrievePurchasedItemResult);
 };
+
+// userIdx로 프로필 가져오기 (상대방 프로필 조회용)
+exports.retrieveUserProfile = async function (userIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  
+  try {
+    const selectUserDetailIdxResult = await userDao.selectUserDetailIdx(connection, userIdx);
+  
+    // 존재하지 않는 회원인지 확인
+    if (selectUserDetailIdxResult.length < 1)
+     return errResponse(baseResponse.USER_NOT_EXIST); 
+  
+    // userLocation 넣기
+    let userProfile = selectUserDetailIdxResult[0]
+    const userLocationsForProfile = await userDao.selectUserLocationNumOfAuthorization(connection, userIdx)
+    userProfile.userLocation = userLocationsForProfile
+
+    // 더미데이터 넣기
+    userProfile.reDealHopeRate = 99.9
+    userProfile.numOfTotalDeals = 1000
+    userProfile.numOfGoodDeals = 999
+    userProfile.answerRate = 99.9
+    userProfile.answerSpeed = "1시간"
+    userProfile.recentActivePeriod = "3일"
+    userProfile.numOfBadges = 99
+    
+    return response(baseResponse.SUCCESS, userProfile)
+  
+  } catch(error) {
+    logger.error(`App - retrieveUserProfile Service error\n: ${error.message}`);
+    return errResponse(baseResponse.DB_ERROR);
+  } finally {
+    connection.release();
+  }
+};
