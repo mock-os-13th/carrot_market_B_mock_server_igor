@@ -119,7 +119,38 @@ async function selectSellingItemsUser(connection, userIdx) {
                 `;
   const [sellingItemRows] = await connection.query(selectUserLocationQuery, userIdx);
   return sellingItemRows;
-}
+};
+
+// 판매 중인 물품 목록 조회
+async function selectSoldItemsUser(connection, userIdx) {
+  const selectSoldItemsUserQuery = `
+                SELECT
+                a.idx,
+                a.title,
+                b.pictureUrl,
+                c.dong,
+                CASE
+                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(second, a.onTopAt, NOW()), "초 전")
+                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(minute, a.onTopAt, NOW()), "분 전")
+                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1440 THEN CONCAT(TIMESTAMPDIFF(hour,  a.onTopAt, NOW()), "시간 전")
+                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 2880 THEN "어제"
+                    ELSE CONCAT(DATEDIFF(NOW(), a.onTopAt), "일 전")
+                END AS passedTime,
+                a.status,
+                IFNULL(c.chats, 0) AS numOfChats,
+                IFNULL(d.likes, 0) AS numOfLikes
+                FROM Item a
+                LEFT JOIN (SELECT itemIdx, pictureUrl FROM ItemPictures GROUP BY itemIdx) b ON a.idx = b.itemIdx
+                LEFT JOIN (SELECT itemIdx, COUNT(*) AS chats  FROM ChatRoom GROUP BY itemIdx) c ON a.idx = c.itemIdx
+                LEFT JOIN (SELECT itemIdx, COUNT(*) AS likes  FROM LikeItem GROUP BY itemIdx) d ON a.idx = d.itemIdx
+                INNER JOIN Village c ON a.villageIdx = c.idx
+                WHERE a.userIdx = ?
+                  AND a.status = "SOLDOUT"
+                ORDER BY a.onTopAt DESC;
+                `;
+  const [soldItemRows] = await connection.query(selectSoldItemsUserQuery, userIdx);
+  return soldItemRows;
+};
 
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
@@ -151,6 +182,8 @@ async function updateUserStatus(connection, updateUserStatusParams) {
 }
 
 
+
+
 module.exports = {
   selectUserMobile,
   selectUserNickname,
@@ -161,5 +194,6 @@ module.exports = {
   updateUserStatus,
   selectUserIdx,
   selectNicknameIdx,
-  selectSellingItemsUser
+  selectSellingItemsUser,
+  selectSoldItemsUser
 };

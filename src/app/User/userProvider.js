@@ -146,3 +146,18 @@ exports.retrieveSellingItem = async function (userIdx) {
 
   return response(baseResponse.SUCCESS, retrieveSellingItemResult);
 };
+
+// 판매내역 조회
+exports.retrieveSoldItem = async function (userIdx) {
+  // userIdx 형식적 검증
+  const userStatusRows = await userProvider.checkUserStatus(userIdx);
+  if (userStatusRows.length < 1)
+      return errResponse(baseResponse.USER_NOT_EXIST);
+
+  // 판매 내역 List
+  const connection = await pool.getConnection(async (conn) => conn);
+  const retrieveSoldItemResult = await userDao.selectSoldItemsUser(connection, userIdx);
+  connection.release();
+
+  return response(baseResponse.SUCCESS, retrieveSoldItemResult);
+};

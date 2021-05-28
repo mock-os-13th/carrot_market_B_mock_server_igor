@@ -26,4 +26,6 @@ module.exports = function(app){
     // 16. 판매 중인 물품 목록 조회 API
     app.get('/app/users/selling-items', jwtMiddleware, user.getSellingItemList)
 
+    // 18. 판매 내역 조회
+    app.get('/app/users/sold-items', jwtMiddleware, user.getSoldItemList)
 };
