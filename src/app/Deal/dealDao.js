@@ -50,7 +50,7 @@ async function updateBuyer(connection, updateBuyerParams) {
                     UPDATE Deal
                     SET buyerIdx = ?
                     WHERE itemIdx = ?
-                        AND status = "VALID;
+                        AND status = "VALID";
                               `;
     const updateBuyerRow = await connection.query(
         updateBuyerQuery,
