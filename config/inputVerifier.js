@@ -258,3 +258,52 @@ exports.verifyPictures = function(pictures) {
     }
     return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR}; 
 };
+
+// 거래 후기 reviewType 검증
+exports.verifyReviewType = function(reviewType) {
+    // 빈 값
+    if (!reviewType) {
+        return {isValid: false, errorMessage: baseResponse.REVIEW_TYPE_EMPTY}; 
+    // 숫자 여부
+    } else if (!(reviewType === "SELLER" || reviewType === "BUYER")) {
+        return {isValid: false, errorMessage: baseResponse.REVIEW_TYPE_ERROR_TYPE}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// 거래 후기 score 검증
+exports.verifyScore = function(score) {
+    // 빈 값
+    if (!score) {
+        return {isValid: false, errorMessage: baseResponse.REVIEW_SCORE_EMPTY}; 
+    // 숫자 여부
+    } else if (!(score === "BEST" || score === "GOOD" || score === "SOSO")) {
+        return {isValid: false, errorMessage: baseResponse.REVIEW_SCORE_ERROR_TYPE}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// 거래 설문 검증
+exports.verifyReviewChoice = function(reviewChoice) {
+    // 빈 값
+    if (!reviewChoice) {
+        return {isValid: false, errorMessage: baseResponse.REVIEW_SCORE_EMPTY}; 
+    // 숫자 여부
+    } else if (!(reviewChoice === "YES" || reviewChoice === "NO")) {
+        return {isValid: false, errorMessage: baseResponse.REVIEW_SCORE_ERROR_TYPE}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// 거래 후기 메시지 검증
+exports.verifyMessage = function(message) {
+    // 길이 1000자 이내
+    if (message.length > 1000) {
+        return {isValid: false, errorMessage: baseResponse.REVIEW_MESSAGE_LENGTH}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};

@@ -9,6 +9,7 @@ const userProvider = require('../User/userProvider')
 
 const jwt = require("jsonwebtoken");
 
+// 구매자 선택 목록 조회
 exports.retrieveBuyerToBeList = async function (userIdx, itemIdx) {
     // itemIdx 의미적 검증 (SOLDOUT인지 확인해야 함)
     const checkSoldItemResult = await itemProvider.checkSoldItemIdx(itemIdx)
@@ -39,4 +40,15 @@ exports.retrieveBuyerToBeList = async function (userIdx, itemIdx) {
     }
 
     return response(baseResponse.SUCCESS, buyerToBeList)
+  };
+
+
+// userIdx와 itemIdx로 중복되는 리뷰가 있는지 확인
+exports.checkReview = async function (userIdx, itemIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectValidReviewParams = [userIdx, itemIdx]
+    const checkReviewResult = await dealDao.selectValidReview(connection, selectValidReviewParams)
+    connection.release();
+
+    return checkReviewResult
   };

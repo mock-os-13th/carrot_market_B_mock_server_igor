@@ -110,3 +110,50 @@ exports.insertBuyer = async function (userIdx, itemIdx, buyerIdx) {
         connection.release();
     }
 };
+
+// 거래 후기 등록
+exports.createReview = async function (userIdx, itemIdx, reviewType, score, didCome, isKind, isTimely, didAnswerQuickly, message, pictureUrl) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    try {
+        await connection.beginTransaction()
+        // userIdx 의미적 검증
+        const userStatusRows = await userProvider.checkUserStatus(userIdx);
+        if (userStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+
+        // itemIdx 의미적 검증 (판매 처리가 안되어도 구매자가 리뷰를 작성이 가능한 것 같음)
+            // 존재하는 상품인지만 확인
+        const checkItemResult = await itemProvider.checkSoldItemIdx(itemIdx)
+        if (checkItemResult.length < 1) 
+            return errResponse(baseResponse.ITEM_NOT_EXIST);
+
+        // 판매자 리뷰인 경우에는 
+            // 상품에 등록된 판매자와 동일한지 확인하고
+            // 사전에 판매완료 등록이 된 것인지 확인한다.
+        if (reviewType === "SELLER") {
+            const userIdxFromItemTable = checkItemResult[0].userIdx;
+            if (userIdx != userIdxFromItemTable) return errResponse(baseResponse.USER_NOT_MATCH);
+            const itemStatusFromItemTable = checkItemResult[0].status;
+            if (itemStatusFromItemTable != "SOLDOUT") return errResponse(baseResponse.ITEM_NOT_SOLD_OUT);
+        }
+
+        // 이미 작성한 리뷰가 있으면 에러
+        const checkReviewResult = await dealProvider.checkReview(userIdx, itemIdx)
+        if (checkReviewResult.length > 0) return errResponse(baseResponse.REVIEW_REDUNDANT); 
+
+        // DB에 거래 등록
+        const insertReviewParams = [userIdx, itemIdx, reviewType, score, didCome, isKind, isTimely, didAnswerQuickly, message, pictureUrl]
+        const insertReviewResult = await dealDao.insertReview(connection, insertReviewParams);
+
+        connection.commit()
+        console.log(`추가된 거래리뷰 : ${insertReviewResult[0].insertId}`)
+        return response(baseResponse.SUCCESS)
+    } catch (err) {
+        connection.rollback()
+        logger.error(`App - createReview Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+};

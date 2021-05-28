@@ -62,6 +62,17 @@ module.exports = {
     BUYER_IDX_EMPTY : { "isSuccess": false,"code": 2037,"message":"구매자 idx를 입력해주세요." },
     BUYER_IDX_NAN : { "isSuccess": false,"code": 2038,"message":"구매자 idx를 숫자로 입력해주세요." },
 
+    REVIEW_TYPE_EMPTY : { "isSuccess": false,"code": 2039,"message":"reviewType을 입력해주세요." },
+    REVIEW_TYPE_ERROR_TYPE : { "isSuccess": false,"code": 2040,"message":"reviewType은 SELLER 또는 BUYER로 입력해야 합니다." },
+
+    REVIEW_SCORE_EMPTY : { "isSuccess": false,"code": 2041,"message":"score를 입력해주세요." },
+    REVIEW_SCORE_ERROR_TYPE : { "isSuccess": false,"code": 2042,"message":"score는 BEST, GOOD 또는 SOSO로 입력해야 합니다." },
+
+    REVIEW_CHOICE_EMPTY : { "isSuccess": false,"code": 2043,"message":"거래 후기 4개 문항의 결과를 모두 입력해주세요." },
+    REVIEW_CHOICE_ERROR_TYPE : { "isSuccess": false,"code": 2044,"message":"거래 후기 문항은 YES 혹은 NO로 입력해야 합니다." },
+    
+    REVIEW_MESSAGE_LENGTH : { "isSuccess": false,"code": 2045,"message":"거래 후기 내용은 1000자 이내로 입력해야 합니다." },
+
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 휴대폰 번호입니다." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
@@ -82,6 +93,8 @@ module.exports = {
     USER_NOT_MATCH: { "isSuccess": false, "code": 3010, "message": "상품을 등록한 사용자가 아닙니다." },
   
     ITEM_NOT_SOLD_OUT: { "isSuccess": false, "code": 3011, "message": "거래 완료된 상품이 아닙니다." },
+
+    REVIEW_REDUNDANT : { "isSuccess": false, "code": 3012, "message": "이미 상품에 대해 작성한 리뷰가 있습니다." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

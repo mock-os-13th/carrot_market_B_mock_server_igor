@@ -102,3 +102,96 @@ const {emit} = require("nodemon");
 
     return res.send(getBuyerToBeListResponse);
 };
+
+/**
+ * API No. 13
+ * API Name : 판매 완료 API
+ * [POST] /app/deals/:itemIdx
+ */
+ exports.postDeal = async function (req, res) {
+
+    /**
+     * body: itemIdx
+     * header: jwt token
+     */
+
+     const { itemIdx } = req.body;
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    // itemIdx 형식적 검증
+    const itemIdxVerification = inputverifier.verifyItemIdx(itemIdx);
+    if (!itemIdxVerification.isValid) return res.send(errResponse(itemIdxVerification.errorMessage)); 
+
+    // DB에 글 등록
+    const postItemResponse = await dealService.createDeal(
+        userIdx,
+        itemIdx
+    );
+
+    return res.send(postItemResponse);
+};
+
+/**
+ * API No. 17
+ * API Name : 거래 후기 남기기 API
+ * [POST] /app/deals/reviews
+ */
+ exports.postReview = async function (req, res) {
+
+    /**
+     * Body : itemIdx, reviewType, score, didCome, isKind, isTimely, didAnswerQuickly, message, pictureUrl
+     * header: jwt token
+     */
+
+    const { itemIdx, reviewType, score, didCome, isKind, isTimely, didAnswerQuickly, message, pictureUrl } = req.body;
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    // itemIdx 형식적 검증
+    const itemIdxVerification = inputverifier.verifyItemIdx(itemIdx);
+    if (!itemIdxVerification.isValid) return res.send(errResponse(itemIdxVerification.errorMessage)); 
+
+    // reviewType 형식적 검증
+    const reviewTypeVerification = inputverifier.verifyReviewType(reviewType);
+    if (!reviewTypeVerification.isValid) return res.send(errResponse(reviewTypeVerification.errorMessage)); 
+    
+    // score 형식적 검증
+    const scoreVerification = inputverifier.verifyScore(score);
+    if (!scoreVerification.isValid) return res.send(errResponse(scoreVerification.errorMessage));
+    
+    // didCome, isKind, isTimely, didAnswerQuickly 검증
+    const reviewChoices = [didCome, isKind, isTimely, didAnswerQuickly]
+    for (reviewChoice of reviewChoices) {
+        const reviewChoiceVerification = inputverifier.verifyReviewChoice(reviewChoice);
+        if (!reviewChoiceVerification.isValid) return res.send(errResponse(reviewChoiceVerification.errorMessage));
+    }
+
+    // message 검증 (존재하는 경우)
+    if (message) {
+        const messageVerification = inputverifier.verifyMessage(message);
+        if (!messageVerification.isValid) return res.send(errResponse(messageVerification.errorMessage));
+    }
+
+    // DB에 거래 후기 등록
+    const postReviewResponse = await dealService.createReview(
+        userIdx,
+        itemIdx, 
+        reviewType, 
+        score, 
+        didCome, 
+        isKind, 
+        isTimely, 
+        didAnswerQuickly, 
+        message, 
+        pictureUrl
+    );
+
+    return res.send(postReviewResponse);
+};

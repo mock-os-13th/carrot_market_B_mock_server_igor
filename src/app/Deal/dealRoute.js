@@ -13,4 +13,7 @@ module.exports = function(app){
 
     // 15. 구매자 선택 목록 조회 API
     app.get('/app/deals/buyers', jwtMiddleware, deal.getBuyerToBeList)
+
+    // 17. 거래 후기 남기기 API
+    app.post('/app/deals/reviews', jwtMiddleware, deal.postReview)
 };

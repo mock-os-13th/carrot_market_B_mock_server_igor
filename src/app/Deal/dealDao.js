@@ -15,6 +15,22 @@ async function selectChatRoomsItem(connection, itemIdx) {
     return selectChatRoomsItemRow;
 };
 
+// 중복되는 리뷰 찾기 위한 쿼리
+async function selectValidReview(connection, selectValidReviewParams) {
+    const selectValidReviewQuery = `
+                    SELECT idx
+                    FROM Review
+                    WHERE userIdx = ?
+                        AND itemIdx = ?
+                        AND status = "VALID"
+        `;
+    const [selectValidReviewRow] = await connection.query(
+        selectValidReviewQuery,
+        selectValidReviewParams
+    );
+    return selectValidReviewRow;
+};
+
 // 구매 등록
 async function insertDeal(connection, itemIdx) {
     const insertDealQuery = `
@@ -43,8 +59,23 @@ async function updateBuyer(connection, updateBuyerParams) {
     return updateBuyerRow;
 };
 
+// 리뷰 등록
+async function insertReview(connection, insertReviewParams) {
+    const insertReviewQuery = `
+                            INSERT INTO Review(userIdx, itemIdx, reviewType, score, didCome, isKind, isTimely, didAnswerQuickly, message, pictureUrl)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                              `;
+    const insertReviewRow = await connection.query(
+        insertReviewQuery,
+        insertReviewParams
+    );
+    return insertReviewRow;
+};
+
 module.exports = {
     insertDeal,
     updateBuyer,
-    selectChatRoomsItem
+    selectChatRoomsItem,
+    insertReview,
+    selectValidReview
     };

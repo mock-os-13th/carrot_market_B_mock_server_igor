@@ -36,7 +36,7 @@ async function selectItemIdx(connection, itemIdx) {
   return itemRow;
 }
 
-// idx로 item 조회
+// idx로 item 조회 (status를 조회하기 위해서)
 async function selectSoldItemIdx(connection, itemIdx) {
   const selectSoldItemIdxQuery = `
                 SELECT idx, userIdx, status
