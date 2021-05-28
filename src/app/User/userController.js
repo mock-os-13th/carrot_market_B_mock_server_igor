@@ -232,3 +232,26 @@ exports.getMobileCheck = async function (req, res) {
 
     return res.send(getSoldItemListResponse);
 };
+
+/**
+ * API No. 20
+ * API Name : 구매 내역 조회 API
+ * [GET] /app/users/sold-items
+ */
+
+ exports.getPurchasedItemList = async function (req, res) {
+
+    /**
+     * header: jwt token
+     */
+
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    const getPurchasedItemListResponse = await userProvider.retrievePurchasedItem(userIdx);
+
+    return res.send(getPurchasedItemListResponse);
+};

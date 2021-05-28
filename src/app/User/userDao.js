@@ -97,7 +97,7 @@ async function selectSellingItemsUser(connection, userIdx) {
                 a.idx,
                 a.title,
                 b.pictureUrl,
-                c.dong,
+                e.dong,
                 a.isOnTop,
                 CASE
                     WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(second, a.onTopAt, NOW()), "초 전")
@@ -114,7 +114,7 @@ async function selectSellingItemsUser(connection, userIdx) {
                 LEFT JOIN (SELECT itemIdx, pictureUrl FROM ItemPictures GROUP BY itemIdx) b ON a.idx = b.itemIdx
                 LEFT JOIN (SELECT itemIdx, COUNT(*) AS chats  FROM ChatRoom GROUP BY itemIdx) c ON a.idx = c.itemIdx
                 LEFT JOIN (SELECT itemIdx, COUNT(*) AS likes  FROM LikeItem GROUP BY itemIdx) d ON a.idx = d.itemIdx
-                INNER JOIN Village c ON a.villageIdx = c.idx
+                INNER JOIN Village e ON a.villageIdx = e.idx
                 WHERE a.userIdx = ?
                   AND a.status = "ONSALE"
                 ORDER BY a.onTopAt DESC;
@@ -130,7 +130,7 @@ async function selectSoldItemsUser(connection, userIdx) {
                 a.idx,
                 a.title,
                 b.pictureUrl,
-                c.dong,
+                e.dong,
                 a.isOnTop,
                 CASE
                     WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(second, a.onTopAt, NOW()), "초 전")
@@ -147,7 +147,7 @@ async function selectSoldItemsUser(connection, userIdx) {
                 LEFT JOIN (SELECT itemIdx, pictureUrl FROM ItemPictures GROUP BY itemIdx) b ON a.idx = b.itemIdx
                 LEFT JOIN (SELECT itemIdx, COUNT(*) AS chats  FROM ChatRoom GROUP BY itemIdx) c ON a.idx = c.itemIdx
                 LEFT JOIN (SELECT itemIdx, COUNT(*) AS likes  FROM LikeItem GROUP BY itemIdx) d ON a.idx = d.itemIdx
-                INNER JOIN Village c ON a.villageIdx = c.idx
+                INNER JOIN Village e ON a.villageIdx = e.idx
                 WHERE a.userIdx = ?
                   AND a.status = "SOLDOUT"
                 ORDER BY a.onTopAt DESC;
@@ -155,6 +155,41 @@ async function selectSoldItemsUser(connection, userIdx) {
   const [soldItemRows] = await connection.query(selectSoldItemsUserQuery, userIdx);
   return soldItemRows;
 };
+
+// 구매 내역 조회
+async function selectPurchasedItemsUser(connection, userIdx) {
+  const selectPurchasedItemsUserQuery = `
+                                SELECT
+                                  a.idx,
+                                  a.title,
+                                  b.pictureUrl,
+                                  f.dong,
+                                  a.isOnTop,
+                                  CASE
+                                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(second, a.onTopAt, NOW()), "초 전")
+                                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(minute, a.onTopAt, NOW()), "분 전")
+                                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1440 THEN CONCAT(TIMESTAMPDIFF(hour,  a.onTopAt, NOW()), "시간 전")
+                                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 2880 THEN "어제"
+                                    ELSE CONCAT(DATEDIFF(NOW(), a.onTopAt), "일 전")
+                                    END AS passedTime,
+                                  a.status,
+                                  a.price,
+                                  IFNULL(c.chats, 0) AS numOfChats,
+                                  IFNULL(d.likes, 0) AS numOfLikes
+                                FROM Item a
+                                LEFT JOIN (SELECT itemIdx, pictureUrl FROM ItemPictures GROUP BY itemIdx) b ON a.idx = b.itemIdx
+                                LEFT JOIN (SELECT itemIdx, COUNT(*) AS chats  FROM ChatRoom GROUP BY itemIdx) c ON a.idx = c.itemIdx
+                                LEFT JOIN (SELECT itemIdx, COUNT(*) AS likes  FROM LikeItem GROUP BY itemIdx) d ON a.idx = d.itemIdx
+                                INNER JOIN Deal e ON a.idx = e.itemIdx
+                                INNER JOIN Village f ON a.villageIdx = f.idx
+                                WHERE e.buyerIdx = 1
+                                AND a.status = "SOLDOUT"
+                                ORDER BY a.onTopAt DESC;
+                `;
+  const [purchasedItemRows] = await connection.query(selectPurchasedItemsUserQuery, userIdx);
+  return purchasedItemRows;
+};
+
 
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
@@ -199,5 +234,6 @@ module.exports = {
   selectUserIdx,
   selectNicknameIdx,
   selectSellingItemsUser,
-  selectSoldItemsUser
+  selectSoldItemsUser,
+  selectPurchasedItemsUser
 };
