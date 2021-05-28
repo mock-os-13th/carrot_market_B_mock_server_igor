@@ -2,7 +2,7 @@ module.exports = function(app){
     const deal = require('./dealController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
 
-    // 13. 판매완료 API
+    // 13. 거래 완료 API
     app.post('/app/deals', jwtMiddleware, deal.postDeal);
         // 힌트! deals 다음에 이런 식으로 :itemIdx로 path variable를 놓았는데
         // /app/deals/buyer 식으로 다른 path를 지정하면
@@ -16,4 +16,7 @@ module.exports = function(app){
 
     // 17. 거래 후기 남기기 API
     app.post('/app/deals/reviews', jwtMiddleware, deal.postReview)
+
+    // 18. 판매 중으로 변경 API
+    app.patch('/app/deals', jwtMiddleware, deal.patchDeal)
 };

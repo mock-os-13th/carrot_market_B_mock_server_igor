@@ -41,7 +41,8 @@ async function selectSoldItemIdx(connection, itemIdx) {
   const selectSoldItemIdxQuery = `
                 SELECT idx, userIdx, status
                 FROM Item
-                WHERE idx = ?;
+                WHERE idx = ?
+                  AND status <> "DELETED";
                 `;
   const [SoldItemRow] = await connection.query(selectSoldItemIdxQuery, itemIdx);
   return SoldItemRow;
@@ -261,6 +262,21 @@ async function updateSoldItem(connection, itemIdx) {
   return updateSoldItemRow;
 }
 
+// item 상태 ONSALE로 변경
+async function updateUnSoldItem(connection, itemIdx) {
+  const updateUnSoldItemQuery = `
+                                UPDATE Item
+                                SET status = "ONSALE"
+                                WHERE idx = ?;
+                              `;
+  const updateUnSoldItemRow = await connection.query(
+    updateUnSoldItemQuery,
+    itemIdx
+  );
+
+  return updateUnSoldItemRow;
+}
+
 
     
   
@@ -279,6 +295,7 @@ async function updateSoldItem(connection, itemIdx) {
     selectOnTopAt,
     selectItemsForList,
     updateSoldItem,
-    selectSoldItemIdx
+    selectSoldItemIdx,
+    updateUnSoldItem
   };
   

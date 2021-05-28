@@ -72,10 +72,25 @@ async function insertReview(connection, insertReviewParams) {
     return insertReviewRow;
 };
 
+// Deal status DELETED로 변경
+async function updateDealStatus(connection, itemIdx) {
+    const updateDealStatusQuery = `
+                                  UPDATE Deal
+                                  SET status = "DELETED"
+                                  WHERE itemIdx = ?;
+                                `;
+    const updateDealStatusRow = await connection.query(
+        updateDealStatusQuery,
+        itemIdx
+    );
+    return updateDealStatusRow;
+};
+
 module.exports = {
     insertDeal,
     updateBuyer,
     selectChatRoomsItem,
     insertReview,
-    selectValidReview
-    };
+    selectValidReview,
+    updateDealStatus
+};

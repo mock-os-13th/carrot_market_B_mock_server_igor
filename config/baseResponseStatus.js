@@ -96,6 +96,8 @@ module.exports = {
 
     REVIEW_REDUNDANT : { "isSuccess": false, "code": 3012, "message": "이미 상품에 대해 작성한 리뷰가 있습니다." },
 
+    ITEM_ALREADY_ON_SALE : { "isSuccess": false, "code": 3013, "message": "이미 판매 중인 상품입니다." },
+
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
     SERVER_ERROR : { "isSuccess": false, "code": 4001, "message": "서버 에러"},

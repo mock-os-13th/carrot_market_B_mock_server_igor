@@ -195,3 +195,34 @@ const {emit} = require("nodemon");
 
     return res.send(postReviewResponse);
 };
+
+/**
+ * API No. 18
+ * API Name : 판매 중으로 변경 API
+ * [PATCH] /app/deals
+ */
+ exports.patchDeal = async function (req, res) {
+
+    /**
+     * Query String: itemIdx
+     * header: jwt token
+     */
+
+    const itemIdx = req.query.itemIdx
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    // itemIdx 형식적 검증
+    const itemIdxVerification = inputverifier.verifyItemIdx(itemIdx);
+    if (!itemIdxVerification.isValid) return res.send(errResponse(itemIdxVerification.errorMessage)); 
+
+    const patchDealResponse = await dealService.updateDeal(
+        userIdx,
+        itemIdx
+    );
+
+    return res.send(patchDealResponse);
+};

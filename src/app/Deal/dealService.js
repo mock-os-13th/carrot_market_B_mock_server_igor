@@ -157,3 +157,46 @@ exports.createReview = async function (userIdx, itemIdx, reviewType, score, didC
         connection.release();
     }
 };
+
+// 판매 중으로 변경 (거래 취소)
+exports.updateDeal = async function (userIdx, itemIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    try {
+        await connection.beginTransaction()
+        // userIdx 의미적 검증
+        const userStatusRows = await userProvider.checkUserStatus(userIdx);
+        if (userStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+
+        // itemIdx 의미적 검증
+        const checkItemResult = await itemProvider.checkSoldItemIdx(itemIdx)
+            // item 자체의 존재 여부
+        if (checkItemResult.length < 1) 
+            return errResponse(baseResponse.ITEM_NOT_EXIST);
+            // userIdx가 Item에 등록된 것과 동일한지 확인
+        const userIdxFromItemTable = checkItemResult[0].userIdx
+        if (userIdx != userIdxFromItemTable)
+           return errResponse(baseResponse.USER_NOT_MATCH); 
+           // 이미 판매중이 아닌지 확인
+        const statusFromItemTable = checkItemResult[0].status
+        if (statusFromItemTable != "SOLDOUT")
+            return errResponse(baseResponse.USER_NOT_MATCH);
+        
+
+        // DB에 거래 status "DELETED"로 만들기
+        const updateDealStatusResult = await dealDao.updateDealStatus(connection, itemIdx);
+        
+        // Item에 Status "ONSALE"으로 수정
+        const updateUnSoldItemResult = await itemDao.updateUnSoldItem(connection, itemIdx);
+
+        connection.commit()
+        return response(baseResponse.SUCCESS)
+    } catch (err) {
+        connection.rollback()
+        logger.error(`App - updateDeal Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+};

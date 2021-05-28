@@ -104,8 +104,6 @@ exports.retrieveItem = async function (userIdx, itemIdx) {
     return itemDetails;
   };  
 
-// 홈 화면용 상품 목록 가져오기
-
   // 홈 화면용 상품 목록 가져오기
 exports.retrieveItemList = async function (villageIdx, rangeLevel, categories, lastItemIdx, numOfPages) {
   // villageIdx 의미적 검증 (있는것인지!)
