@@ -137,6 +137,7 @@ async function selectSoldItemsUser(connection, userIdx) {
                     ELSE CONCAT(DATEDIFF(NOW(), a.onTopAt), "일 전")
                 END AS passedTime,
                 a.status,
+                a.price,
                 IFNULL(c.chats, 0) AS numOfChats,
                 IFNULL(d.likes, 0) AS numOfLikes
                 FROM Item a
