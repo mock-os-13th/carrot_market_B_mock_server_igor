@@ -289,10 +289,10 @@ exports.verifyScore = function(score) {
 exports.verifyReviewChoice = function(reviewChoice) {
     // 빈 값
     if (!reviewChoice) {
-        return {isValid: false, errorMessage: baseResponse.REVIEW_SCORE_EMPTY}; 
+        return {isValid: false, errorMessage: baseResponse.REVIEW_CHOICE_EMPTY}; 
     // 숫자 여부
     } else if (!(reviewChoice === "YES" || reviewChoice === "NO")) {
-        return {isValid: false, errorMessage: baseResponse.REVIEW_SCORE_ERROR_TYPE}; 
+        return {isValid: false, errorMessage: baseResponse.REVIEW_CHOICE_ERROR_TYPE}; 
     } else {
         return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
     }
