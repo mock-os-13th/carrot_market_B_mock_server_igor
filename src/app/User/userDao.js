@@ -98,6 +98,7 @@ async function selectSellingItemsUser(connection, userIdx) {
                 a.title,
                 b.pictureUrl,
                 c.dong,
+                a.isOnTop,
                 CASE
                     WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(second, a.onTopAt, NOW()), "초 전")
                     WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(minute, a.onTopAt, NOW()), "분 전")
@@ -130,6 +131,7 @@ async function selectSoldItemsUser(connection, userIdx) {
                 a.title,
                 b.pictureUrl,
                 c.dong,
+                a.isOnTop,
                 CASE
                     WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(second, a.onTopAt, NOW()), "초 전")
                     WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(minute, a.onTopAt, NOW()), "분 전")
