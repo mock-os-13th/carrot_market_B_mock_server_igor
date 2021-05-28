@@ -71,11 +71,11 @@ async function selectItemdetails(connection, itemIdx) {
             a.status AS status,
             a.isOnTop AS isOnTop,
             CASE
-                WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(second, a.onTopAt, NOW()), "초 전")
-                WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(minute, a.onTopAt, NOW()), "분 전")
-                WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) > 59 THEN CONCAT(TIMESTAMPDIFF(hour,  a.onTopAt, NOW()), "시간 전")
-                WHEN DATEDIFF(NOW(), a.onTopAt) = 1 THEN "어제"
-                ELSE CONCAT(DATEDIFF(NOW(), a.onTopAt), "일 전")
+              WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(second, a.onTopAt, NOW()), "초 전")
+              WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(minute, a.onTopAt, NOW()), "분 전")
+              WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1440 THEN CONCAT(TIMESTAMPDIFF(hour,  a.onTopAt, NOW()), "시간 전")
+              WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 2880 THEN "어제"
+              ELSE CONCAT(DATEDIFF(NOW(), a.onTopAt), "일 전")
             END AS passedTime,
             a.content AS content,
             IFNULL(d.chatNum, 0) AS chatNum,

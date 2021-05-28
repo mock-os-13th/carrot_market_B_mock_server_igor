@@ -23,4 +23,7 @@ module.exports = function(app){
     // 10. 자동 로그인 API
     app.post('/app/auto-login', jwtMiddleware, user.autoLogin)
 
+    // 16. 판매 중인 물품 목록 조회 API
+    app.get('/app/users/selling-items', jwtMiddleware, user.getSellingItemList)
+
 };

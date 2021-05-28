@@ -3,6 +3,7 @@ const { logger } = require("../../../config/winston");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
+const userProvider = require('./userProvider')
 const userDao = require("./userDao");
 require("dotenv").config();
 
@@ -129,4 +130,19 @@ exports.getUserLocations = async function (userIdx) {
   } finally {
     connection.release();
   }
+};
+
+// 판매 중인 물품 목록 조회
+exports.retrieveSellingItem = async function (userIdx) {
+  // userIdx 형식적 검증
+  const userStatusRows = await userProvider.checkUserStatus(userIdx);
+  if (userStatusRows.length < 1)
+      return errResponse(baseResponse.USER_NOT_EXIST);
+
+  // 판매 중인 물건 List
+  const connection = await pool.getConnection(async (conn) => conn);
+  const retrieveSellingItemResult = await userDao.selectSellingItemsUser(connection, userIdx);
+  connection.release();
+
+  return response(baseResponse.SUCCESS, retrieveSellingItemResult);
 };

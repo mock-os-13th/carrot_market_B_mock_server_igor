@@ -186,3 +186,26 @@ exports.getMobileCheck = async function (req, res) {
 
     return res.send(getUserLocationsResponse);
 };
+
+/**
+ * API No. 16
+ * API Name : 판매 중인 물품 목록 조회 API
+ * [GET] /app/users/selling-items
+ */
+
+ exports.getSellingItemList = async function (req, res) {
+
+    /**
+     * header: jwt token
+     */
+
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    const getSellingItemListResponse = await userProvider.retrieveSellingItem(userIdx);
+
+    return res.send(getSellingItemListResponse);
+};
