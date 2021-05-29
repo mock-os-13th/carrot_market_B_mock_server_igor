@@ -25,6 +25,11 @@ exports.getMobileCheck = async function (req, res) {
     const mobileVerification = inputverifier.verifyMobile(mobile);
     if (!mobileVerification.isValid) return res.send(errResponse(mobileVerification.errorMessage));
 
+    // 회원 가입 여부 확인
+    const isMakableMobile = await userProvider.checkMobile(mobile)
+    if (isMakableMobile.length > 0 && isMakableMobile[0].status === "VALID")
+        return res.send(errResponse(baseResponse.REDUNDANT_MOBILE)); 
+
     const interimResult = { "interimMessage" : "개발용 임시 인증코드는 1234입니다."}
 
     return res.send(response(baseResponse.SUCCESS, interimResult));
@@ -55,8 +60,12 @@ exports.getMobileCheck = async function (req, res) {
 
     // 회원 가입 여부 확인
     const isMakableMobile = await userProvider.checkMobile(mobile)
-    if (isMakableMobile.length > 0 && isMakableMobile[0].status === "VALID")
-        return errResponse(baseResponse.REDUNDANT_MOBILE);
+    if (isMakableMobile.length > 0 && isMakableMobile[0].status === "VALID") { // 이미 있는 회원이면
+        return res.send(errResponse(baseResponse.REDUNDANT_MOBILE)); 
+    } else if (isMakableMobile.length > 0 && isMakableMobile[0].status === "DELETED") { // 이미 삭제 회원이면
+        if (isMakableMobile[0].isRemakable === "NO") // 그런데 1주일이 안지나서 다시 가입라려고 하면
+            return res.send(errResponse(baseResponse.REJOIN_TOO_SOON));  
+    }
 
     // 인증번호 일치여부 확인
     if (verificationCode === "1234") {
