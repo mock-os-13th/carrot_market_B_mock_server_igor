@@ -1,9 +1,14 @@
 // 휴대 전화로 회원 조회
 async function selectUserMobile(connection, mobile) {
   const selectUserMobileQuery = `
-                SELECT idx
-                FROM User
-                WHERE mobileNum = ? AND status = "VALID";
+              SELECT idx,
+              CASE
+                  WHEN TIMESTAMPDIFF(second, updatedAt, NOW()) < 604800 THEN "NO"
+                  ELSE "YES"
+              END AS isRemakable,
+              status
+              FROM User
+              WHERE mobileNum = ?;
                 `;
   const [mobileRows] = await connection.query(selectUserMobileQuery, mobile);
   return mobileRows;
@@ -237,16 +242,16 @@ async function insertUserInfo(connection, insertUserInfoParams) {
   return insertUserInfoRow;
 }
 
-// 유저 상태 변경
-async function updateUserStatus(connection, updateUserStatusParams) {
+// 유저 탈퇴
+async function updateUserStatus(connection, userIdx) {
   const updateUserStatusQuery = `
       UPDATE User
-      SET status = ?
+      SET status = "DELETED", updatedAt = CURRENT_TIMESTAMP
       WHERE idx = ?;
     `;
   const insertUserInfoRow = await connection.query(
     updateUserStatusQuery,
-    updateUserStatusParams
+    userIdx
   );
 
   return insertUserInfoRow;

@@ -77,7 +77,7 @@ module.exports = {
     USERIDX_NaN : { "isSuccess": false,"code": 2047,"message":"userIdx를 숫자로 입력해주세요." },
 
     // Response error
-    REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"중복된 휴대폰 번호입니다." },
+    REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"이미 가입한 계정입니다. 로그인해주세요." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
 
     OVERLAPPING_MOBILE : { "isSuccess": false, "code": 3003, "message": "입력한 전화번호로 가입한 회원이 여러 명입니다. 고객센터에 문의하세요." },
@@ -102,6 +102,8 @@ module.exports = {
     ITEM_ALREADY_ON_SALE : { "isSuccess": false, "code": 3013, "message": "이미 판매 중인 상품입니다." },
 
     SELLER_NOT_EXIST : { "isSuccess": false, "code": 3014, "message": "존재하지 않는 판매자입니다." },
+
+    REJOIN_TOO_SOON : { "isSuccess": false, "code": 3015, "message": "동일한 휴대번호로 가입한 계정이 탈퇴한지 일주일이 안되었습니다." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

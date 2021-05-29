@@ -20,7 +20,7 @@ exports.checkMobile = async function (mobile) {
   return checkMobileResult;
 };
 
-//  동일한 닉네임이 있는지 체크 
+// 동일한 닉네임이 있는지 체크 
 exports.checkNickname = async function (nickname) {
   const connection = await pool.getConnection(async (conn) => conn);
   const checkNicknameResult = await userDao.selectUserNickname(connection, nickname);

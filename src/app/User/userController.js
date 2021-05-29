@@ -33,7 +33,7 @@ exports.getMobileCheck = async function (req, res) {
 
 /**
  * API No. 2
- * API Name : 휴대폰 인증번호 확인 API (임시)
+ * API Name : 회원 가입 휴대폰 인증 API (임시)
  * [POST] app/users/mobile-check
  */
 
@@ -52,6 +52,11 @@ exports.getMobileCheck = async function (req, res) {
     // 인증번호 형식적 검증
     const verificationCodeVerification = inputverifier.verifyCode(verificationCode);
     if (!verificationCodeVerification.isValid) return res.send(errResponse(verificationCodeVerification.errorMessage));
+
+    // 회원 가입 여부 확인
+    const isMakableMobile = await userProvider.checkMobile(mobile)
+    if (isMakableMobile.length > 0 && isMakableMobile[0].status === "VALID")
+        return errResponse(baseResponse.REDUNDANT_MOBILE);
 
     // 인증번호 일치여부 확인
     if (verificationCode === "1234") {
