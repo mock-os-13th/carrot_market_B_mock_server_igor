@@ -20,10 +20,11 @@ exports.createUser = async function (mobile, nickname) {
         if (mobileRows.length > 0)
             return errResponse(baseResponse.REDUNDANT_MOBILE); 
 
-        // 닉네임 중복 확인
-        const nicknameRows = await userProvider.checkNickname(nickname);
-        if (nicknameRows.length > 0)
-            return errResponse(baseResponse.REDUNDANT_NICKNAME); 
+        // // 닉네임 중복 확인
+        // const nicknameRows = await userProvider.checkNickname(nickname);
+        // if (nicknameRows.length > 0)
+        //     return errResponse(baseResponse.REDUNDANT_NICKNAME); 
+            // 중복 닉네임이 가능한 것으로 판단되어 주석처리
 
         // DB에 회원정보 입력
         const insertUserInfoParams = [mobile, nickname];
