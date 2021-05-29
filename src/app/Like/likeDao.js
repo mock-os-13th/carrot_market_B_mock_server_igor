@@ -84,6 +84,32 @@ async function selectSellerLikeItemsUser(connection, userIdx) {
     return sellerLikeItemsRow;
 };
 
+// userIdx로 모아보기 지정한 사람들 명단 가져오기
+async function selectSellerLike(connection, userIdx) {
+    const selectSellerLikeQuery = `
+                SELECT a.sellerIdx,
+                    b.nickName,
+                    b.profilePictureUrl,
+                    d.siGunGu,
+                    d.dong,
+                    "YES" AS isLiked
+                FROM LikeSeller a
+                INNER JOIN User b ON a.sellerIdx = b.idx
+                LEFT JOIN (SELECT userIdx, villageIdx
+                    FROM UserLocation
+                    WHERE status = "VALID"
+                    AND createdAt in (SELECT MAX(createdAt) FROM UserLocation GROUP BY userIdx)
+                    GROUP BY userIdx) c ON a.sellerIdx = c.userIdx
+                INNER JOIN Village d on c.villageIdx = d.idx
+                WHERE a.userIdx = 1
+                AND a.status = "VALID"
+                  `;
+    const [sellerLikeRow] = await connection.query(selectSellerLikeQuery, userIdx);
+    return sellerLikeRow;
+};
+
+    // (블로그 기록!) 여러 데이터 중에 최신 data 하나만 가져오는 기법!
+
 // 관심상품 등록
 async function insertItemLike(connection, itemLikeParams) {
     const insertItemLikeQuery = `
@@ -136,6 +162,7 @@ module.exports = {
     selectSellerLikeUserItem,
     insertSellerLike,
     updateSellerLike,
-    selectSellerLikeItemsUser
+    selectSellerLikeItemsUser,
+    selectSellerLike
   };
   

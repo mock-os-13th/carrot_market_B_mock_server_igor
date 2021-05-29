@@ -13,4 +13,7 @@ module.exports = function(app){
 
     // 24. 판매자 모아보기 물품 조회 API
     app.get('/app/likes/sellers', jwtMiddleware, like.getSellerLikeItems);
+
+    // 25. 판매자 모아보기 목록 조회  API
+    app.get('/app/likes/seller-list', jwtMiddleware, like.getSellerLikeList);
 };

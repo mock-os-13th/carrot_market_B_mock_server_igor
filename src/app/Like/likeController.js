@@ -117,6 +117,27 @@ exports.postUserLike = async function (req, res) {
     const retrieveSellerLikeItemsResponse = await likeProvider.retrieveSellerLikeItems(userIdx);
 
     return res.send(retrieveSellerLikeItemsResponse);
+};
 
-    
+/**
+ * API No. 25
+ * API Name : 판매자 모아보기 목록 조회  API
+ * [GET] /app/likes/seller-list
+ */
+ exports.getSellerLikeList = async function (req, res) {
+
+    /*
+     * header: jwt token
+     */
+
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // 판매자 모아보기 물품 조회
+    const retrieveSellerLikeListResponse = await likeProvider.retrieveSellerLikeList(userIdx);
+
+    return res.send(retrieveSellerLikeListResponse);
 };
