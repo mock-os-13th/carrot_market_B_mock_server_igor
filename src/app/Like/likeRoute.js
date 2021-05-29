@@ -10,4 +10,7 @@ module.exports = function(app){
 
     // 23. 판매자 모아보기 등록/취소 API
     app.post('/app/likes/sellers/:sellerIdx', jwtMiddleware, like.postUserLike)
+
+    // 24. 판매자 모아보기 물품 조회 API
+    app.get('/app/likes/sellers', jwtMiddleware, like.getSellerLikeItems);
 };

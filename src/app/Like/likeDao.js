@@ -58,6 +58,31 @@ async function selectItemLikesUser(connection, userIdx) {
     return itemLikesRow;
 };
 
+// userIdx로 관심 항목 조회
+async function selectSellerLikeItemsUser(connection, userIdx) {
+    const selectSellerLikeItemsUserQuery = `
+                                SELECT a.idx,
+                                    a.title,
+                                    c.nickName,
+                                    d.siGunGu,
+                                    d.dong,
+                                    e.pictureUrl,
+                                    a.status,
+                                    a.price,
+                                    IFNULL(f.numOfLikes, 0) AS numOfLikes,
+                                    IFNULL(g.numOfChats, 0) AS numOfChats
+                                FROM Item a
+                                INNER JOIN (SELECT * FROM LikeSeller WHERE userIdx = 1 AND status = "VALID") b ON a.userIdx = b.sellerIdx
+                                INNER JOIN User c ON b.sellerIdx = c.idx
+                                INNER JOIN Village d ON a.villageIdx = d.idx
+                                LEFT JOIN (SELECT * FROM ItemPictures GROUP BY itemIdx) e ON a.idx = e.itemIdx
+                                LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOfLikes FROM LikeItem WHERE status = "VALID" GROUP BY itemIdx) f ON a.idx = f.itemIdx
+                                LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOfChats FROM ChatRoom WHERE status = "VALID" GROUP BY itemIdx) g ON a.idx = g.itemIdx
+                                ORDER BY a.createdAt DESC;
+                  `;
+    const [sellerLikeItemsRow] = await connection.query(selectSellerLikeItemsUserQuery, userIdx);
+    return sellerLikeItemsRow;
+};
 
 // 관심상품 등록
 async function insertItemLike(connection, itemLikeParams) {
@@ -110,6 +135,7 @@ module.exports = {
     selectItemLikesUser,
     selectSellerLikeUserItem,
     insertSellerLike,
-    updateSellerLike
+    updateSellerLike,
+    selectSellerLikeItemsUser
   };
   

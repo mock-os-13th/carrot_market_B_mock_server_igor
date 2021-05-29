@@ -44,3 +44,18 @@ exports.retrieveItemLikes = async function (userIdx) {
 
   return response(baseResponse.SUCCESS, selectItemLikesUserResult)
 };
+
+// 판매자 모아보기 물품 조회
+exports.retrieveSellerLikeItems = async function (userIdx) {
+  // userIdx DB에 존재하는지 확인
+  const userStatusRows = await userProvider.checkUserStatus(userIdx);
+  if (userStatusRows.length < 1)
+      return errResponse(baseResponse.USER_NOT_EXIST);
+
+  // 리스트 가져오기
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectSellerLikeItemsUserResult = await likeDao.selectSellerLikeItemsUser(connection, userIdx);
+  connection.release();
+
+  return response(baseResponse.SUCCESS, selectSellerLikeItemsUserResult)
+};

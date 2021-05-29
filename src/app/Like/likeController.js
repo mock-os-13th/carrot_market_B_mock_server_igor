@@ -95,3 +95,28 @@ exports.postUserLike = async function (req, res) {
     return res.send(createOrDeleteSellerLikeResponse);
 
 };
+
+/**
+ * API No. 24
+ * API Name :판매자 모아보기 물품 조회 API
+ * [GET] /app/likes/sellers
+ */
+ exports.getSellerLikeItems = async function (req, res) {
+
+    /*
+     * header: jwt token
+     */
+
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // 판매자 모아보기 물품 조회
+    const retrieveSellerLikeItemsResponse = await likeProvider.retrieveSellerLikeItems(userIdx);
+
+    return res.send(retrieveSellerLikeItemsResponse);
+
+    
+};
