@@ -7,4 +7,7 @@ module.exports = function(app){
 
     // 12. 관심상품 목록 조회 API
     app.get('/app/likes/items', jwtMiddleware, like.getItemLikes);
+
+    // 23. 판매자 모아보기 등록/취소 API
+    app.post('/app/likes/sellers/:sellerIdx', jwtMiddleware, like.postUserLike)
 };

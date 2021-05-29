@@ -20,6 +20,16 @@ exports.checkItemLike = async function (userIdx, itemIdx) {
     return checkItemLikeResult;
   };
 
+// 이미 등록한 모아보기 있는지 체크
+exports.checkSellerLike = async function (userIdx, sellerIdx) {
+  const selectSellerLikeUserParams = [userIdx, sellerIdx]
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectSellerLikeUserItemResult = await likeDao.selectSellerLikeUserItem(connection, selectSellerLikeUserParams);
+  connection.release();
+
+  return selectSellerLikeUserItemResult;
+};
+
 // 관심상품 목록 조회
 exports.retrieveItemLikes = async function (userIdx) {
   // userIdx DB에 존재하는지 확인

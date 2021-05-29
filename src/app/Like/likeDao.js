@@ -11,6 +11,19 @@ async function selectItemLikeUserItem(connection, selectItemLikeUserItemParams) 
     return itemLikeRow;
 };
 
+// userIdx와 sellerIdx로 모아보기가 이미 있는지 조회
+async function selectSellerLikeUserItem(connection, selectSellerLikeUserParams) {
+    const selectSellerLikeUserItemQuery = `
+                SELECT idx
+                FROM LikeSeller
+                WHERE userIdx = ?
+                    AND sellerIdx = ?
+                    AND status = "VALID";
+                  `;
+    const [sellerLikeRow] = await connection.query(selectSellerLikeUserItemQuery, selectSellerLikeUserParams);
+    return sellerLikeRow;
+};
+
 // userIdx로 관심 항목 조회
 async function selectItemLikesUser(connection, userIdx) {
     const selectItemLikeUserItemQuery = `
@@ -56,6 +69,16 @@ async function insertItemLike(connection, itemLikeParams) {
     return itemLikeRow;
 };
 
+// 판매자 모아보기 등록
+async function insertSellerLike(connection, insertSellerLikeParams) {
+    const insertSellerLikeQuery = `
+    INSERT INTO LikeSeller(userIdx, sellerIdx)
+    VALUES (?, ?);
+                  `;
+    const sellerLikeRow = await connection.query(insertSellerLikeQuery, insertSellerLikeParams);
+    return sellerLikeRow;
+};
+
 // 관심 상품 취소
 async function updateItemLike(connection, targetItemLikeIdx) {
     const updateItemLikeQuery = `
@@ -67,12 +90,26 @@ async function updateItemLike(connection, targetItemLikeIdx) {
     return itemLikeRow;
 };
 
+// 판매자 모아보기 취소
+async function updateSellerLike(connection, targetSellerLikeIdx) {
+    const updateSellerLikeQuery = `
+                UPDATE LikeSeller
+                SET status = "DELETED"
+                WHERE idx = ?;
+                  `;
+    const sellerLikeRow = await connection.query(updateSellerLikeQuery, targetSellerLikeIdx);
+    return sellerLikeRow;
+};
+
 
 
 module.exports = {
     selectItemLikeUserItem,
     insertItemLike,
     updateItemLike,
-    selectItemLikesUser
+    selectItemLikesUser,
+    selectSellerLikeUserItem,
+    insertSellerLike,
+    updateSellerLike
   };
   

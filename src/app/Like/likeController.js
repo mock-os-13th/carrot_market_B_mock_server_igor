@@ -63,3 +63,35 @@ const {emit} = require("nodemon");
 
     
 };
+
+/*
+ * API No. 23
+ * API Name : 판매자 모아보기 등록/취소 API
+ * [POST] /app/likes/sellers/:userIdx
+ */
+exports.postUserLike = async function (req, res) {
+
+    /**
+     * Path Variable: userIdx
+     * header: jwt token
+     */
+
+    const userIdx = req.verifiedToken.userIdx;
+    const sellerIdx = req.params.sellerIdx;
+
+    // userIdx 형식적 검증
+    const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // seller 형식적 검증
+    const sellerIdxVerification = inputverifier.verifyUserIdxNotFromJwt(sellerIdx);
+    if (!sellerIdxVerification.isValid) return res.send(errResponse(sellerIdxVerification.errorMessage));
+
+    const createOrDeleteSellerLikeResponse = await likeService.createOrDeleteSellerLike(
+        userIdx, 
+        sellerIdx
+    );
+
+    return res.send(createOrDeleteSellerLikeResponse);
+
+};
