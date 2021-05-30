@@ -100,8 +100,8 @@ async function selectSellerLike(connection, userIdx) {
                     WHERE status = "VALID"
                     AND createdAt in (SELECT MAX(createdAt) FROM UserLocation GROUP BY userIdx)
                     GROUP BY userIdx) c ON a.sellerIdx = c.userIdx
-                INNER JOIN Village d on c.villageIdx = d.idx
-                WHERE a.userIdx = 1
+                LEFT JOIN Village d on c.villageIdx = d.idx
+                WHERE a.userIdx = ?
                 AND a.status = "VALID"
                   `;
     const [sellerLikeRow] = await connection.query(selectSellerLikeQuery, userIdx);

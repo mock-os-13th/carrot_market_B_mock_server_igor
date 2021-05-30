@@ -67,6 +67,7 @@ exports.retrieveSellerLikeList = async function (userIdx) {
   if (userStatusRows.length < 1)
       return errResponse(baseResponse.USER_NOT_EXIST);
 
+  console.log(`userIdx: ${userIdx}`)
   // 리스트 가져오기
   const connection = await pool.getConnection(async (conn) => conn);
   const selectSellerLikeUserResult = await likeDao.selectSellerLike(connection, userIdx);
