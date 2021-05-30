@@ -23,6 +23,7 @@ module.exports = function () {
     require('../src/app/Like/likeRoute')(app);
     require('../src/app/Deal/dealRoute')(app);
     require('../src/dev/Database/datebaseRoute')(app);
+    require('../src/app/Location/locationRoute')(app);
     // require('../src/app/Board/boardRoute')(app);
 
     return app;

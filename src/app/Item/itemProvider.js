@@ -32,7 +32,7 @@ exports.checkVillageIdx = async function (villageIdx) {
     return checkMobileResult;
   };
 
-// idx로 존재하는 상품인지 확인 (SOLDOUT 상품 제외)
+// idx로 존재하는 상품인지 확인 (DELETED 상품만 제외)
 exports.checkItemIdx = async function (itemIdx) {
   const connection = await pool.getConnection(async (conn) => conn);
   const checkItemIdxResult = await itemDao.selectItemIdx(connection, itemIdx);
