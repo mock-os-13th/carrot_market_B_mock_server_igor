@@ -121,8 +121,8 @@ async function selectUserLocationNumOfAuthorization(connection, targetIdx, userI
                 WHEN a.siGunGu = (SELECT a.siGunGu FROM Village a WHERE idx = (SELECT villageIdx FROM UserLocation WHERE userIdx = ${userIdx} AND status = "VALID" ORDER BY createdAt DESC LIMIT 1))
                     THEN a.dong
                 ELSE CONCAT(a.siGunGu, " ", a.dong)
-            END AS displayLocationName,
-            IFNULL(numOfAuthorization, 0) AS siGunGuDong
+            END AS siGunGuDong,
+            IFNULL(numOfAuthorization, 0) AS numOfAuthorization
           FROM Village a
           INNER JOIN (SELECT * FROM UserLocation WHERE userIdx = ${targetIdx} AND status ="VALID") b ON a.idx = b.villageIdx
           LEFT JOIN (SELECT villageIdx, COUNT(*) AS numOfAuthorization
