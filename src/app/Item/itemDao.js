@@ -29,8 +29,7 @@ async function selectItemIdx(connection, itemIdx) {
                 SELECT idx, userIdx
                 FROM Item
                 WHERE idx = ?
-                  AND (status = "ONSALE"
-                  OR status = "BOOKED");
+                  AND status <> "DELETED";
                 `;
   const [itemRow] = await connection.query(selectItemIdxQuery, itemIdx);
   return itemRow;
