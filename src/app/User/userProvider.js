@@ -178,11 +178,16 @@ exports.retrievePurchasedItem = async function (userIdx) {
 };
 
 // userIdx로 프로필 가져오기 (상대방 프로필 조회용)
-exports.retrieveUserProfile = async function (userIdx) {
+exports.retrieveUserProfile = async function (userIdx, targetIdx) {
   const connection = await pool.getConnection(async (conn) => conn);
   
   try {
-    const selectUserDetailIdxResult = await userDao.selectUserDetailIdx(connection, userIdx);
+    // userIdx 형식적 검증
+    const userStatusRows = await userProvider.checkUserStatus(userIdx);
+    if (userStatusRows.length < 1)
+        return errResponse(baseResponse.USER_NOT_EXIST);
+
+    const selectUserDetailIdxResult = await userDao.selectUserDetailIdx(connection, targetIdx);
   
     // 존재하지 않는 회원인지 확인
     if (selectUserDetailIdxResult.length < 1)
@@ -190,7 +195,7 @@ exports.retrieveUserProfile = async function (userIdx) {
   
     // userLocation 넣기
     let userProfile = selectUserDetailIdxResult[0]
-    const userLocationsForProfile = await userDao.selectUserLocationNumOfAuthorization(connection, userIdx)
+    const userLocationsForProfile = await userDao.selectUserLocationNumOfAuthorization(connection, targetIdx, userIdx)
     userProfile.userLocation = userLocationsForProfile
 
     // 더미데이터 넣기 (홀수와 짝수 다르게)

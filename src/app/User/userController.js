@@ -279,16 +279,22 @@ exports.getMobileCheck = async function (req, res) {
  exports.getProfile = async function (req, res) {
 
     /**
-     * path variable: userIdx
+     * path variable: targetIdx
+     * header: jwt token
      */
 
-    const userIdx = req.params.userIdx;
+    const targetIdx = req.params.targetIdx;
+    const userIdx = req.verifiedToken.userIdx;
 
-    // userIdx 형식적 검증
-    const idxVerification = inputverifier.verifyUserIdxNotFromJwt(userIdx);
-    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+    //userIdx 형식적 검증
+    const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
 
-    const getProfileResponse = await userProvider.retrieveUserProfile(userIdx);
+    // targetIdx 형식적 검증
+    const targetIdxVerification = inputverifier.verifyUserIdxNotFromJwt(targetIdx);
+    if (!targetIdxVerification.isValid) return res.send(errResponse(targetIdxVerification.errorMessage));
+
+    const getProfileResponse = await userProvider.retrieveUserProfile(userIdx, targetIdx);
 
     return res.send(getProfileResponse);
 };

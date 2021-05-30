@@ -112,18 +112,25 @@ async function selectUserLocation(connection, userIdx) {
 }
 
 // 현재 회원 위치와 총 인증 횟수 조회
-async function selectUserLocationNumOfAuthorization(connection, userIdx) {
+  // targetIdx가 조회하고자 하는 회원
+  // userIdx는 조회하는 회원
+async function selectUserLocationNumOfAuthorization(connection, targetIdx, userIdx) {
   const selectUserLocationNumOfAuthorizationQuery = `
-            SELECT a.siGunGu,
-              a.dong,
-              IFNULL(numOfAuthorization, 0) AS numOfAuthorization
-            FROM Village a
-            INNER JOIN (SELECT * FROM UserLocation WHERE userIdx = ${userIdx} AND status ="VALID") b ON a.idx = b.villageIdx
-            LEFT JOIN (SELECT villageIdx, COUNT(*) AS numOfAuthorization
-            FROM (SELECT * FROM UserLocation WHERE userIdx = ${userIdx} AND isAuthorized = "YES") as z
-            GROUP BY villageIdx) c ON b.villageIdx = c.villageIdx;
+            SELECT
+            CASE
+                WHEN a.siGunGu = (SELECT a.siGunGu FROM Village a WHERE idx = (SELECT villageIdx FROM UserLocation WHERE userIdx = ${userIdx} AND status = "VALID" ORDER BY createdAt DESC LIMIT 1))
+                    THEN a.dong
+                ELSE CONCAT(a.siGunGu, " ", a.dong)
+            END AS displayLocationName,
+            IFNULL(numOfAuthorization, 0) AS siGunGuDong
+          FROM Village a
+          INNER JOIN (SELECT * FROM UserLocation WHERE userIdx = ${targetIdx} AND status ="VALID") b ON a.idx = b.villageIdx
+          LEFT JOIN (SELECT villageIdx, COUNT(*) AS numOfAuthorization
+            FROM (SELECT * FROM UserLocation WHERE userIdx = ${targetIdx} AND isAuthorized = "YES") as z
+                GROUP BY villageIdx) c
+            ON b.villageIdx = c.villageIdx;
                 `;
-  const [userLocationRows] = await connection.query(selectUserLocationNumOfAuthorizationQuery, userIdx);
+  const [userLocationRows] = await connection.query(selectUserLocationNumOfAuthorizationQuery);
   return userLocationRows;
 }
 
