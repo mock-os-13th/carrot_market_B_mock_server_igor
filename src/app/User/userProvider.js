@@ -193,14 +193,24 @@ exports.retrieveUserProfile = async function (userIdx) {
     const userLocationsForProfile = await userDao.selectUserLocationNumOfAuthorization(connection, userIdx)
     userProfile.userLocation = userLocationsForProfile
 
-    // 더미데이터 넣기
-    userProfile.reDealHopeRate = 99.9
-    userProfile.numOfTotalDeals = 1000
-    userProfile.numOfGoodDeals = 999
-    userProfile.answerRate = 99.9
-    userProfile.answerSpeed = "1시간"
-    userProfile.recentActivePeriod = "3일"
-    userProfile.numOfBadges = 99
+    // 더미데이터 넣기 (홀수와 짝수 다르게)
+    if (userIdx % 2 == 1) {
+      userProfile.reDealHopeRate = 99.9
+      userProfile.numOfTotalDeals = 1000
+      userProfile.numOfGoodDeals = 999
+      userProfile.answerRate = 99.9
+      userProfile.answerSpeed = "1시간"
+      userProfile.recentActivePeriod = "3일"
+      userProfile.numOfBadges = 99
+    } else {
+      userProfile.reDealHopeRate = 0
+      userProfile.numOfTotalDeals = 0
+      userProfile.numOfGoodDeals = 0
+      userProfile.answerRate = 0
+      userProfile.answerSpeed = "불충분"
+      userProfile.recentActivePeriod = "없음"
+      userProfile.numOfBadges = 0
+    }
     
     return response(baseResponse.SUCCESS, userProfile)
   
