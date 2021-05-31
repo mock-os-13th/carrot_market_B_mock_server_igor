@@ -232,7 +232,7 @@ async function insertClick(connection, insertClick) {
   return insertClickRow;
   }
 
-// 사진 등록
+// 상품 사진 등록
 async function insertItemPictures(connection, insertItemPicturesParams) {
   const insertItemPicturesQuery = `
           INSERT INTO ItemPictures(itemIdx, pictureUrl, pictureId)

@@ -263,10 +263,10 @@ exports.verifyPictures = function(pictures) {
 
     // 각각의 파일을 한번씩 돌면서 검증한다.
     for (picture of pictures) {
-        if (!picture.fileId) { // fileId 누락
-            return {isValid: false, errorMessage: baseResponse.PICTURE_NO_FILE_ID};
-        } else if (!picture.fileUrl) { //fileUrl 누락
-            return {isValid: false, errorMessage: baseResponse.PICTURE_NO_FILE_URL};
+        if (!picture.pictureId) { // fileId 누락
+            return {isValid: false, errorMessage: baseResponse.PICTURE_NO_PICTURE_ID};
+        } else if (!picture.pictureUrl) { //fileUrl 누락
+            return {isValid: false, errorMessage: baseResponse.PICTURE_NO_PICTURE_URL};
         } 
     }
     return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR}; 

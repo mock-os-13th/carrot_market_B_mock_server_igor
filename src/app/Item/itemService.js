@@ -38,7 +38,7 @@ exports.createItem = async function (userIdx, title, category, price, isNegotiab
         // insertId 사용해서 사진들 등록
         if (pictures.length > 0) {
             for (picture of pictures) {
-                const insertItemPicturesPrams = [currentItemIdx, picture.fileUrl, picture.fileId];
+                const insertItemPicturesPrams = [currentItemIdx, picture.pictureUrl, picture.pictureId];
                 const insertItemPicturesResult = await itemDao.insertItemPictures(connection, insertItemPicturesPrams);
                 console.log(`추가된 중고거래 사진 : ${insertItemPicturesResult[0].insertId}`)
             }
