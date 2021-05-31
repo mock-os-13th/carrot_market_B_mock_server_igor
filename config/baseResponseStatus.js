@@ -108,6 +108,8 @@ module.exports = {
 
     REJOIN_TOO_SOON : { "isSuccess": false, "code": 3015, "message": "동일한 휴대번호로 가입한 계정이 탈퇴한지 일주일이 안되었습니다." },
 
+    USER_LOCATION_OVER_TWO : { "isSuccess": false, "code": 3016, "message": "등록된 위치가 2개 이상입니다. 서버개발자에게 연락주세요." },
+
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
     SERVER_ERROR : { "isSuccess": false, "code": 4001, "message": "서버 에러"},

@@ -1,5 +1,5 @@
 const locationProvider = require("../../app/Location/locationProvider");
-const likeService = require("../../app/Location/locationService");
+const locationService = require("../../app/Location/locationService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const inputverifier = require("../../../config/inputVerifier");
 const {response, errResponse} = require("../../../config/response");
@@ -37,6 +37,12 @@ exports.test1 = async function (req, res) {
 
 };
 
+/**
+ * API No. 26
+ * API Name : 동네 검색 API
+ * [GET] /app/locations/search
+*/
+
 exports.searchVillage = async function (req, res) {
 
     const searchWord = req.query.searchWord;
@@ -49,5 +55,30 @@ exports.searchVillage = async function (req, res) {
     const retrieveLocationSearchListResponse = await locationProvider.retrieveLocationSearchList(searchWord);
 
     return res.send(retrieveLocationSearchListResponse);
+
+};
+
+/**
+ * API No. 27
+ * API Name : 내 동네 설정 페이지 API
+ * [GET] app/locations/my-villages
+*/
+
+exports.getMyVillages = async function (req, res) {
+
+     /*
+     * header: jwt token
+     */
+
+     const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // 내 동네 가져오기
+    const retrieveMyVillagesResponse = await locationProvider.retrieveMyVillages(userIdx);
+
+    return res.send(retrieveMyVillagesResponse);
 
 };
