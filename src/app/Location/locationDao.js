@@ -76,6 +76,21 @@ async function selectUserLocations(connection, userIdx) {
     return selectUserLocationsRow;
 };
 
+// userLocationIdx의 의미적 검증 + userLocation의 userIdx와 입력된 userIdx 비교
+async function selectUserIdxByIdx(connection, userLocationIdx) {
+    const selectUserIdxQuery = `
+                    SELECT userIdx
+                    FROM UserLocation
+                    WHERE idx = ?
+                        AND status = "VALID";
+                 `;
+    const [selectUserIdxRow] = await connection.query(
+        selectUserIdxQuery,
+        userLocationIdx
+    );
+    return selectUserIdxRow;
+};
+
 // userLocation에 있는 villageIdx 가져오기
 async function selectUserLocations(connection, userIdx) {
     const selectUserLocationsQuery = `
@@ -141,6 +156,21 @@ async function insertUserLocation(connection, insertUserLocationParams) {
     return insertUserLocationRow;
   }
 
+// userLocation 상태 "INVALID"로 바꾸기
+async function updateUserLocation(connection, userLocationIdx) {
+    const updateUserLocationQuery = `
+                                  UPDATE UserLocation
+                                  SET status = "INVALID"
+                                  WHERE idx = ?;
+                                `;
+    const updateUserLocationRow = await connection.query(
+      updateUserLocationQuery,
+      userLocationIdx
+    );
+  
+    return updateUserLocationRow;
+  }
+
 module.exports = {
     selectVillageLikeDong,
     selectVillageLikeSiGunGu,
@@ -149,5 +179,7 @@ module.exports = {
     selectNumOfNearVillages,
     selectDongByFromIdxRangeLevel,
     selectVillageIdx,
-    insertUserLocation
+    insertUserLocation,
+    selectUserIdxByIdx,
+    updateUserLocation
 };

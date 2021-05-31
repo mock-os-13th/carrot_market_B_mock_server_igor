@@ -25,6 +25,15 @@ exports.checkUserLocations = async function (userIdx) {
     return selectUserLocationsResult
   };
 
+// userLocationIdx의 의미적 검증 + userLocation의 userIdx와 입력된 userIdx 비교
+exports.checkUserLocationIdx = async function (userLocationIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectUserIdxResult = await locationDao.selectUserIdxByIdx(connection, userLocationIdx);
+    connection.release();
+
+    return selectUserIdxResult
+  };
+
 
 // 검색어로 동네 DB에서 검색
 exports.retrieveLocationSearchList = async function (searchWord) {

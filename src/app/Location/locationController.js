@@ -118,3 +118,34 @@ exports.postMyVillage = async function (req, res) {
    return res.send(createUserLocationResponse);
 
 };
+
+/**
+ * API No. 29
+ * API Name : 내 동네 삭제 API
+ * [PATCH] /app/locations/my-villages
+*/
+
+exports.patchMyVillage = async function (req, res) {
+
+    /*
+    * header: jwt token
+    * body: userLocationIdx
+    */
+
+    const userIdx = req.verifiedToken.userIdx;
+    const userLocationIdx = req.body.userLocationIdx;
+
+   // userIdx 형식적 검증
+   const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+   if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // userLocationIdx 형식적 검증
+    const userLocationIdxVerification = inputverifier.verifyUserLocationIdx(userLocationIdx);
+    if (!userLocationIdxVerification.isValid) return res.send(errResponse(userLocationIdxVerification.errorMessage));
+
+   // 내 동네 삭제하기
+   const deleteUserLocationResponse = await locationService.deleteUserLocation(userIdx, userLocationIdx);
+
+   return res.send(deleteUserLocationResponse);
+
+};

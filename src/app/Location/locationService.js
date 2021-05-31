@@ -12,8 +12,6 @@ const jwt = require("jsonwebtoken");
 const {connect} = require("http2");
 
 // 내 동네 DB에 등록
-
-// 관심 상품 등록 / 취소
 exports.createUserLocation = async function (userIdx, villageIdx, rangeLevel) {
     try {
         // userIdx DB에 존재하는지 확인
@@ -42,6 +40,37 @@ exports.createUserLocation = async function (userIdx, villageIdx, rangeLevel) {
 
     } catch (err) {
         logger.error(`App - createUserLocation Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+// 내 동네 DB에서 삭제하기
+exports.deleteUserLocation = async function (userIdx, userLocationIdx) {
+    try {
+        // userIdx DB에 존재하는지 확인
+        const userStatusRows = await userProvider.checkUserStatus(userIdx);
+        if (userStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+
+        // userLocationIdx DB에 존재하는지 확인
+        const checkUserLocationIdxResult = await locationProvider.checkUserLocationIdx(userLocationIdx) 
+        if (checkUserLocationIdxResult.length < 1)
+            return errResponse(baseResponse.USER_LOCATION_NOT_EXIST);
+
+        // userLocationIdx에 해당하는 userLocation의 주인이 userIdx와 일치하는지 확인
+        if (checkUserLocationIdxResult[0].userIdx != userIdx)
+          return errResponse(baseResponse.USER_LOCATION_NOT_MATCH);
+
+        // userLocation 삭제
+        const connection = await pool.getConnection(async (conn) => conn);
+        const updateUserLocationResult = await locationDao.updateUserLocation(connection, userLocationIdx);
+        console.log(`삭제된 사용자 동네 : ${userLocationIdx}`)
+        connection.release();
+               
+        return response(baseResponse.SUCCESS)
+
+    } catch (err) {
+        logger.error(`App - deleteUserLocation Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

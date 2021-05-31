@@ -139,6 +139,19 @@ exports.verifyBuyerIdx = function(buyerIdx) {
     }
 };
 
+// userLocationIdx 검증
+exports.verifyUserLocationIdx = function(userLocationIdx) {
+    // 빈 값
+    if (!userLocationIdx) {
+        return {isValid: false, errorMessage: baseResponse.USER_LOCATION_IDX_EMPTY}; 
+    // 숫자 여부
+    } else if (!regexNum.test(userLocationIdx)) {
+        return {isValid: false, errorMessage: baseResponse.USER_LOCATION_IDX_NAN}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
 // rangeLevel 검증
 exports.verifyRangeLevel = function(rangeLevel) {
     // 있는지 검증

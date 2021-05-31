@@ -79,6 +79,9 @@ module.exports = {
     SEARCH_WORD_EMPTY : { "isSuccess": false,"code": 2048,"message":"검색어를 입력해주세요." },
     SEARCH_WORD_LENGTH : { "isSuccess": false,"code": 2049,"message":"검색어를 10자 이내로 입력해주세요." },
 
+    USER_LOCATION_IDX_EMPTY : { "isSuccess": false,"code": 2050,"message":"사용자 동네 idx를 입력해주세요." },
+    USER_LOCATION_IDX_NAN : { "isSuccess": false,"code": 2051,"message":"사용자 동네 idx를 숫자로 입력해주세요." },
+
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"이미 가입한 계정입니다. 로그인해주세요." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
@@ -111,6 +114,9 @@ module.exports = {
     USER_LOCATION_OVER_TWO : { "isSuccess": false, "code": 3016, "message": "등록된 위치가 2개 이상입니다." },
 
     ITEM_ALREADY_SOLD_OUT : { "isSuccess": false, "code": 3017, "message": "이미 거래 완료된 상품입니다." },
+
+    USER_LOCATION_NOT_EXIST : { "isSuccess": false, "code": 3018, "message": "존재하지 않는 사용자 동네입니다." },
+    USER_LOCATION_NOT_MATCH : { "isSuccess": false, "code": 3019, "message": "사용자 동네를 등록한 사용자가 아닙니다." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
