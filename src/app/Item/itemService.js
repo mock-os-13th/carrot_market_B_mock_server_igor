@@ -73,9 +73,9 @@ exports.createClick = async function (userIdx, itemIdx) {
         const retrieveItemResult = await itemProvider.retrieveItem(userIdx, itemIdx)
 
         // DB에 클릭 저장
-        const insertClick = [userIdx, itemIdx]
+        const insertClickParams = [userIdx, itemIdx]
         const connection = await pool.getConnection(async (conn) => conn);
-        const clickResult = await itemDao.insertClick(connection, insertClick);
+        const clickResult = await itemDao.insertClick(connection, insertClickParams);
         console.log(`추가된 클릭 (조회) : ${clickResult[0].insertId}`)
         connection.release();
         

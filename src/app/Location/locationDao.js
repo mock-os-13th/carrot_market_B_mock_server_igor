@@ -46,6 +46,36 @@ async function selectVillageLikeSido(connection, searchWord) {
     return selectVillageLikeSidoRow;
 };
 
+// villageIdx로 실제 존재하는 village인지 확인
+async function selectVillageIdx(connection, villageIdx) {
+    const selectVillageIdxQuery = `
+                        SELECT idx,
+                         dong
+                        FROM Village
+                        WHERE idx = ?
+        `;
+    const [selectVillageIdxRow] = await connection.query(
+        selectVillageIdxQuery,
+        villageIdx
+    );
+    return selectVillageIdxRow;
+};
+
+// userLocation의 갯수를 세기 위한 쿼리
+async function selectUserLocations(connection, userIdx) {
+    const selectUserLocationsQuery = `
+                    SELECT idx
+                    FROM UserLocation
+                    WHERE userIdx = ?
+                        AND status = "VALID";
+        `;
+    const [selectUserLocationsRow] = await connection.query(
+        selectUserLocationsQuery,
+        userIdx
+    );
+    return selectUserLocationsRow;
+};
+
 // userLocation에 있는 villageIdx 가져오기
 async function selectUserLocations(connection, userIdx) {
     const selectUserLocationsQuery = `
@@ -97,11 +127,27 @@ async function selectDongByFromIdxRangeLevel(connection, userLocationVillageIdx,
     return selectDongByFromIdxRangeLevelRow;
 };
 
+// UserLocation 등록
+async function insertUserLocation(connection, insertUserLocationParams) {
+    const insertUserLocationQuery = `
+          INSERT INTO UserLocation(userIdx, villageIdx, villageRangeLevel)
+          VALUES (?, ?, ?);
+      `;
+    const insertUserLocationRow = await connection.query(
+        insertUserLocationQuery,
+        insertUserLocationParams
+    );
+  
+    return insertUserLocationRow;
+  }
+
 module.exports = {
     selectVillageLikeDong,
     selectVillageLikeSiGunGu,
     selectVillageLikeSido,
     selectUserLocations,
     selectNumOfNearVillages,
-    selectDongByFromIdxRangeLevel
+    selectDongByFromIdxRangeLevel,
+    selectVillageIdx,
+    insertUserLocation
 };

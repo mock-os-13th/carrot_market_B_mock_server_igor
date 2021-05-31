@@ -7,6 +7,25 @@ const locationDao = require("./locationDao");
 const userProvider = require('../User/userProvider')
 require("dotenv").config();
 
+// villageIdx 의미적 검증
+exports.checkVillageIdx = async function (villageIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectVillageIdxResult = await locationDao.selectVillageIdx(connection, villageIdx);
+    connection.release();
+
+    return selectVillageIdxResult
+  };
+
+// userLocation 2개 갯수 확인용
+exports.checkUserLocations = async function (userIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectUserLocationsResult = await locationDao.selectUserLocations(connection, userIdx);
+    connection.release();
+
+    return selectUserLocationsResult
+  };
+
+
 // 검색어로 동네 DB에서 검색
 exports.retrieveLocationSearchList = async function (searchWord) {
     // 리스트 가져오기

@@ -113,7 +113,7 @@ exports.postMyVillage = async function (req, res) {
     if (!rangeLevelVerification.isValid) return res.send(errResponse(rangeLevelVerification.errorMessage));
 
    // 내 동네 설정하기
-   const createUserLocationResponse = await locationProvider.createUserLocation(userIdx, villageIdx, rangeLevel);
+   const createUserLocationResponse = await locationService.createUserLocation(userIdx, villageIdx, rangeLevel);
 
    return res.send(createUserLocationResponse);
 

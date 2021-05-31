@@ -22,34 +22,26 @@ exports.createUserLocation = async function (userIdx, villageIdx, rangeLevel) {
             return errResponse(baseResponse.USER_NOT_EXIST);
 
         // villageIdx DB에 존재하는지 확인
-        const checkItemResult = await itemProvider.checkItemIdx(itemIdx)
-        if (checkItemResult.length < 1) 
-            return errResponse(baseResponse.ITEM_NOT_EXIST);
+        const checkVillageResult = await locationProvider.checkVillageIdx(villageIdx)
+        if (checkVillageResult.length < 1) 
+            return errResponse(baseResponse.VILLAGE_NOT_EXIST);
 
         // 등록된 userLocation이 2개 미만인지 확인
+        const checkUserLocationsResult = await locationProvider.checkUserLocations(userIdx)
+        if (checkUserLocationsResult.length > 1)
+            return errResponse(baseResponse.USER_LOCATION_OVER_TWO);
 
-        // 좋아요 있는지 확인
-        const checkItemLikeResult = await likeProvider.checkItemLike(userIdx, itemIdx) 
-
+        // userLocation 등록
+        const insertUserLocationParams = [userIdx, villageIdx, rangeLevel]
         const connection = await pool.getConnection(async (conn) => conn);
-        // 좋아요 있으면 취소하고 없으면 신규 등록
-        if (checkItemLikeResult.length < 1) { // 신규 등록
-            const itemLikeParams = [userIdx, itemIdx]
-            const insertItemLikeResult = await likeDao.insertItemLike(connection, itemLikeParams)
-            console.log(`추가된 관심상품 : ${insertItemLikeResult[0].insertId}`)
-        } else {
-            const targetItemLikeIdx = checkItemLikeResult[0].idx
-            const updateItemLikeResult = await likeDao.updateItemLike(connection, targetItemLikeIdx)
-            console.log(`취소된 관심상품의 Idx : ${targetItemLikeIdx}`)
-                // (블로그 기록) : 속을 알 수 없는 object Object를 출력하기 위해서 쓴다
-                    // 잘 되지는 않는다...
-        }
+        const insertUserLocationResult = await locationDao.insertUserLocation(connection, insertUserLocationParams);
+        console.log(`추가된 사용자 동네 : ${insertUserLocationResult[0].insertId}`)
         connection.release();
                
         return response(baseResponse.SUCCESS)
 
     } catch (err) {
-        logger.error(`App - createOrDeleteItemLike Service error\n: ${err.message}`);
+        logger.error(`App - createUserLocation Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

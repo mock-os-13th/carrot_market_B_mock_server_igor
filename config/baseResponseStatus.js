@@ -108,7 +108,7 @@ module.exports = {
 
     REJOIN_TOO_SOON : { "isSuccess": false, "code": 3015, "message": "동일한 휴대번호로 가입한 계정이 탈퇴한지 일주일이 안되었습니다." },
 
-    USER_LOCATION_OVER_TWO : { "isSuccess": false, "code": 3016, "message": "등록된 위치가 2개 이상입니다. 서버개발자에게 연락주세요." },
+    USER_LOCATION_OVER_TWO : { "isSuccess": false, "code": 3016, "message": "등록된 위치가 2개 이상입니다." },
 
     ITEM_ALREADY_SOLD_OUT : { "isSuccess": false, "code": 3017, "message": "이미 거래 완료된 상품입니다." },
 
