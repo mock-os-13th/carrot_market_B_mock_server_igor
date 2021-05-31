@@ -28,6 +28,8 @@ exports.createDeal = async function (userIdx, itemIdx) {
         const checkItemResult = await itemProvider.checkItemIdx(itemIdx)
         if (checkItemResult.length < 1) 
             return errResponse(baseResponse.ITEM_NOT_EXIST);
+        if (checkItemResult[0].status === "SOLDOUT")
+            return errResponse(baseResponse.ITEM_ALREADY_SOLD_OUT);
 
         // userIdx가 Item에 등록된 것과 동일한지 확인
         const userIdxFromItemTable = checkItemResult[0].userIdx
@@ -39,8 +41,7 @@ exports.createDeal = async function (userIdx, itemIdx) {
         
         // Item에 Status "SOLDOUT"으로 수정
         const itemIdResult = await itemDao.updateSoldItem(connection, itemIdx);
-        
-        
+                
         // 구매자 선택 목록 조회
         const buyerToBeList = await dealDao.selectChatRoomsItem(connection, itemIdx)
 

@@ -26,7 +26,7 @@ async function selectVillageIdx(connection, villageIdx) {
 // idx로 item 유무 조회
 async function selectItemIdx(connection, itemIdx) {
   const selectItemIdxQuery = `
-                SELECT idx, userIdx
+                SELECT idx, userIdx, status
                 FROM Item
                 WHERE idx = ?
                   AND status <> "DELETED";

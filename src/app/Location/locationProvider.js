@@ -5,7 +5,6 @@ const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
 const locationDao = require("./locationDao");
 const userProvider = require('../User/userProvider')
-const locationService = require("./locationService");
 require("dotenv").config();
 
 // 검색어로 동네 DB에서 검색

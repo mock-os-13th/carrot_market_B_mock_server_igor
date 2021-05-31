@@ -7,7 +7,7 @@ const {emit} = require("nodemon");
 
 /**
  * API No. 13
- * API Name : 판매 완료 API
+ * API Name : 거래 완료 API
  * [POST] /app/deals/:itemIdx
  */
  exports.postDeal = async function (req, res) {

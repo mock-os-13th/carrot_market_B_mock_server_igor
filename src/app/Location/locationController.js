@@ -82,3 +82,39 @@ exports.getMyVillages = async function (req, res) {
     return res.send(retrieveMyVillagesResponse);
 
 };
+
+/**
+ * API No. 28
+ * API Name : 내 동네 설정 페이지 API
+ * [POST] /app/locations/my-villages
+*/
+
+exports.postMyVillage = async function (req, res) {
+
+    /*
+    * header: jwt token
+    * body: villageIdx, rangeLevel
+    */
+
+    const userIdx = req.verifiedToken.userIdx;
+    const villageIdx = req.body.villageIdx;
+    const rangeLevel = req.body.rangeLevel
+
+   // userIdx 형식적 검증
+   const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+   if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // villageIdx 형식적 검증
+    const villageIdxVerification = inputverifier.verifyVillageIdx(villageIdx);
+    if (!villageIdxVerification.isValid) return res.send(errResponse(villageIdxVerification.errorMessage));
+
+    // rangeLevel 형식적 검증
+    const rangeLevelVerification = inputverifier.verifyRangeLevel(rangeLevel);
+    if (!rangeLevelVerification.isValid) return res.send(errResponse(rangeLevelVerification.errorMessage));
+
+   // 내 동네 설정하기
+   const createUserLocationResponse = await locationProvider.createUserLocation(userIdx, villageIdx, rangeLevel);
+
+   return res.send(createUserLocationResponse);
+
+};

@@ -110,6 +110,8 @@ module.exports = {
 
     USER_LOCATION_OVER_TWO : { "isSuccess": false, "code": 3016, "message": "등록된 위치가 2개 이상입니다. 서버개발자에게 연락주세요." },
 
+    ITEM_ALREADY_SOLD_OUT : { "isSuccess": false, "code": 3017, "message": "이미 거래 완료된 상품입니다." },
+
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
     SERVER_ERROR : { "isSuccess": false, "code": 4001, "message": "서버 에러"},
