@@ -182,7 +182,7 @@ exports.updateDeal = async function (userIdx, itemIdx) {
            // 이미 판매중이 아닌지 확인
         const statusFromItemTable = checkItemResult[0].status
         if (statusFromItemTable != "SOLDOUT")
-            return errResponse(baseResponse.USER_NOT_MATCH);
+            return errResponse(baseResponse.ITEM_NOT_SOLD_OUT);
         
 
         // DB에 거래 status "DELETED"로 만들기
