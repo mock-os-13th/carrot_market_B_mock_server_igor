@@ -76,6 +76,9 @@ module.exports = {
     USERIDX_EMPTY : { "isSuccess": false,"code": 2046,"message":"userIdx를 입력해주세요." },
     USERIDX_NaN : { "isSuccess": false,"code": 2047,"message":"userIdx를 숫자로 입력해주세요." },
 
+    SEARCH_WORD_EMPTY : { "isSuccess": false,"code": 2048,"message":"검색어를 입력해주세요." },
+    SEARCH_WORD_LENGTH : { "isSuccess": false,"code": 2049,"message":"검색어를 10자 이내로 입력해주세요." },
+
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"이미 가입한 계정입니다. 로그인해주세요." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },

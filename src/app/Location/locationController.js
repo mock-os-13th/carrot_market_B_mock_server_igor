@@ -36,3 +36,18 @@ exports.test1 = async function (req, res) {
     
 
 };
+
+exports.searchVillage = async function (req, res) {
+
+    const searchWord = req.query.searchWord;
+
+    // 검색어 검증
+    const searchWordVerification = inputverifier.verifyVillageSearchWord(searchWord)
+    if (!searchWordVerification.isValid) return res.send(errResponse(searchWordVerification.errorMessage));
+
+    // 검색 내역 가져오기
+    const retrieveLocationSearchListResponse = await locationProvider.retrieveLocationSearchList(searchWord);
+
+    return res.send(retrieveLocationSearchListResponse);
+
+};

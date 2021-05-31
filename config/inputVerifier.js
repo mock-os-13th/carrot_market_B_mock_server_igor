@@ -320,3 +320,17 @@ exports.verifyMessage = function(message) {
         return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
     }
 };
+
+// 동네검색 검색어 검증
+exports.verifyVillageSearchWord = function(searchWord) {
+    // 있는지 검증
+    if (!searchWord) {
+        return {isValid: false, errorMessage: baseResponse.SEARCH_WORD_EMPTY}; 
+    // 길이가 10 이내
+    } else if (searchWord.length > 10) {
+        return {isValid: false, errorMessage: baseResponse.SEARCH_WORD_LENGTH}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+    
+};
