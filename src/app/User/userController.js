@@ -85,10 +85,10 @@ exports.getMobileCheck = async function (req, res) {
  exports.postUser = async function (req, res) {
 
     /**
-     * Body: mobile, nickName
+     * Body: mobile, nickName, pictureId, pictureUrl
      */
 
-    const { mobile, nickname } = req.body;
+    let { mobile, nickname, pictureId, pictureUrl } = req.body;
 
     // 휴대전화 형식적 검증
     const mobileVerification = inputverifier.verifyMobile(mobile);
@@ -98,10 +98,23 @@ exports.getMobileCheck = async function (req, res) {
     const nicknameVerification = inputverifier.verifyNickname(nickname);
     if (!nicknameVerification.isValid) return res.send(errResponse(nicknameVerification.errorMessage));
 
+    // pictureId, pictureUrl 중 하나만 있는 경우 에러
+    if (pictureId ^ pictureUrl)
+        return res.send(errResponse(baseResponse.PICTURE_ID_OR_URL_EMPTY));
+
+    // pictureId, pictureUrl 없으면 null 부여
+    if ((!pictureId) && (!pictureUrl)) {
+        pictureId = null
+        pictureUrl = null
+    }
+        
+
     // DB에 회원정보 등록
     const signUpResponse = await userService.createUser(
         mobile,
-        nickname
+        nickname,
+        pictureId,
+        pictureUrl
     );
 
     return res.send(signUpResponse);

@@ -13,7 +13,7 @@ const {connect} = require("http2");
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
 // 회원 가입
-exports.createUser = async function (mobile, nickname) {
+exports.createUser = async function (mobile, nickname, pictureId, pictureUrl) {
     try {
         // 휴대폰 번호 중복 확인
         const mobileRows = await userProvider.checkMobile(mobile);
@@ -32,7 +32,7 @@ exports.createUser = async function (mobile, nickname) {
             // 중복 닉네임이 가능한 것으로 판단되어 주석처리
 
         // DB에 회원정보 입력
-        const insertUserInfoParams = [mobile, nickname];
+        const insertUserInfoParams = [mobile, nickname, pictureId, pictureUrl];
         const connection = await pool.getConnection(async (conn) => conn);
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
         console.log(`추가된 회원 : ${userIdResult[0].insertId}`)

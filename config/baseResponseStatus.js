@@ -89,6 +89,8 @@ module.exports = {
     LATITUDE_OUT_OF_KOREA : { "isSuccess": false,"code": 2056,"message":"위도가 나타내는 위치가 대한민국이 아닙니다. 당근마켓은 한국 내에서만 이용할 수 있습니다." },
     LONGITUDE_OUT_OF_KOREA : { "isSuccess": false,"code": 2057,"message":"경도가 나타내는 위치가 대한민국이 아닙니다. 당근마켓은 한국 내에서만 이용할 수 있습니다." },
 
+    PICTURE_ID_OR_URL_EMPTY : { "isSuccess": false,"code": 2058,"message":"프로필 사진 ID 혹은 URL 중 한가지 데이터만 전송되었습니다." },
+
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"이미 가입한 계정입니다. 로그인해주세요." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },

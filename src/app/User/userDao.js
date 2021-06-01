@@ -241,8 +241,8 @@ async function selectPurchasedItemsUser(connection, userIdx) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
-        INSERT INTO User(mobileNum, nickName)
-        VALUES (?, ?);
+        INSERT INTO User(mobileNum, nickName, profilePictureId, profilePictureUrl)
+        VALUES (?, ?, ?, ?);
     `;
   const insertUserInfoRow = await connection.query(
     insertUserInfoQuery,
