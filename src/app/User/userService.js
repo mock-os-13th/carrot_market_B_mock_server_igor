@@ -39,8 +39,7 @@ exports.createUser = async function (mobile, nickname) {
         connection.release();
 
         // user idx 구하고 jwt 토큰 반환
-        const getNewUserIdx = await userProvider.checkMobile(mobile);
-        const newUserIdx = getNewUserIdx[0].idx
+        const newUserIdx = userIdResult[0].insertId
 
         let token = await jwt.sign(
             {

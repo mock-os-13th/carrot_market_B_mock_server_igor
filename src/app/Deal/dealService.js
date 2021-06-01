@@ -88,7 +88,10 @@ exports.insertBuyer = async function (userIdx, itemIdx, buyerIdx) {
             // userIdx가 Item에 등록된 것과 동일한지 확인
         const userIdxFromItemTable = checkSoldItemResult[0].userIdx
         if (userIdx != userIdxFromItemTable)
-            return errResponse(baseResponse.USER_NOT_MATCH); 
+            return errResponse(baseResponse.USER_NOT_MATCH);
+
+        // itemIdx로 deal을 가져오고 이미 등록된 구매자가 있다면 에러
+            // 나중에 구매자 삭제 구현되면 추가
 
         // buyerIdx 의미적 검증
         const buyerStatusRows = await userProvider.checkUserStatus(buyerIdx);

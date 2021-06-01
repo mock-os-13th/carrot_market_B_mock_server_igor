@@ -28,4 +28,7 @@ module.exports = function(app){
 
     // 33. 동네 범위 변경 API
     app.patch('/app/locations/range-level', jwtMiddleware, location.patchRangeLevel)
+
+    // 34. 현재 위치로 동네 검색 API
+    app.get('/app/locations/search-gps', location.searchVillageByGps);
 };

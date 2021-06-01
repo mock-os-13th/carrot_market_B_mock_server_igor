@@ -309,3 +309,41 @@ exports.patchRangeLevel = async function (req, res) {
    return res.send(changeRangeLevelResponse);
 
 };
+
+/**
+ * API No. 34
+ * API Name : 현재 위치로 동네 검색 API
+ * [GET] /app/locations/search-gps
+*/
+
+exports.searchVillageByGps = async function (req, res) {
+
+    const latitude = req.query.latitude
+    const longitude = req.query.longitude
+
+    // 좌표 검증하기
+    const coordVerification = inputverifier.verifyCoord(latitude, longitude);
+   if (!coordVerification.isValid) return res.send(errResponse(coordVerification.errorMessage));
+
+    // 카카오맵 API 파라미터 입력
+    const kakaoMapOptions = {
+    uri: "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json",
+    qs:{
+        x: longitude,
+        y: latitude
+    },
+    headers: {
+        'Authorization': 'KakaoAK 2780c91e78f580017296a2c3a88b251e'
+    },
+    };
+
+    // 카카오맵 API 사용
+    const kakaoMapresult = await request(kakaoMapOptions)
+    const parsedKakaoMapresult = JSON.parse(kakaoMapresult)
+    const userLocationDongByCoord = parsedKakaoMapresult.documents[1].region_3depth_name
+    
+    // 동이름으로 검색
+    const retrieveLocationSearchListResponse = await locationProvider.retrieveLocationSearchList(userLocationDongByCoord);
+
+    return res.send(retrieveLocationSearchListResponse);
+};
