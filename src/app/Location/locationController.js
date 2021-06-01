@@ -180,3 +180,41 @@ exports.patchCurrentVillage = async function (req, res) {
    return res.send(updateCurrentVillageResponse);
 
 };
+
+exports.getCurrentLocation = async function (req, res) {
+
+    const userIdx = req.verifiedToken.userIdx;
+    const latitude = req.query.latitude
+    const longitude = req.query.longitude
+    
+
+    // userIdx 형식적 검증  
+   const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+   if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // 좌표 검증하기
+    const coordVerification = inputverifier.verifyCoord(latitude, longitude);
+   if (!coordVerification.isValid) return res.send(errResponse(coordVerification.errorMessage));
+
+    // 카카오맵 API 파라미터 입력
+    const kakaoMapOptions = {
+    uri: "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json",
+    qs:{
+        x: longitude,
+        y: latitude
+    },
+    headers: {
+        'Authorization': 'KakaoAK 2780c91e78f580017296a2c3a88b251e'
+    },
+    };
+
+    // 카카오맵 API 사용
+    const kakaoMapresult = await request(kakaoMapOptions)
+    const parsedKakaoMapresult = JSON.parse(kakaoMapresult)
+    const userLocationDongByCoord = parsedKakaoMapresult.documents[1].region_3depth_name
+    
+    // 좌표를 통한 현재 위치, 사용자가 저장한 현재 위치 가져오기
+    const retrieveCoordAndCurrentLocationsResponse = await locationProvider.retrieveCoordAndCurrentLocations(userIdx, userLocationDongByCoord);
+
+    return res.send(retrieveCoordAndCurrentLocationsResponse);
+};

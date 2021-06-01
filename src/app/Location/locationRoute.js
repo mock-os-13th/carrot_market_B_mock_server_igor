@@ -21,5 +21,5 @@ module.exports = function(app){
     app.patch('/app/locations/current-village', jwtMiddleware, location.patchCurrentVillage)
 
     // 31. 동네 인증하기 페이지 API
-    app.get('/app/locatiions/authentification', jwtMiddleware, location.getMyVillages)
+    app.get('/app/locations/authentification', jwtMiddleware, location.getCurrentLocation)
 };

@@ -145,6 +145,41 @@ async function selectDongByFromIdxRangeLevel(connection, userLocationVillageIdx,
     return selectDongByFromIdxRangeLevelRow;
 };
 
+// dong으로 villageIdx 가져오기
+async function selectVillageByDong(connection, dong) {
+    const selectVillageByDongQuery = `
+                    SELECT idx AS villageIdx,
+                        dong
+                    FROM Village
+                    WHERE dong = ?
+                    AND status = "VALID"
+        `;
+    const [selectVillageByDongRow] = await connection.query(
+        selectVillageByDongQuery,
+        dong
+    );
+    return selectVillageByDongRow;
+};
+
+// userIdx로 userLocationIdx, villageIdx, dong 가져오기 (isCurrent = YES 인 것만!)
+async function selectCurrentUserLocation(connection, userIdx) {
+    const selectCurrentUserLocationQuery = `
+                SELECT a.idx AS userLocationIdx,
+                    a.villageIdx,
+                    b.dong
+                FROM UserLocation a
+                INNER JOIN Village b ON a.villageIdx = b.idx
+                WHERE a.userIdx = ?
+                AND a.status = "VALID"
+                AND a.isCurrent = "YES"
+        `;
+    const [selectCurrentUserLocationRow] = await connection.query(
+        selectCurrentUserLocationQuery,
+        userIdx
+    );
+    return selectCurrentUserLocationRow;
+};
+
 // UserLocation 등록
 async function insertUserLocation(connection, insertUserLocationParams) {
     const insertUserLocationQuery = `
@@ -217,5 +252,7 @@ module.exports = {
     updateUserLocation,
     selectUserLocation,
     updateIsCurrentNo,
-    updateIsCurrentYes
+    updateIsCurrentYes,
+    selectVillageByDong,
+    selectCurrentUserLocation
 };

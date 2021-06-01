@@ -90,3 +90,29 @@ exports.retrieveMyVillages = async function (userIdx) {
 
     return response(baseResponse.SUCCESS, selectUserLocationResult)
   };
+
+// 좌표를 통한 현재 위치, 사용자가 저장한 현재 위치 가져오기
+exports.retrieveCoordAndCurrentLocations = async function (userIdx, userLocationDongByCoord) {
+    // userIdx 의미적 검증
+    const userStatusRows = await userProvider.checkUserStatus(userIdx);
+    if (userStatusRows.length < 1)
+        return errResponse(baseResponse.USER_NOT_EXIST);
+   
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    // 좌표에서 나온 dong으로 Village 정보 가져오기
+    const selectVillageByDongResult = await locationDao.selectVillageByDong(connection, userLocationDongByCoord);
+        // 만약에 dong으로 검색했는데 없으면 에러
+    if (selectVillageByDongResult.length < 1)
+        return errResponse(baseResponse.COORD_DONG_NOT_FOUND);
+
+    // userIdx로 userLocationIdx, villageIdx, dong 가져오기 (isCurrent = YES 인 것만!)
+    const selectCurrentUserLocationResult = await locationDao.selectCurrentUserLocation(connection, userIdx); // 함수
+    connection.release();
+
+    let retrieveCoordAndCurrentLocationsResult = new Object();
+    retrieveCoordAndCurrentLocationsResult.locationByCoord = selectVillageByDongResult
+    retrieveCoordAndCurrentLocationsResult.currentUserLocation = selectCurrentUserLocationResult
+
+    return response(baseResponse.SUCCESS, retrieveCoordAndCurrentLocationsResult)
+  };

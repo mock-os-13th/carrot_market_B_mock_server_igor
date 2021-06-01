@@ -82,6 +82,13 @@ module.exports = {
     USER_LOCATION_IDX_EMPTY : { "isSuccess": false,"code": 2050,"message":"사용자 동네 idx를 입력해주세요." },
     USER_LOCATION_IDX_NAN : { "isSuccess": false,"code": 2051,"message":"사용자 동네 idx를 숫자로 입력해주세요." },
 
+    LATITUDE_EMPTY : { "isSuccess": false,"code": 2052,"message":"위도를 입력해주세요." },
+    LONGITUDE_EMPTY : { "isSuccess": false,"code": 2053,"message":"경도를 입력해주세요." },
+    LATITUDE_NOT_FLOAT : { "isSuccess": false,"code": 2054,"message":"위도를 실수(float)로 입력해주세요." },
+    LONGITUDE_NOT_FLOAT : { "isSuccess": false,"code": 2055,"message":"경도를 실수(float)로 입력해주세요." },
+    LATITUDE_OUT_OF_KOREA : { "isSuccess": false,"code": 2056,"message":"위도가 나타내는 위치가 대한민국이 아닙니다. 당근마켓은 한국 내에서만 이용할 수 있습니다." },
+    LONGITUDE_OUT_OF_KOREA : { "isSuccess": false,"code": 2057,"message":"경도가 나타내는 위치가 대한민국이 아닙니다. 당근마켓은 한국 내에서만 이용할 수 있습니다." },
+
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"이미 가입한 계정입니다. 로그인해주세요." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
@@ -120,6 +127,8 @@ module.exports = {
     USER_LOCATION_REDUNDANT : { "isSuccess": false, "code": 3020, "message": "이미 등록된 사용자 동네입니다." },
     USER_LOCATION_AT_LEAST_ONE : { "isSuccess": false, "code": 3021, "message": "1개 남은 사용자 동네는 삭제할 수 없습니다. 최소한 1개의 위치를 등록하고 있어야 합니다." },
     USER_LOCATION_ALREADY_CURRENT : { "isSuccess": false, "code": 3022, "message": "이미 현재 위치로 등록되어 있는 사용자 동네입니다." },
+
+    COORD_DONG_NOT_FOUND : { "isSuccess": false, "code": 3023, "message": "좌표가 가리키는 행정동이 데이터베이스에 없습니다." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

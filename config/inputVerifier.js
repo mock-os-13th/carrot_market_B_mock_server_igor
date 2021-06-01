@@ -7,6 +7,7 @@ const baseResponse = require("./baseResponseStatus");
 const regexEmail = require("regex-email");
 const regexNum= /^[0-9]+$/;
 const regexMobile = /(01[016789])([1-9]{1}[0-9]{2,3})([0-9]{4})$/;
+const regexFloat = /^[0-9]+(.[0-9]+)?$/;
 
 const allCategories = [
     "디지털/가전",
@@ -345,5 +346,26 @@ exports.verifyVillageSearchWord = function(searchWord) {
     } else {
         return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
     }
-    
+};
+
+// 위도 경도 검증
+exports.verifyCoord = function(latitude, longitude) {
+    // 각각 있는지 검증
+    if (!latitude) {
+        return {isValid: false, errorMessage: baseResponse.LATITUDE_EMPTY}; 
+    } else if (!longitude) {
+        return {isValid: false, errorMessage: baseResponse.LONGITUDE_EMPTY}; 
+    // 각각 실수 (float)로 입력했는지 검증
+    } else if (!regexFloat.test(latitude)) {
+        return {isValid: false, errorMessage: baseResponse.LATITUDE_NOT_FLOAT}; 
+    } else if (!regexFloat.test(longitude)) {
+        return {isValid: false, errorMessage: baseResponse.LONGITUDE_NOT_FLOAT};
+    // 각각 한국 내의 범위에 해당하는지 확인
+    } else if (latitude < 33.10000000 || latitude > 38.45000000) {
+        return {isValid: false, errorMessage: baseResponse.LATITUDE_OUT_OF_KOREA}; 
+    } else if (longitude < 125.06666667 || longitude > 131.87222222) {
+        return {isValid: false, errorMessage: baseResponse.LONGITUDE_OUT_OF_KOREA}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
 };
