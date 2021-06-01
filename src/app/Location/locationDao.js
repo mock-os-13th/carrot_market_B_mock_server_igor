@@ -195,6 +195,20 @@ async function insertUserLocation(connection, insertUserLocationParams) {
     return insertUserLocationRow;
   }
 
+// 인증된 UserLocation 등록
+async function insertAuthorizedUserLocation(connection, updateAuthorizedUserLocationParms) {
+    const insertAuthorizedUserLocationQuery = `
+          INSERT INTO UserLocation(userIdx, villageIdx, villageRangeLevel, isCurrent, isAuthorized)
+          VALUES (?, ?, 2, "YES", "YES");
+      `;
+    const insertAuthorizedUserLocationRow = await connection.query(
+        insertAuthorizedUserLocationQuery,
+        updateAuthorizedUserLocationParms
+    );
+  
+    return insertAuthorizedUserLocationRow;
+  }
+
 // userLocation 상태 "INVALID"로 바꾸기
 async function updateUserLocation(connection, userLocationIdx) {
     const updateUserLocationQuery = `
@@ -255,5 +269,6 @@ module.exports = {
     updateIsCurrentNo,
     updateIsCurrentYes,
     selectVillageByDong,
-    selectCurrentUserLocation
+    selectCurrentUserLocation,
+    insertAuthorizedUserLocation
 };

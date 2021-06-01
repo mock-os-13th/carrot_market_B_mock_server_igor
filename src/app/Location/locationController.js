@@ -181,6 +181,12 @@ exports.patchCurrentVillage = async function (req, res) {
 
 };
 
+/**
+ * API No. 31
+ * API Name : 동네 인증하기 페이지 API
+ * [GET] /app/locations/authentification
+*/
+
 exports.getCurrentLocation = async function (req, res) {
 
     const userIdx = req.verifiedToken.userIdx;
@@ -217,4 +223,53 @@ exports.getCurrentLocation = async function (req, res) {
     const retrieveCoordAndCurrentLocationsResponse = await locationProvider.retrieveCoordAndCurrentLocations(userIdx, userLocationDongByCoord);
 
     return res.send(retrieveCoordAndCurrentLocationsResponse);
+};
+
+/**
+ * API No. 32
+ * API Name : 동네 인증하기 API
+ * [POST] /app/locations/authentification
+*/
+
+exports.postAuthenticatedLocation = async function (req, res) {
+
+    const userIdx = req.verifiedToken.userIdx;
+    const latitude = req.body.latitude
+    const longitude = req.body.longitude
+    const villageIdx = req.body.villageIdx
+    
+
+    // userIdx 형식적 검증  
+   const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+   if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // 좌표 검증하기
+    const coordVerification = inputverifier.verifyCoord(latitude, longitude);
+   if (!coordVerification.isValid) return res.send(errResponse(coordVerification.errorMessage));
+
+   // villageIdx 형식적 검증
+   const villageIdxVerification = inputverifier.verifyVillageIdx(villageIdx);
+   if (!villageIdxVerification.isValid) return res.send(errResponse(villageIdxVerification.errorMessage));
+
+    // 카카오맵 API 파라미터 입력
+    const kakaoMapOptions = {
+    uri: "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json",
+    qs:{
+        x: longitude,
+        y: latitude
+    },
+    headers: {
+        'Authorization': 'KakaoAK 2780c91e78f580017296a2c3a88b251e'
+    },
+    };
+
+    // 카카오맵 API 사용
+    const kakaoMapresult = await request(kakaoMapOptions)
+    const parsedKakaoMapresult = JSON.parse(kakaoMapresult)
+    const userLocationDongByCoord = parsedKakaoMapresult.documents[1].region_3depth_name
+    
+    // 인증 받은 위치 저장
+    const createAuthorizedUserLocationResponse = await locationService.createAuthorizedUserLocation(userIdx, villageIdx, userLocationDongByCoord);
+
+    return res.send(createAuthorizedUserLocationResponse);
 };

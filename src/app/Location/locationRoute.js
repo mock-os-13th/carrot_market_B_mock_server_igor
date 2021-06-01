@@ -22,4 +22,7 @@ module.exports = function(app){
 
     // 31. 동네 인증하기 페이지 API
     app.get('/app/locations/authentification', jwtMiddleware, location.getCurrentLocation)
+
+    // 32. 동네 인증하기 API
+    app.post('/app/locations/authentification', jwtMiddleware, location.postAuthenticatedLocation)
 };

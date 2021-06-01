@@ -130,6 +130,8 @@ module.exports = {
 
     COORD_DONG_NOT_FOUND : { "isSuccess": false, "code": 3023, "message": "좌표가 가리키는 행정동이 데이터베이스에 없습니다." },
 
+    COORD_VILLAGE_IDX_NOT_MATCH : { "isSuccess": false, "code": 3024, "message": "좌표와 villageIdx가 가리키는 동네가 일치하지 않습니다." },
+
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
     SERVER_ERROR : { "isSuccess": false, "code": 4001, "message": "서버 에러"},

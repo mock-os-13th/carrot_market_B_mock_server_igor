@@ -54,6 +54,7 @@ exports.createUserLocation = async function (userIdx, villageIdx, rangeLevel) {
         return response(baseResponse.SUCCESS)
 
     } catch (err) {
+        connection.rollback()
         logger.error(`App - createUserLocation Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     } finally {
@@ -103,6 +104,7 @@ exports.deleteUserLocation = async function (userIdx, userLocationIdx) {
         return response(baseResponse.SUCCESS)
 
     } catch (err) {
+        connection.rollback()
         logger.error(`App - deleteUserLocation Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     } finally {
@@ -150,7 +152,55 @@ exports.updateCurrentVillage = async function (userIdx, userLocationIdx) {
         return response(baseResponse.SUCCESS)
 
     } catch (err) {
+        connection.rollback()
         logger.error(`App - updateCurrentVillage Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+};
+
+// 인증 받은 위치 저장
+exports.createAuthorizedUserLocation = async function (userIdx, villageIdx, userLocationDongByCoord) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        await connection.beginTransaction()
+        
+        // userIdx 의미적 검증
+        const userStatusRows = await userProvider.checkUserStatus(userIdx);
+        if (userStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+    
+        // villageIdx 의미적 검증
+        const checkVillageResult = await locationProvider.checkVillageIdx(villageIdx)
+        if (checkVillageResult.length < 1) 
+            return errResponse(baseResponse.VILLAGE_NOT_EXIST);
+
+        // userLocationDongByCoord과 villageIdx가 가리키는 dong이 동일한지 체크
+        const dongByVillageIdx = checkVillageResult[0].dong
+        if (dongByVillageIdx != userLocationDongByCoord)
+            return errResponse(baseResponse.COORD_VILLAGE_IDX_NOT_MATCH);
+
+        // userIdx로 현재 isCurrent인 userLocation 가져오기
+        const currentUserLocation = await locationDao.selectCurrentUserLocation(connection, userIdx)
+        console.log(currentUserLocation)
+            // isCurrent인 위치 있으면 그 위치 삭제
+        if (currentUserLocation.length > 0) {
+            const currentUserLocationIdx = currentUserLocation[0].userLocationIdx
+            await locationDao.updateUserLocation(connection, currentUserLocationIdx)
+        }
+
+        // 현재 위치 인증된 위치로 등록하기
+        const insertAuthorizedUserLocationParms = [userIdx, villageIdx]
+        const insertAuthorizedUserLocationResult = await locationDao.insertAuthorizedUserLocation(connection, insertAuthorizedUserLocationParms)
+        console.log(`인증된 동네로 추가된 동네 : ${insertAuthorizedUserLocationResult[0].insertId}`)
+
+        connection.commit()
+        return response(baseResponse.SUCCESS)
+
+    } catch (err) {
+        connection.rollback()
+        logger.error(`App - createAuthorizedUserLocation Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     } finally {
         connection.release();
