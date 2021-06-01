@@ -63,7 +63,9 @@ exports.createUserLocation = async function (userIdx, villageIdx, rangeLevel) {
 
 // 내 동네 DB에서 삭제하기
 exports.deleteUserLocation = async function (userIdx, userLocationIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
     try {
+        await connection.beginTransaction()
         // userIdx DB에 존재하는지 확인
         const userStatusRows = await userProvider.checkUserStatus(userIdx);
         if (userStatusRows.length < 1)
@@ -74,24 +76,36 @@ exports.deleteUserLocation = async function (userIdx, userLocationIdx) {
         if (checkUserLocationIdxResult.length < 1)
             return errResponse(baseResponse.USER_LOCATION_NOT_EXIST);
 
+        // 1개 이하면 삭제 불가 에러메시지
+        const userLocationRows = await locationProvider.checkUserLocations(userIdx);
+        if (userLocationRows.length < 2)
+            return errResponse(baseResponse.USER_LOCATION_AT_LEAST_ONE);
+
         // userLocationIdx에 해당하는 userLocation의 주인이 userIdx와 일치하는지 확인
         if (checkUserLocationIdxResult[0].userIdx != userIdx)
           return errResponse(baseResponse.USER_LOCATION_NOT_MATCH);
 
-        // 1개 이하면 삭제 불가 에러메시지
-
         // 2개면 남아있을 하나를 isCurrent = "YES" 변경하기
+        if (userLocationRows.length > 1) {
+            for (userLocation of userLocationRows) {
+                if (userLocation.idx != userLocationIdx) {
+                    await locationDao.updateIsCurrentYes(connection, userLocation.idx) 
+                }
+            }
+        }
 
         // userLocation 삭제
-        const connection = await pool.getConnection(async (conn) => conn);
         const updateUserLocationResult = await locationDao.updateUserLocation(connection, userLocationIdx);
         console.log(`삭제된 사용자 동네 : ${userLocationIdx}`)
-        connection.release();
-               
+        connection.commit()
+            // 블로그에 적기!
+                // commit 빼먹으니까 반영이 안되고 성공만 뜸...
         return response(baseResponse.SUCCESS)
 
     } catch (err) {
         logger.error(`App - deleteUserLocation Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
     }
 };

@@ -77,10 +77,10 @@ async function selectUserLocation(connection, userIdx) {
     return selectUserLocationsRow;
 };
 
-// userLocationIdx의 의미적 검증 + userLocation의 userIdx와 입력된 userIdx 비교
+// userLocationIdx의 의미적 검증 + userLocation의 userIdx와 입력된 userIdx 비교 + 현재 선택된 것인지
 async function selectUserIdxByIdx(connection, userLocationIdx) {
     const selectUserIdxQuery = `
-                    SELECT userIdx
+                    SELECT userIdx, isCurrent
                     FROM UserLocation
                     WHERE idx = ?
                         AND status = "VALID";
@@ -175,7 +175,7 @@ async function updateUserLocation(connection, userLocationIdx) {
   }
 
 // userLocation의 isCurrent "NO"로 수정하기
-async function updateIsCurrentNo(connection, existingUserLocationIdx) {
+async function updateIsCurrentNo(connection, userLocationIdx) {
     const updateIsCurrentNoQuery = `
                                   UPDATE UserLocation
                                   SET isCurrent = "NO"
@@ -183,7 +183,22 @@ async function updateIsCurrentNo(connection, existingUserLocationIdx) {
                                 `;
     const updateIsCurrentNoRow = await connection.query(
         updateIsCurrentNoQuery,
-        existingUserLocationIdx
+        userLocationIdx
+    );
+  
+    return updateIsCurrentNoRow;
+  }
+
+// userLocation의 isCurrent "YES"로 수정하기
+async function updateIsCurrentYes(connection, userLocationIdx) {
+    const updateIsCurrentNoQuery = `
+                                  UPDATE UserLocation
+                                  SET isCurrent = "YES"
+                                  WHERE idx = ?;
+                                `;
+    const updateIsCurrentNoRow = await connection.query(
+        updateIsCurrentNoQuery,
+        userLocationIdx
     );
   
     return updateIsCurrentNoRow;
@@ -201,5 +216,6 @@ module.exports = {
     selectUserIdxByIdx,
     updateUserLocation,
     selectUserLocation,
-    updateIsCurrentNo
+    updateIsCurrentNo,
+    updateIsCurrentYes
 };
