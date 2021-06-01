@@ -99,7 +99,7 @@ exports.getMobileCheck = async function (req, res) {
     if (!nicknameVerification.isValid) return res.send(errResponse(nicknameVerification.errorMessage));
 
     // pictureId, pictureUrl 중 하나만 있는 경우 에러
-    if (!(pictureId^pictureUrl))
+    if ((!pictureId&&pictureUrl)||(pictureId&&!pictureUrl)) 
         return res.send(errResponse(baseResponse.PICTURE_ID_OR_URL_EMPTY));
 
     // pictureId, pictureUrl 없으면 null 부여
