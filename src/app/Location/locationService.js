@@ -181,9 +181,18 @@ exports.createAuthorizedUserLocation = async function (userIdx, villageIdx, user
         if (dongByVillageIdx != userLocationDongByCoord)
             return errResponse(baseResponse.COORD_VILLAGE_IDX_NOT_MATCH);
 
+        // userIdx로 userLocation 가져와서 villageIdx와 겹치지는 않는지 검증
+        const checkUserLocationsResult = await locationProvider.checkUserLocations(userIdx)
+        for (userLocation of checkUserLocationsResult) {
+            // 겹치면 기존 것 삭제
+            if (userLocation.villageIdx == villageIdx) {
+                const redundantUserLocationIdx = userLocation.idx
+                await locationDao.updateUserLocation(connection, redundantUserLocationIdx) 
+            }
+        }
+
         // userIdx로 현재 isCurrent인 userLocation 가져오기
         const currentUserLocation = await locationDao.selectCurrentUserLocation(connection, userIdx)
-        console.log(currentUserLocation)
             // isCurrent인 위치 있으면 그 위치 삭제
         if (currentUserLocation.length > 0) {
             const currentUserLocationIdx = currentUserLocation[0].userLocationIdx
