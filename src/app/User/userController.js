@@ -25,10 +25,10 @@ exports.getMobileCheck = async function (req, res) {
     const mobileVerification = inputverifier.verifyMobile(mobile);
     if (!mobileVerification.isValid) return res.send(errResponse(mobileVerification.errorMessage));
 
-    // 회원 가입 여부 확인
-    const isMakableMobile = await userProvider.checkMobile(mobile)
-    if (isMakableMobile.length > 0 && isMakableMobile[0].status === "VALID")
-        return res.send(errResponse(baseResponse.REDUNDANT_MOBILE)); 
+    // // 회원 가입 여부 확인 -> 클라이언트에서 빼달라고 함
+    // const isMakableMobile = await userProvider.checkMobile(mobile)
+    // if (isMakableMobile.length > 0 && isMakableMobile[0].status === "VALID")
+    //     return res.send(errResponse(baseResponse.REDUNDANT_MOBILE)); 
 
     const interimResult = { "interimMessage" : "개발용 임시 인증코드는 1234입니다."}
 
