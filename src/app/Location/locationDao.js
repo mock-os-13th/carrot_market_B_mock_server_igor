@@ -64,7 +64,8 @@ async function selectVillageIdx(connection, villageIdx) {
 // userLocation의 갯수를 세기 위한 쿼리
 async function selectUserLocation(connection, userIdx) {
     const selectUserLocationsQuery = `
-                    SELECT idx, 
+                    SELECT idx,
+                        villageIdx
                     FROM UserLocation
                     WHERE userIdx = ?
                         AND status = "VALID";
@@ -147,8 +148,8 @@ async function selectDongByFromIdxRangeLevel(connection, userLocationVillageIdx,
 // UserLocation 등록
 async function insertUserLocation(connection, insertUserLocationParams) {
     const insertUserLocationQuery = `
-          INSERT INTO UserLocation(userIdx, villageIdx, villageRangeLevel)
-          VALUES (?, ?, ?);
+          INSERT INTO UserLocation(userIdx, villageIdx, villageRangeLevel, isCurrent)
+          VALUES (?, ?, ?, "YES");
       `;
     const insertUserLocationRow = await connection.query(
         insertUserLocationQuery,
@@ -173,6 +174,21 @@ async function updateUserLocation(connection, userLocationIdx) {
     return updateUserLocationRow;
   }
 
+// userLocation의 isCurrent "NO"로 수정하기
+async function updateIsCurrentNo(connection, existingUserLocationIdx) {
+    const updateIsCurrentNoQuery = `
+                                  UPDATE UserLocation
+                                  SET isCurrent = "NO"
+                                  WHERE idx = ?;
+                                `;
+    const updateIsCurrentNoRow = await connection.query(
+        updateIsCurrentNoQuery,
+        existingUserLocationIdx
+    );
+  
+    return updateIsCurrentNoRow;
+  }
+
 module.exports = {
     selectVillageLikeDong,
     selectVillageLikeSiGunGu,
@@ -184,5 +200,6 @@ module.exports = {
     insertUserLocation,
     selectUserIdxByIdx,
     updateUserLocation,
-    selectUserLocation
+    selectUserLocation,
+    updateIsCurrentNo
 };

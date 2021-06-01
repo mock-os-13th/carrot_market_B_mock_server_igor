@@ -117,6 +117,7 @@ module.exports = {
 
     USER_LOCATION_NOT_EXIST : { "isSuccess": false, "code": 3018, "message": "존재하지 않는 사용자 동네입니다." },
     USER_LOCATION_NOT_MATCH : { "isSuccess": false, "code": 3019, "message": "사용자 동네를 등록한 사용자가 아닙니다." },
+    USER_LOCATION_REDUNDANT : { "isSuccess": false, "code": 3020, "message": "이미 등록된 사용자 위치입니다." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

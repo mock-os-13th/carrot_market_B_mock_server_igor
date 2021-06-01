@@ -13,7 +13,9 @@ const {connect} = require("http2");
 
 // 내 동네 DB에 등록
 exports.createUserLocation = async function (userIdx, villageIdx, rangeLevel) {
+    const connection = await pool.getConnection(async (conn) => conn);
     try {
+        await connection.beginTransaction()
         // userIdx DB에 존재하는지 확인
         const userStatusRows = await userProvider.checkUserStatus(userIdx);
         if (userStatusRows.length < 1)
@@ -29,18 +31,33 @@ exports.createUserLocation = async function (userIdx, villageIdx, rangeLevel) {
         if (checkUserLocationsResult.length > 1)
             return errResponse(baseResponse.USER_LOCATION_OVER_TWO);
 
+        // 이미 등록된 villageIdx와 현재 등록하려는 villageIdx를 비교해서 같으면 이미 등록된 것이라는 에러 메시지
+        if (checkUserLocationsResult.length > 0) {
+            const existingLocationVillageIdx = checkUserLocationsResult[0].villageIdx
+            if (villageIdx == existingLocationVillageIdx) {
+                return errResponse(baseResponse.USER_LOCATION_REDUNDANT);
+            }
+        }
+
+        // 이전에 등록된 userLocation이 1개 있다면 그 row의 isCurrent를 "NO"로 바꾼다
+        if (checkUserLocationsResult.length > 0) {
+            const existingUserLocationIdx = checkUserLocationsResult[0].idx
+            await locationDao.updateIsCurrentNo(connection, existingUserLocationIdx)
+        }
+
         // userLocation 등록
         const insertUserLocationParams = [userIdx, villageIdx, rangeLevel]
-        const connection = await pool.getConnection(async (conn) => conn);
         const insertUserLocationResult = await locationDao.insertUserLocation(connection, insertUserLocationParams);
         console.log(`추가된 사용자 동네 : ${insertUserLocationResult[0].insertId}`)
-        connection.release();
+        connection.commit()
                
         return response(baseResponse.SUCCESS)
 
     } catch (err) {
         logger.error(`App - createUserLocation Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
     }
 };
 
@@ -60,6 +77,10 @@ exports.deleteUserLocation = async function (userIdx, userLocationIdx) {
         // userLocationIdx에 해당하는 userLocation의 주인이 userIdx와 일치하는지 확인
         if (checkUserLocationIdxResult[0].userIdx != userIdx)
           return errResponse(baseResponse.USER_LOCATION_NOT_MATCH);
+
+        // 1개 이하면 삭제 불가 에러메시지
+
+        // 2개면 남아있을 하나를 isCurrent = "YES" 변경하기
 
         // userLocation 삭제
         const connection = await pool.getConnection(async (conn) => conn);

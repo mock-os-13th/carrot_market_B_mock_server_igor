@@ -64,11 +64,11 @@ exports.retrieveMyVillages = async function (userIdx) {
 
      // userIdx에 등록된 userLocationIdx, villageIdx 가져오기
     let selectUserLocationResult = await locationDao.selectUserLocations(connection, userIdx);
-    console.log(selectUserLocationResult)
+    
     // userLocation에 등록된 villageIdx로 주변 동네 갯수 가져오기
         // 예외처리 -> 만약에 등록된 위치 없으면 빈 배열 리턴
     if (selectUserLocationResult.length < 1) return response(baseResponse.SUCCESS, selectUserLocationResult)
-
+        // 등록된 위치가 2개 이상이면 에러
     if (selectUserLocationResult.length > 2) return errResponse(baseResponse.USER_LOCATION_OVER_TWO);
 
     for (userLocation of selectUserLocationResult) { // userLocation 하나 마다 범위별 근처 동네 정보 담기
