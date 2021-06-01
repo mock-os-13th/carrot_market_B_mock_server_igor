@@ -62,9 +62,9 @@ async function selectVillageIdx(connection, villageIdx) {
 };
 
 // userLocation의 갯수를 세기 위한 쿼리
-async function selectUserLocations(connection, userIdx) {
+async function selectUserLocation(connection, userIdx) {
     const selectUserLocationsQuery = `
-                    SELECT idx
+                    SELECT idx, 
                     FROM UserLocation
                     WHERE userIdx = ?
                         AND status = "VALID";
@@ -96,11 +96,13 @@ async function selectUserLocations(connection, userIdx) {
     const selectUserLocationsQuery = `
                     SELECT a.idx,
                         a.villageIdx,
-                        b.dong
+                        b.dong,
+                        a.isCurrent
                     FROM UserLocation a
                     INNER JOIN Village b ON a.villageIdx = b.idx
                     WHERE a.userIdx = ?
-                    AND a.status = "VALID";
+                    AND a.status = "VALID"
+                    ORDER BY a.isCurrent DESC;
         `;
     const [selectUserLocationsRow] = await connection.query(
         selectUserLocationsQuery,
@@ -181,5 +183,6 @@ module.exports = {
     selectVillageIdx,
     insertUserLocation,
     selectUserIdxByIdx,
-    updateUserLocation
+    updateUserLocation,
+    selectUserLocation
 };

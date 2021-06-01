@@ -19,10 +19,10 @@ exports.checkVillageIdx = async function (villageIdx) {
 // userLocation 2개 갯수 확인용
 exports.checkUserLocations = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
-    const selectUserLocationsResult = await locationDao.selectUserLocations(connection, userIdx);
+    const selectUserLocationResult = await locationDao.selectUserLocation(connection, userIdx);
     connection.release();
 
-    return selectUserLocationsResult
+    return selectUserLocationResult
   };
 
 // userLocationIdx의 의미적 검증 + userLocation의 userIdx와 입력된 userIdx 비교
@@ -64,12 +64,12 @@ exports.retrieveMyVillages = async function (userIdx) {
 
      // userIdx에 등록된 userLocationIdx, villageIdx 가져오기
     let selectUserLocationResult = await locationDao.selectUserLocations(connection, userIdx);
-
+    console.log(selectUserLocationResult)
     // userLocation에 등록된 villageIdx로 주변 동네 갯수 가져오기
         // 예외처리 -> 만약에 등록된 위치 없으면 빈 배열 리턴
     if (selectUserLocationResult.length < 1) return response(baseResponse.SUCCESS, selectUserLocationResult)
 
-    if (selectUserLocationResult.length > 2) return errResponse(baseResponse.USER_NOT_EXIST);
+    if (selectUserLocationResult.length > 2) return errResponse(baseResponse.USER_LOCATION_OVER_TWO);
 
     for (userLocation of selectUserLocationResult) { // userLocation 하나 마다 범위별 근처 동네 정보 담기
         const userLocationVillageIdx = userLocation.villageIdx

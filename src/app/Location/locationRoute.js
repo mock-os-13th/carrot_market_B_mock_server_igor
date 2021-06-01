@@ -11,10 +11,12 @@ module.exports = function(app){
     // 27. 내 동네 설정 페이지 API
     app.get('/app/locations/my-villages', jwtMiddleware, location.getMyVillages)
     
-
     // 28. 내 동네 설정 API
     app.post('/app/locations/my-villages', jwtMiddleware, location.postMyVillage)
 
     // 29. 내 동네 삭제 API
     app.patch('/app/locations/my-villages', jwtMiddleware, location.patchMyVillage)
+
+    // 30. 동네 인증하기 페이지 API
+    app.get('/app/locatiions/authentification', jwtMiddleware, location.getMyVillages)
 };
