@@ -17,6 +17,9 @@ module.exports = function(app){
     // 29. 내 동네 삭제 API
     app.patch('/app/locations/my-villages', jwtMiddleware, location.patchMyVillage)
 
-    // 30. 동네 인증하기 페이지 API
+    // 30. 현재 선택한 내 동네 변경 API
+    app.patch('/app/locations/current-village', jwtMiddleware, location.patchCurrentVillage)
+
+    // 31. 동네 인증하기 페이지 API
     app.get('/app/locatiions/authentification', jwtMiddleware, location.getMyVillages)
 };

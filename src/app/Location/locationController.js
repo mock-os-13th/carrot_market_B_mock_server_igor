@@ -149,3 +149,34 @@ exports.patchMyVillage = async function (req, res) {
    return res.send(deleteUserLocationResponse);
 
 };
+
+/**
+ * API No. 30
+ * API Name : 현재 선택한 내 동네 변경 API
+ * [PATCH] /app/locations/current-village
+*/
+
+exports.patchCurrentVillage = async function (req, res) {
+
+    /*
+    * header: jwt token
+    * body: userLocationIdx
+    */
+
+    const userIdx = req.verifiedToken.userIdx;
+    const userLocationIdx = req.body.userLocationIdx;
+
+   // userIdx 형식적 검증
+   const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+   if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // userLocationIdx 형식적 검증
+    const userLocationIdxVerification = inputverifier.verifyUserLocationIdx(userLocationIdx);
+    if (!userLocationIdxVerification.isValid) return res.send(errResponse(userLocationIdxVerification.errorMessage));
+
+   // 현재 선택한 내 동네 바꾸기
+   const updateCurrentVillageResponse = await locationService.updateCurrentVillage(userIdx, userLocationIdx);
+
+   return res.send(updateCurrentVillageResponse);
+
+};

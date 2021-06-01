@@ -109,3 +109,50 @@ exports.deleteUserLocation = async function (userIdx, userLocationIdx) {
         connection.release();
     }
 };
+
+// 현재 선택한 내 동네 바꾸기
+exports.updateCurrentVillage = async function (userIdx, userLocationIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        await connection.beginTransaction()
+        // userIdx 의미적 검증
+        const userStatusRows = await userProvider.checkUserStatus(userIdx);
+        if (userStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+
+        // userLocationIdx 의미적 검증
+        const checkUserLocationIdxResult = await locationProvider.checkUserLocationIdx(userLocationIdx) 
+        if (checkUserLocationIdxResult.length < 1)
+            return errResponse(baseResponse.USER_LOCATION_NOT_EXIST);
+
+        // userLocationIdx에 해당하는 userLocation의 주인이 userIdx와 일치하는지 확인
+        if (checkUserLocationIdxResult[0].userIdx != userIdx)
+            return errResponse(baseResponse.USER_LOCATION_NOT_MATCH);
+
+        // 이미 isCurrent가 YES면 에러
+        if (checkUserLocationIdxResult[0].isCurrent === "YES")
+            return errResponse(baseResponse.USER_LOCATION_ALREADY_CURRENT);
+        
+        // 현재 동네가 2개면 기존의 1개는 isCurrent = "NO"로 표시
+        const userLocationRows = await locationProvider.checkUserLocations(userIdx);
+        if (userLocationRows.length > 1) {
+            for (userLocation of userLocationRows) {
+                if (userLocation.idx != userLocationIdx) {
+                    await locationDao.updateIsCurrentNo(connection, userLocation.idx) 
+                }
+            }
+        }
+
+        // isCurrent = "YES"로 바꾸기
+        const updateIsCurrentYesResult = await locationDao.updateIsCurrentYes(connection, userLocationIdx);
+        console.log(`현재 동네로 설정된 동네 : ${userLocationIdx}`)
+        connection.commit()
+        return response(baseResponse.SUCCESS)
+
+    } catch (err) {
+        logger.error(`App - updateCurrentVillage Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+};
