@@ -12,7 +12,7 @@ const jwt = require("jsonwebtoken");
 const {connect} = require("http2");
 
 // 내 동네 DB에 등록
-exports.createUserLocation = async function (userIdx, villageIdx, rangeLevel) {
+exports.createUserLocation = async function (userIdx, villageIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
         await connection.beginTransaction()
@@ -46,7 +46,7 @@ exports.createUserLocation = async function (userIdx, villageIdx, rangeLevel) {
         }
 
         // userLocation 등록
-        const insertUserLocationParams = [userIdx, villageIdx, rangeLevel]
+        const insertUserLocationParams = [userIdx, villageIdx]
         const insertUserLocationResult = await locationDao.insertUserLocation(connection, insertUserLocationParams);
         console.log(`추가된 사용자 동네 : ${insertUserLocationResult[0].insertId}`)
         connection.commit()
@@ -201,6 +201,42 @@ exports.createAuthorizedUserLocation = async function (userIdx, villageIdx, user
     } catch (err) {
         connection.rollback()
         logger.error(`App - createAuthorizedUserLocation Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+};
+
+// rangeLevel 변경하기
+exports.changeRangeLevel = async function (userIdx, userLocationIdx, rangeLevel) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        await connection.beginTransaction()
+        // userIdx 의미적 검증
+        const userStatusRows = await userProvider.checkUserStatus(userIdx);
+        if (userStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+
+        // userLocationIdx 의미적 검증
+        const checkUserLocationIdxResult = await locationProvider.checkUserLocationIdx(userLocationIdx) 
+        if (checkUserLocationIdxResult.length < 1)
+            return errResponse(baseResponse.USER_LOCATION_NOT_EXIST);
+
+        // userLocationIdx에 해당하는 userLocation의 주인이 userIdx와 일치하는지 확인
+        if (checkUserLocationIdxResult[0].userIdx != userIdx)
+            return errResponse(baseResponse.USER_LOCATION_NOT_MATCH);
+
+        // rangeLevel 바꾸기
+        const updateRangeLevelParams = [rangeLevel, userLocationIdx]
+        const updateRangeLevelResult = await locationDao.updateRangeLevel(connection, updateRangeLevelParams);
+        console.log(`rangeLevel 수정된 사용자 동네 : ${userLocationIdx}`)
+        connection.commit()
+               
+        return response(baseResponse.SUCCESS)
+
+    } catch (err) {
+        connection.rollback()
+        logger.error(`App - changeRangeLevel Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     } finally {
         connection.release();

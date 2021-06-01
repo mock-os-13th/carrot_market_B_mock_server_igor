@@ -25,4 +25,7 @@ module.exports = function(app){
 
     // 32. 동네 인증하기 API
     app.post('/app/locations/authentification', jwtMiddleware, location.postAuthenticatedLocation)
+
+    // 33. 동네 범위 변경 API
+    app.patch('/app/locations/range-level', jwtMiddleware, location.patchRangeLevel)
 };

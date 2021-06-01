@@ -98,7 +98,7 @@ exports.postMyVillage = async function (req, res) {
 
     const userIdx = req.verifiedToken.userIdx;
     const villageIdx = req.body.villageIdx;
-    const rangeLevel = req.body.rangeLevel
+    // const rangeLevel = req.body.rangeLevel
 
    // userIdx 형식적 검증
    const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
@@ -108,12 +108,12 @@ exports.postMyVillage = async function (req, res) {
     const villageIdxVerification = inputverifier.verifyVillageIdx(villageIdx);
     if (!villageIdxVerification.isValid) return res.send(errResponse(villageIdxVerification.errorMessage));
 
-    // rangeLevel 형식적 검증
-    const rangeLevelVerification = inputverifier.verifyRangeLevel(rangeLevel);
-    if (!rangeLevelVerification.isValid) return res.send(errResponse(rangeLevelVerification.errorMessage));
+    // // rangeLevel 형식적 검증
+    // const rangeLevelVerification = inputverifier.verifyRangeLevel(rangeLevel);
+    // if (!rangeLevelVerification.isValid) return res.send(errResponse(rangeLevelVerification.errorMessage));
 
    // 내 동네 설정하기
-   const createUserLocationResponse = await locationService.createUserLocation(userIdx, villageIdx, rangeLevel);
+   const createUserLocationResponse = await locationService.createUserLocation(userIdx, villageIdx);
 
    return res.send(createUserLocationResponse);
 
@@ -272,4 +272,40 @@ exports.postAuthenticatedLocation = async function (req, res) {
     const createAuthorizedUserLocationResponse = await locationService.createAuthorizedUserLocation(userIdx, villageIdx, userLocationDongByCoord);
 
     return res.send(createAuthorizedUserLocationResponse);
+};
+
+/**
+ * API No. 33
+ * API Name : 동네 범위 변경 API
+ * [PATCH] /app/locations/range-level
+*/
+
+exports.patchRangeLevel = async function (req, res) {
+
+    /*
+    * header: jwt token
+    * body: userLocationIdx, rangeLevel
+    */
+
+    const userIdx = req.verifiedToken.userIdx;
+    const userLocationIdx = req.body.userLocationIdx;
+    const rangeLevel = req.body.rangeLevel
+
+   // userIdx 형식적 검증
+   const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+   if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+    // userLocationIdx 형식적 검증
+    const userLocationVerification = inputverifier.verifyUserLocationIdx(userLocationIdx)
+    if (!userLocationVerification.isValid) return res.send(errResponse(userLocationVerification.errorMessage)); 
+
+    // rangeLevel 형식적 검증
+    const rangeLevelVerification = inputverifier.verifyRangeLevel(rangeLevel);
+    if (!rangeLevelVerification.isValid) return res.send(errResponse(rangeLevelVerification.errorMessage));
+
+   // 내 동네 설정하기
+   const changeRangeLevelResponse = await locationService.changeRangeLevel(userIdx, userLocationIdx, rangeLevel);
+
+   return res.send(changeRangeLevelResponse);
+
 };

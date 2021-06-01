@@ -185,7 +185,7 @@ async function selectCurrentUserLocation(connection, userIdx) {
 async function insertUserLocation(connection, insertUserLocationParams) {
     const insertUserLocationQuery = `
           INSERT INTO UserLocation(userIdx, villageIdx, villageRangeLevel, isCurrent)
-          VALUES (?, ?, ?, "YES");
+          VALUES (?, ?, 2, "YES");
       `;
     const insertUserLocationRow = await connection.query(
         insertUserLocationQuery,
@@ -254,6 +254,21 @@ async function updateIsCurrentYes(connection, userLocationIdx) {
     return updateIsCurrentNoRow;
   }
 
+// userLocation의 rangeLevel 수정하기
+async function updateRangeLevel(connection, updateRangeLevelParams) {
+    const updateIsCurrentNoQuery = `
+                                  UPDATE UserLocation
+                                  SET villageRangeLevel = ?
+                                  WHERE idx = ?;
+                                `;
+    const updateRangeLevelRow = await connection.query(
+        updateIsCurrentNoQuery,
+        updateRangeLevelParams
+    );
+  
+    return updateRangeLevelRow;
+  }
+
 module.exports = {
     selectVillageLikeDong,
     selectVillageLikeSiGunGu,
@@ -270,5 +285,6 @@ module.exports = {
     updateIsCurrentYes,
     selectVillageByDong,
     selectCurrentUserLocation,
-    insertAuthorizedUserLocation
+    insertAuthorizedUserLocation,
+    updateRangeLevel
 };
