@@ -102,10 +102,13 @@ async function selectUserLocation(connection, userIdx) {
           a.villageIdx,
           b.dong,
           a.villageRangeLevel,
-          a.isAuthorized
+          a.isAuthorized,
+          a.isCurrent
         FROM UserLocation a
         INNER JOIN Village b ON a.villageIdx = b.idx
-        WHERE a.userIdx = ?;
+        WHERE a.userIdx = ?
+          AND a.status = "VALID"
+        ORDER BY a.isCurrent DESC;
                 `;
   const [userLocationRows] = await connection.query(selectUserLocationQuery, userIdx);
   return userLocationRows;
