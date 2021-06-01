@@ -98,6 +98,7 @@ async function selectUserLocations(connection, userIdx) {
                     SELECT a.idx,
                         a.villageIdx,
                         b.dong,
+                        a.villageRangeLevel AS rangeLevel,
                         a.isCurrent
                     FROM UserLocation a
                     INNER JOIN Village b ON a.villageIdx = b.idx
