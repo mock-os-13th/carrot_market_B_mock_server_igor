@@ -119,19 +119,25 @@ exports.retrieveCoordAndCurrentLocations = async function (userIdx, userLocation
 
 // 좌표를 통해 얻은 dong으로 정확히 그 동네랑 rangeLevel 1 이내인 동네 검색
 exports.retrieveLocationSearchListByGps = async function (userLocationDongByCoord) {
-    // 리스트 가져오기
-    const connection = await pool.getConnection(async (conn) => conn);
-    const selectVillageLikeDongResult = await locationDao.selectVillageLikeDong(connection, userLocationDongByCoord);
+    try {
+        // 리스트 가져오기
+        const connection = await pool.getConnection(async (conn) => conn);
+        const selectVillageLikeDongResult = await locationDao.selectVillageLikeDong(connection, userLocationDongByCoord);
 
-    const villageIdxFromCoord = selectVillageLikeDongResult[0].idx
-    const selectVillageWithinRangeOneResult = await locationDao.selectVillageWithinRangeOne(connection, villageIdxFromCoord);
+        const villageIdxFromCoord = selectVillageLikeDongResult[0].idx
+        const selectVillageWithinRangeOneResult = await locationDao.selectVillageWithinRangeOne(connection, villageIdxFromCoord);
 
-    connection.release();
+        connection.release();
 
-    const searchResult = [
-        ...selectVillageLikeDongResult,
-        ...selectVillageWithinRangeOneResult
-    ]
+        const searchResult = [
+            ...selectVillageLikeDongResult,
+            ...selectVillageWithinRangeOneResult
+        ]
 
-    return response(baseResponse.SUCCESS, searchResult)
+        return response(baseResponse.SUCCESS, searchResult)
+    } catch (err) {
+        logger.error(`App - retrieveLocationSearchListByGps Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+    
   };

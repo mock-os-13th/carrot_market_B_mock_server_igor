@@ -10,4 +10,8 @@ module.exports = function(app){
 
     // 9. 물품 목록 조회 API (홈화면)
     app.get('/app/items', item.getItemList)
+
+    // 35. 상품 검색 API
+    app.get('/app/item-search', item.getItemList)
+
 };

@@ -140,3 +140,37 @@ const {emit} = require("nodemon");
 
     return res.send(retrieveItemListResponse);
 };
+
+/**
+ * API No. 35
+ * API Name : 상품 검색 API
+ * [GET] /app/item-search
+ */
+ exports.getItem = async function (req, res) {
+
+     /**
+     * Query String : searchWord, categories, orderBy, minPrice, maxPrice, villageIdx, rangeLevel, lastItemIdx, numOfPages
+     */
+
+    const searchWord = req.query.searchWord;
+    const categories = req.query.categories;
+    const orderBy = req.query.orderBy;
+    const minPrice = req.query.maxPrice;
+    const maxPrice = req.query.maxPrice;
+    const villageIdx = req.query.villageIdx;
+    const rangeLevel = req.query.rangeLevel;
+    const lastItemIdx = req.query.lastItemIdx;
+    const numOfPages = req.query.numOfPages;
+
+    
+
+    // 검색결과 반환
+    const createClickResponse = await itemService.createClick(
+        userIdx, 
+        itemIdx
+    );
+
+    return res.send(createClickResponse);
+
+    
+};
