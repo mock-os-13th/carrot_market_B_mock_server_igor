@@ -31,4 +31,7 @@ module.exports = function(app){
 
     // 34. 현재 위치로 동네 검색 API
     app.get('/app/locations/search-gps', location.searchVillageByGps);
+
+    // 36. 현재 선택한 동네를 새로운 동네로 바꾸기 API
+    app.post('/app/locations/current-village', jwtMiddleware, location.postCurrentVillage)
 };

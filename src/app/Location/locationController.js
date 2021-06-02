@@ -346,3 +346,39 @@ exports.searchVillageByGps = async function (req, res) {
 
     return res.send(retrieveLocationSearchListResponse);
 };
+
+/**
+ * API No. 36
+ * API Name : 현재 선택한 동네를 새로운 동네로 바꾸기 API
+ * [POST] /app/locations/current-village
+*/
+
+exports.postCurrentVillage = async function (req, res) {
+
+    /*
+    * header: jwt token
+    * body: userLocationIdx, villageIdx
+    */
+
+    const userIdx = req.verifiedToken.userIdx;
+    const userLocationIdx = req.body.userLocationIdx
+    const villageIdx = req.body.villageIdx
+
+   // userIdx 형식적 검증
+   const userIdxVerification = inputverifier.verifyUserIdx(userIdx);
+   if (!userIdxVerification.isValid) return res.send(errResponse(userIdxVerification.errorMessage));
+
+   // userLocationIdx 형식적 검증
+   const userLocationVerification = inputverifier.verifyUserLocationIdx(userLocationIdx)
+   if (!userLocationVerification.isValid) return res.send(errResponse(userLocationVerification.errorMessage)); 
+
+   // villageIdx 형식적 검증
+   const villageIdxVerification = inputverifier.verifyVillageIdx(villageIdx);
+   if (!villageIdxVerification.isValid) return res.send(errResponse(villageIdxVerification.errorMessage));
+
+   // 내 동네 가져오기
+   const changeCurrentVillageResponse = await locationService.changeCurrentVillage(userIdx, userLocationIdx, villageIdx);
+
+   return res.send(changeCurrentVillageResponse);
+
+};

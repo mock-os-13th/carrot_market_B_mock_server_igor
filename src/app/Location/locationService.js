@@ -251,3 +251,47 @@ exports.changeRangeLevel = async function (userIdx, userLocationIdx, rangeLevel)
         connection.release();
     }
 };
+
+// 현재 동네를 지우고 다른 동네로 대체
+exports.changeCurrentVillage = async function (userIdx, userLocationIdx, villageIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        await connection.beginTransaction()
+        // userIdx 의미적 검증
+        const userStatusRows = await userProvider.checkUserStatus(userIdx);
+        if (userStatusRows.length < 1)
+            return errResponse(baseResponse.USER_NOT_EXIST);
+
+        // villageIdx 의미적 검증
+        const checkVillageResult = await locationProvider.checkVillageIdx(villageIdx)
+        if (checkVillageResult.length < 1) 
+            return errResponse(baseResponse.VILLAGE_NOT_EXIST);
+
+        // userLocationIdx 의미적 검증
+        const checkUserLocationIdxResult = await locationProvider.checkUserLocationIdx(userLocationIdx) 
+        if (checkUserLocationIdxResult.length < 1)
+            return errResponse(baseResponse.USER_LOCATION_NOT_EXIST);
+
+        // userLocationIdx에 해당하는 userLocation의 주인이 userIdx와 일치하는지 확인
+        if (checkUserLocationIdxResult[0].userIdx != userIdx)
+            return errResponse(baseResponse.USER_LOCATION_NOT_MATCH);
+
+        // 기존에 등록된 userLocation 삭제
+        await locationDao.updateUserLocation(connection, userLocationIdx)
+
+        // 새로운 userLocation 등록
+        const insertUserLocationParams = [userIdx, villageIdx]
+        const insertUserLocationResult = await locationDao.insertUserLocation(connection, insertUserLocationParams);
+        console.log(`변경된 사용자 동네 : ${insertUserLocationResult[0].insertId}`)
+        connection.commit()
+               
+        return response(baseResponse.SUCCESS)
+
+    } catch (err) {
+        connection.rollback()
+        logger.error(`App - changeCurrentVillage Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+};
