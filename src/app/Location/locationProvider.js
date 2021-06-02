@@ -122,10 +122,10 @@ exports.retrieveLocationSearchListByGps = async function (userLocationDongByCoor
     // 리스트 가져오기
     const connection = await pool.getConnection(async (conn) => conn);
     const selectVillageLikeDongResult = await locationDao.selectVillageLikeDong(connection, userLocationDongByCoord);
-    const villageIdxFromCoord = selectVillageLikeDongResult[0].idx
-    const selectVillageWithinRangeOneResult = await locationDao.selectVillageWithinRangeOne(connection, villageIdxFromCoord);        
 
-    
+    const villageIdxFromCoord = selectVillageLikeDongResult[0].idx
+    const selectVillageWithinRangeOneResult = await locationDao.selectVillageWithinRangeOne(connection, villageIdxFromCoord);
+
     connection.release();
 
     const searchResult = [

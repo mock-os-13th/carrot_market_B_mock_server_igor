@@ -64,6 +64,7 @@ async function selectItemdetails(connection, itemIdx) {
         SELECT a.idx AS idx,
             a.userIdx AS sellerIdx,
             c.nickname AS sellerNickname,
+            c.profilePictureUrl AS sellerPictureUrl,
             b.dong AS dong,
             c.mannerTemperature AS sellerMannerTemperature,
             a.title AS title,

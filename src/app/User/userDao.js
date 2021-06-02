@@ -52,6 +52,7 @@ async function selectUserDetailIdx(connection, userIdx) {
   const selectUserDetailIdxQuery = `
               SELECT a.idx,
                 a.nickName,
+                a.profilePictureUrl,
                 a.mannerTemperature,
                 IFNULL(b.numOfItems, 0) AS numOfItems,
                 DATE_FORMAT(a.createdAt, '%Y년 %c월 %e일') AS registerDate

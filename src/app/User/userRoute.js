@@ -32,6 +32,6 @@ module.exports = function(app){
     // 20. 구매 내역 조회
     app.get('/app/users/purchased-items', jwtMiddleware, user.getPurchasedItemList)
 
-    // 21. 프로필 조회 API (임시)
+    // 22. 프로필 조회 API (임시)
     app.get('/app/users/profiles/:targetIdx', jwtMiddleware, user.getProfile)
 };
