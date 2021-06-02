@@ -54,7 +54,7 @@ async function selectVillageWithinRangeOne(connection, villageIdxFromCoord) {
                         CONCAT(a.siDo, " ", a.siGunGu, " ", a.dong) AS village
                     FROM Village a
                     INNER JOIN (SELECT * FROM VillageRelation
-                            WHERE fromVillageIdx = 116
+                            WHERE fromVillageIdx = ?
                                 AND rangeLevel = 1
                                 AND toVillageIdx <> 116) b
                         ON a.idx = b.toVillageIdx
