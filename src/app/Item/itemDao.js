@@ -191,8 +191,8 @@ async function selectItemsForList(connection, selectItemsForListParams) {
               FROM Item a
               INNER JOIN Village b ON a.villageIdx = b.idx
               LEFT JOIN (SELECT itemIdx, pictureUrl FROM ItemPictures GROUP BY itemIdx) c ON a.idx = c.itemIdx
-              LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOfLikes FROM LikeItem GROUP BY itemIdx) d ON a.idx = d.itemIdx
-              LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOfChats FROM ChatRoom GROUP BY itemIdx) e ON a.idx = e.itemIdx
+              LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOfLikes FROM LikeItem WHERE status = "VALID" GROUP BY itemIdx) d ON a.idx = d.itemIdx
+              LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOfChats FROM ChatRoom WHERE status = "VALID" GROUP BY itemIdx) e ON a.idx = e.itemIdx
               WHERE category IN (${selectItemsForListParams[0]})
               AND CONCAT(LPAD(UNIX_TIMESTAMP(onTopAt), 15, 0), LPAD(a.idx, 15, 0)) < ${selectItemsForListParams[1]}
               ORDER BY a.onTopAt DESC, a.idx DESC

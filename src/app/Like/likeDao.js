@@ -48,8 +48,8 @@ async function selectItemLikesUser(connection, userIdx) {
                 FROM LikeItem a
                 INNER JOIN Item b ON a.itemIdx = b.idx
                 INNER JOIN Village c ON b.villageIdx = c.idx
-                LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOflikes FROM LikeItem GROUP BY itemIdx) d ON a.itemIdx = d.itemIdx
-                LEFT JOIN (SELECT itemIdx, pictureUrl FROM ItemPictures GROUP BY itemIdx) e ON a.itemIdx = e.itemIdx
+                LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOflikes FROM LikeItem WHERE status = "VALID" GROUP BY itemIdx) d ON a.itemIdx = d.itemIdx
+                LEFT JOIN (SELECT itemIdx, pictureUrl FROM ItemPictures WHERE status = "VALID" GROUP BY itemIdx) e ON a.itemIdx = e.itemIdx
                 LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOfChats FROM ChatRoom GROUP BY itemIdx) f ON a.itemIdx = f.itemIdx
                 WHERE a.userIdx = ?
                     AND a.status = "VALID"
@@ -58,7 +58,7 @@ async function selectItemLikesUser(connection, userIdx) {
     return itemLikesRow;
 };
 
-// userIdx로 관심 항목 조회
+// userIdx로 모아보기 항목 조회
 async function selectSellerLikeItemsUser(connection, userIdx) {
     const selectSellerLikeItemsUserQuery = `
                                 SELECT a.idx,
