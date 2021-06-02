@@ -126,10 +126,7 @@ exports.retrieveLocationSearchListByGps = async function (userLocationDongByCoor
         
 
         const villageIdxFromCoord = selectVillageLikeDongResult[0].idx
-        console.log(villageIdxFromCoord)
         const selectVillageWithinRangeOneResult = await locationDao.selectVillageWithinRangeOne(connection, villageIdxFromCoord);
-        console.log(selectVillageWithinRangeOneResult)
-
         connection.release();
 
         const searchResult = [
