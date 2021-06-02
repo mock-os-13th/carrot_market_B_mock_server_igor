@@ -46,6 +46,26 @@ async function selectVillageLikeSido(connection, searchWord) {
     return selectVillageLikeSidoRow;
 };
 
+// idx으로 rangeLevel 1인 검색결과 가져오기 (좌표로 검색용)
+async function selectVillageWithinRangeOne(connection, villageIdxFromCoord) {
+    const selectVillageWithinRangeOneQuery = `
+                    SELECT
+                        a.idx,
+                        CONCAT(a.siDo, " ", a.siGunGu, " ", a.dong) AS village
+                    FROM Village a
+                    INNER JOIN (SELECT * FROM VillageRelation
+                            WHERE fromVillageIdx = 116
+                                AND rangeLevel = 1
+                                AND toVillageIdx <> 116) b
+                        ON a.idx = b.toVillageIdx
+        `;
+    const [selectVillageWithinRangeOneRow] = await connection.query(
+        selectVillageWithinRangeOneQuery,
+        villageIdxFromCoord
+    );
+    return selectVillageWithinRangeOneRow;
+};
+
 // villageIdx로 실제 존재하는 village인지 확인
 async function selectVillageIdx(connection, villageIdx) {
     const selectVillageIdxQuery = `
@@ -286,5 +306,6 @@ module.exports = {
     selectVillageByDong,
     selectCurrentUserLocation,
     insertAuthorizedUserLocation,
-    updateRangeLevel
+    updateRangeLevel,
+    selectVillageWithinRangeOne
 };

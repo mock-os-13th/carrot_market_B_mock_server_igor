@@ -343,7 +343,7 @@ exports.searchVillageByGps = async function (req, res) {
     const userLocationDongByCoord = parsedKakaoMapresult.documents[1].region_3depth_name
     
     // 동이름으로 검색
-    const retrieveLocationSearchListResponse = await locationProvider.retrieveLocationSearchList(userLocationDongByCoord);
+    const retrieveLocationSearchListResponse = await locationProvider.retrieveLocationSearchListByGps(userLocationDongByCoord);
 
     return res.send(retrieveLocationSearchListResponse);
 };
