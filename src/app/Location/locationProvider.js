@@ -101,10 +101,15 @@ exports.retrieveCoordAndCurrentLocations = async function (userIdx, userLocation
     const connection = await pool.getConnection(async (conn) => conn);
 
     // 좌표에서 나온 dong으로 Village 정보 가져오기
-    const selectVillageByDongResult = await locationDao.selectVillageByDong(connection, userLocationDongByCoord);
+    let selectVillageByDongResult = await locationDao.selectVillageByDong(connection, userLocationDongByCoord);
         // 만약에 dong으로 검색했는데 없으면 에러
     if (selectVillageByDongResult.length < 1)
         return errResponse(baseResponse.COORD_DONG_NOT_FOUND);
+
+    // 좌표로 나온 dong의 rangeLevel = 1인 동들 가져오기
+    const villageIdxFromCoord = selectVillageByDongResult[0].villageIdx
+    const selectVillageRangeLevelOne = await locationDao.selectVillageRangeLevel(connection, villageIdxFromCoord);
+    selectVillageByDongResult[0].nearDongs = selectVillageRangeLevelOne
 
     // userIdx로 userLocationIdx, villageIdx, dong 가져오기 (isCurrent = YES 인 것만!)
     const selectCurrentUserLocationResult = await locationDao.selectCurrentUserLocation(connection, userIdx); // 함수

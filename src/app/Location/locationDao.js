@@ -66,6 +66,25 @@ async function selectVillageWithinRangeOne(connection, villageIdxFromCoord) {
     return selectVillageWithinRangeOneRow;
 };
 
+// 좌표로 나온 dong의 rangeLevel = 1인 동들 가져오기 (인증 페이지 용)
+async function selectVillageRangeLevel(connection, villageIdxFromCoord) {
+    const selectVillageRangeLevelQuery = `
+                    SELECT
+                        a.idx,
+                        a.dong
+                    FROM Village a
+                    INNER JOIN VillageRelation b ON a.idx = b.toVillageIdx
+                    WHERE b.fromVillageIdx = ?
+                        AND b.rangeLevel = 1
+        `;
+    const [selectVillageRangeLevelRow] = await connection.query(
+        selectVillageRangeLevelQuery,
+        villageIdxFromCoord
+    );
+    return selectVillageRangeLevelRow;
+};
+
+
 // villageIdx로 실제 존재하는 village인지 확인
 async function selectVillageIdx(connection, villageIdx) {
     const selectVillageIdxQuery = `
@@ -307,5 +326,6 @@ module.exports = {
     selectCurrentUserLocation,
     insertAuthorizedUserLocation,
     updateRangeLevel,
-    selectVillageWithinRangeOne
+    selectVillageWithinRangeOne,
+    selectVillageRangeLevel
 };
