@@ -67,7 +67,6 @@ const {emit} = require("nodemon");
      * Path Variable: itemIdx
      * header: jwt token
      */
-    console.log(verifiedToken)
     const itemIdx = req.params.itemIdx;
     const userIdx = req.verifiedToken.userIdx;
 

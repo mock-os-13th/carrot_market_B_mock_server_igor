@@ -158,7 +158,7 @@ async function selectDongByFromIdxRangeLevel(connection, userLocationVillageIdx,
                     FROM VillageRelation a
                     INNER JOIN Village b ON a.toVillageIdx = b.idx
                     WHERE a.fromVillageIdx = ${userLocationVillageIdx}
-                        AND rangeLevel = ${rangeLevel};
+                        AND rangeLevel < ${rangeLevel + 1};
         `;
     const [selectDongByFromIdxRangeLevelRow] = await connection.query(
         selectDongByFromIdxRangeLevelQuery
