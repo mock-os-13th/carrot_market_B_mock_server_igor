@@ -5,6 +5,7 @@ const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
 const itemDao = require("./itemDao");
 const userProvider = require('../User/userProvider')
+const locationProvider = require('../Location/locationProvider')
 const itemService = require("./itemService");
 const util = require('../../../config/util')
 require("dotenv").config();
@@ -145,3 +146,26 @@ exports.retrieveItemList = async function (villageIdx, rangeLevel, categories, l
 // } else {
 //   const cursor = "999999999999999999999999999999"
 // }
+
+// 상품 이름으로 검색 + 각종 검색 필터
+exports.getFilteredItemList = async function (searchWord, categories, orderBy, minPrice, maxPrice, villageIdx, rangeLevel, lastItemIdx, numOfPages, isNoSoldout) {
+  try {
+    // villageIdx 의미적 검증
+    const villageRow = await itemProvider.checkVillageIdx(villageIdx);
+    if (villageRow.length < 1)
+        return errResponse(baseResponse.VILLAGE_NOT_EXIST);
+
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectOnTopAtResult = await itemDao.selectOnTopAt(connection, lastItemIdx);
+    const lastItemUnixTimestamp = selectOnTopAtResult[0]
+    const cursor = util.makeCursor(lastItemUnixTimestamp, lastItemIdx)
+
+
+
+
+    return response(baseResponse.SUCCESS, )
+  } catch (err) {
+    logger.error(`App - getFilteredItemList Service error\n: ${err.message}`);
+    return errResponse(baseResponse.DB_ERROR);
+  }
+};

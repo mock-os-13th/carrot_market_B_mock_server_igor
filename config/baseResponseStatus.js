@@ -76,8 +76,8 @@ module.exports = {
     USERIDX_EMPTY : { "isSuccess": false,"code": 2046,"message":"userIdx를 입력해주세요." },
     USERIDX_NaN : { "isSuccess": false,"code": 2047,"message":"userIdx를 숫자로 입력해주세요." },
 
-    SEARCH_WORD_EMPTY : { "isSuccess": false,"code": 2048,"message":"검색어를 입력해주세요." },
-    SEARCH_WORD_LENGTH : { "isSuccess": false,"code": 2049,"message":"검색어를 10자 이내로 입력해주세요." },
+    VILLAGE_SEARCH_WORD_EMPTY : { "isSuccess": false,"code": 2048,"message":"검색어를 입력해주세요." },
+    VILLAGE_SEARCH_WORD_LENGTH : { "isSuccess": false,"code": 2049,"message":"검색어를 10자 이내로 입력해주세요." },
 
     USER_LOCATION_IDX_EMPTY : { "isSuccess": false,"code": 2050,"message":"사용자 동네 idx를 입력해주세요." },
     USER_LOCATION_IDX_NAN : { "isSuccess": false,"code": 2051,"message":"사용자 동네 idx를 숫자로 입력해주세요." },
@@ -90,6 +90,18 @@ module.exports = {
     LONGITUDE_OUT_OF_KOREA : { "isSuccess": false,"code": 2057,"message":"경도가 나타내는 위치가 대한민국이 아닙니다. 당근마켓은 한국 내에서만 이용할 수 있습니다." },
 
     PICTURE_ID_OR_URL_EMPTY : { "isSuccess": false,"code": 2058,"message":"프로필 사진 ID 혹은 URL 중 한가지 데이터만 전송되었습니다." },
+
+    ITEM_SEARCH_WORD_EMPTY : { "isSuccess": false,"code": 2059,"message":"검색어를 입력해주세요." },
+    ITEM_SEARCH_WORD_LENGTH : { "isSuccess": false,"code": 2060,"message":"검색어를 30자 이내로 입력해주세요." },
+
+    ORDER_BY_ERROR_TYPE : { "isSuccess": false,"code": 2061,"message":"정렬 기준은 accuracy 혹은 lastest로 입력해주세요." },
+
+    MIN_PRICE_NAN : { "isSuccess": false,"code": 2062,"message":"최소 금액을 숫자로 입력해주세요." },
+    MAX_PRICE_NAN : { "isSuccess": false,"code": 2063,"message":"최대 금액을 숫자로 입력해주세요." },
+    MIN_PRICE_BIGGER_THAN_MAX_PRICE : { "isSuccess": false,"code": 2064,"message":"최소 금액이 최대 금액보다 크거나 같습니다." },
+
+    IS_NO_SOLD_OUT_EMPTY : { "isSuccess": false,"code": 2065,"message":"거래 완료 안보기 여부를 입력해주세요." },
+    IS_NO_SOLD_OUT_ERROR_TYPE : { "isSuccess": false,"code": 2066,"message":"거래 완료 안보기는 YES 혹은 NO로만 입력해주세요." },
 
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"이미 가입한 계정입니다. 로그인해주세요." },

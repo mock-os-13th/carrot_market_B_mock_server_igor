@@ -67,6 +67,7 @@ const {emit} = require("nodemon");
      * Path Variable: itemIdx
      * header: jwt token
      */
+    console.log(verifiedToken)
     const itemIdx = req.params.itemIdx;
     const userIdx = req.verifiedToken.userIdx;
 
@@ -146,28 +147,128 @@ const {emit} = require("nodemon");
  * API Name : 상품 검색 API
  * [GET] /app/item-search
  */
- exports.getItem = async function (req, res) {
+ exports.getFilteredItemList = async function (req, res) {
 
      /**
      * Query String : searchWord, categories, orderBy, minPrice, maxPrice, villageIdx, rangeLevel, lastItemIdx, numOfPages
      */
 
     const searchWord = req.query.searchWord;
-    const categories = req.query.categories;
-    const orderBy = req.query.orderBy;
-    const minPrice = req.query.maxPrice;
-    const maxPrice = req.query.maxPrice;
+    const categoriesString = req.query.categories;
+    let orderBy = req.query.orderBy;
+    let minPrice = req.query.minPrice;
+    let maxPrice = req.query.maxPrice;
     const villageIdx = req.query.villageIdx;
     const rangeLevel = req.query.rangeLevel;
-    const lastItemIdx = req.query.lastItemIdx;
+    let lastItemIdx = req.query.lastItemIdx;
     const numOfPages = req.query.numOfPages;
-
+    const isNoSoldout = req.query.isNoSoldout;
     
 
+    // searchWord 검증
+    const searchWordVerification = inputverifier.verifyItemSearchWord(searchWord);
+    if (!searchWordVerification.isValid) return res.send(errResponse(searchWordVerification.errorMessage));
+
+    // categories 검증 및 없을 경우 default값으로 설정
+    if (!categoriesString) {
+        var categories = [
+            "디지털/가전",
+            "가구/인테리어",
+            "유아동/유아도서",
+            "생활/가공식품",
+            "스포츠/레저",
+            "여성잡화",
+            "여성의류",
+            "남성패션/잡화",
+            "게임/취미",
+            "뷰티/미용",
+            "반려동물용품",
+            "도서/티켓/음반",
+            "식물",
+            "기타 중고물품",
+            "삽니다"
+        ]
+    } else {
+        var categories = categoriesString.split('&')
+        const categoriesVerification = inputverifier.verifyCategories(categories);
+        if (!categoriesVerification.isValid) return res.send(errResponse(categoriesVerification.errorMessage));
+    }
+
+    // orderBy 검증 및 없을 경우 default값으로 설정
+    if (!orderBy) {
+        orderBy = "accuracy"
+    } else {
+        const orderByVerification = inputverifier.verifyOrderBy(orderBy);
+        if (!orderByVerification.isValid) return res.send(errResponse(orderByVerification.errorMessage));
+    }
+    
+    // minPrice 검증 및 없을 경우 default값으로 설정
+    if (!minPrice) {
+        minPrice = 0
+    } else {
+        const minPriceVerification = inputverifier.verifyMinPrice(minPrice);
+        if (!minPriceVerification.isValid) return res.send(errResponse(minPriceVerification.errorMessage));
+    }
+
+    // maxPrice 검증 및 없을 경우 default값으로 설정
+    if (!maxPrice) {
+        maxPrice = 9999999999999
+    } else {
+        const maxPriceVerification = inputverifier.verifyMaxPrice(maxPrice);
+        if (!maxPriceVerification.isValid) return res.send(errResponse(maxPriceVerification.errorMessage));
+    }
+
+    // minPrice < maxPrice 인지 검증
+    if (minPrice >= maxPrice) return res.send(errResponse(baseResponse.MIN_PRICE_BIGGER_THAN_MAX_PRICE));
+
+    // villageIdx 검증
+    const villageIdxVerification = inputverifier.verifyVillageIdx(villageIdx);
+    if (!villageIdxVerification.isValid) return res.send(errResponse(villageIdxVerification.errorMessage));
+
+    // rangeLevel 검증
+    const rangeLevelVerification = inputverifier.verifyRangeLevel(rangeLevel);
+    if (!rangeLevelVerification.isValid) return res.send(errResponse(rangeLevelVerification.errorMessage));
+
+    // lastItemIdx 검증 및 없을 경우 default값으로 설정
+    if (!lastItemIdx) {
+        lastItemIdx = 0
+    } else {
+        const lastItemIdxVerification = inputverifier.verifyItemIdx(lastItemIdx);
+        if (!lastItemIdxVerification.isValid) return res.send(errResponse(lastItemIdxVerification.errorMessage));
+    }
+
+    // numOfPages 검증
+    const numOfPagesVerification = inputverifier.verifyItemIdx(numOfPages);
+    if (!numOfPagesVerification.isValid) return res.send(errResponse(numOfPagesVerification.errorMessage));
+
+    // isNoSoldout 검증
+    const isNoSoldoutVerification = inputverifier.verifyIsNoSoldout(isNoSoldout);
+    if (!isNoSoldoutVerification.isValid) return res.send(errResponse(isNoSoldoutVerification.errorMessage));
+
+    // return res.send([searchWord, 
+    //     categories, 
+    //     orderBy, 
+    //     minPrice, 
+    //     maxPrice, 
+    //     villageIdx, 
+    //     rangeLevel, 
+    //     lastItemIdx, 
+    //     numOfPages,
+    //     isNoSoldout]);
+    //     // 이렇게 send로 찍어가면서 중간에 input 검증하는 것 괜찮은 것 같음
+
     // 검색결과 반환
-    const createClickResponse = await itemService.createClick(
-        userIdx, 
-        itemIdx
+    const createClickResponse = await itemService.getFilteredItemList(
+        searchWord, 
+        categories, 
+        orderBy, 
+        minPrice, 
+        maxPrice, 
+        villageIdx, 
+        rangeLevel, 
+        lastItemIdx, 
+        numOfPages,
+        isNoSoldout
     );
 
     return res.send(createClickResponse);

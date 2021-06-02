@@ -170,10 +170,10 @@ exports.verifyRangeLevel = function(rangeLevel) {
 exports.verifyCategories = function(categories) {
     try {
         if (categories.length < 0)
-            return {isValid: false, errorMessage: baseResponse.CATEGORIES_EMPTY}; // 에러 메시지
+            return {isValid: false, errorMessage: baseResponse.CATEGORIES_EMPTY}; 
         for (category of categories) {
             if (!allCategories.includes(category)) {
-                return {isValid: false, errorMessage: baseResponse.CATEGORIES_WITH_INVALID_CATEGORY}; // 에러 메시지
+                return {isValid: false, errorMessage: baseResponse.CATEGORIES_WITH_INVALID_CATEGORY};
             }
         }
         return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
@@ -188,10 +188,10 @@ exports.verifyCategories = function(categories) {
 exports.verifynumOfPages = function(numOfPages) {
     // 있는지 검증
     if (!numOfPages) {
-        return {isValid: false, errorMessage: baseResponse.RANGE_LEVEL_EMPTY}; // 에러 메시지
+        return {isValid: false, errorMessage: baseResponse.RANGE_LEVEL_EMPTY}; 
     // 0 이상의 수인지 검증
     } else if (numOfPages > 1) {
-        return {isValid: false, errorMessage: baseResponse.RANGE_LEVEL_ERROR_TYPE}; // 에러 메시지
+        return {isValid: false, errorMessage: baseResponse.RANGE_LEVEL_ERROR_TYPE};
     }
 };
 
@@ -339,10 +339,23 @@ exports.verifyMessage = function(message) {
 exports.verifyVillageSearchWord = function(searchWord) {
     // 있는지 검증
     if (!searchWord) {
-        return {isValid: false, errorMessage: baseResponse.SEARCH_WORD_EMPTY}; 
+        return {isValid: false, errorMessage: baseResponse.VILLAGE_SEARCH_WORD_EMPTY}; 
     // 길이가 10 이내
     } else if (searchWord.length > 10) {
-        return {isValid: false, errorMessage: baseResponse.SEARCH_WORD_LENGTH}; 
+        return {isValid: false, errorMessage: baseResponse.VILLAGE_SEARCH_WORD_LENGTH}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// 상품검색 검색어 검증
+exports.verifyItemSearchWord = function(searchWord) {
+    // 있는지 검증
+    if (!searchWord) {
+        return {isValid: false, errorMessage: baseResponse.ITEM_SEARCH_WORD_EMPTY}; 
+    // 길이가 30 이내
+    } else if (searchWord.length > 30) {
+        return {isValid: false, errorMessage: baseResponse.ITEM_SEARCH_WORD_LENGTH}; 
     } else {
         return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
     }
@@ -365,6 +378,47 @@ exports.verifyCoord = function(latitude, longitude) {
         return {isValid: false, errorMessage: baseResponse.LATITUDE_OUT_OF_KOREA}; 
     } else if (longitude < 125.06666667 || longitude > 131.87222222) {
         return {isValid: false, errorMessage: baseResponse.LONGITUDE_OUT_OF_KOREA}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// 상품 검색 정렬 검색
+exports.verifyOrderBy = function(orderBy) {
+    // 정확한 포맷인지
+    if (!(orderBy === "accuracy" || orderBy === "latest")) {
+        return {isValid: false, errorMessage: baseResponse.ORDER_BY_ERROR_TYPE}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// 상품 검색 최소금액 검증
+exports.verifyMinPrice = function(minPrice) {
+    // 숫자 여부
+    if (!regexNum.test(minPrice)) {
+        return {isValid: false, errorMessage: baseResponse.MIN_PRICE_NAN};
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// 상품 검색 최대금액 검증
+exports.verifyMaxPrice = function(maxPrice) {
+    // 숫자 여부
+    if (!regexNum.test(maxPrice)) {
+        return {isValid: false, errorMessage: baseResponse.MIN_PRICE_NAN};
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// isNoSoldout 검증
+exports.verifyIsNoSoldout = function(isNoSoldout) {
+    if (!isNoSoldout) {
+        return {isValid: false, errorMessage: baseResponse.IS_NO_SOLD_OUT_EMPTY};
+    } else if (!(isNoSoldout === "YES" || isNoSoldout === "NO")) {
+        return {isValid: false, errorMessage: baseResponse.IS_NO_SOLD_OUT_ERROR_TYPE};
     } else {
         return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
     }

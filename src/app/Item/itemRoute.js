@@ -12,6 +12,6 @@ module.exports = function(app){
     app.get('/app/items', item.getItemList)
 
     // 35. 상품 검색 API
-    app.get('/app/item-search', item.getItemList)
+    app.get('/app/item-search', item.getFilteredItemList)
 
 };
