@@ -257,7 +257,7 @@ const {emit} = require("nodemon");
     //     // 이렇게 send로 찍어가면서 중간에 input 검증하는 것 괜찮은 것 같음
 
     // 검색결과 반환
-    const createClickResponse = await itemService.getFilteredItemList(
+    const retrieveFilteredItemListResponse = await itemProvider.retrieveFilteredItemList(
         searchWord, 
         categories, 
         orderBy, 
@@ -270,7 +270,7 @@ const {emit} = require("nodemon");
         isNoSoldout
     );
 
-    return res.send(createClickResponse);
+    return res.send(retrieveFilteredItemListResponse);
 
     
 };

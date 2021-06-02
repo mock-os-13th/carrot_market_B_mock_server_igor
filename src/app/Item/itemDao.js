@@ -204,6 +204,46 @@ async function selectItemsForList(connection, selectItemsForListParams) {
   return itemsRows;
 }
 
+// 검색된 상품 목록 가져오기 (무한 스크롤)
+async function selectFilteredItems(connection, searchWord, categoryFilter, minPrice, maxPrice, cursor, numOfPages, isNoSoldOutQuery) {
+  const selectItemsForListQuery = `
+                                SELECT
+                                a.idx,
+                                a.title,
+                                b.dong,
+                                a.isOnTop,
+                                CASE
+                                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(second, a.onTopAt, NOW()), "초 전")
+                                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(minute, a.onTopAt, NOW()), "분 전")
+                                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 1440 THEN CONCAT(TIMESTAMPDIFF(hour,  a.onTopAt, NOW()), "시간 전")
+                                    WHEN TIMESTAMPDIFF(minute, a.onTopAt, NOW()) < 2880 THEN "어제"
+                                    ELSE CONCAT(DATEDIFF(NOW(), a.onTopAt), "일 전")
+                                END AS passedTime,
+                                  a.status,
+                                  a.price,
+                                  c.pictureUrl,
+                                  IFNULL(d.numOfLikes, 0) AS numOfLikes,
+                                  IFNULL(e.numOfChats, 0) AS numOfChats
+                                  FROM Item a
+                                  INNER JOIN Village b ON a.villageIdx = b.idx
+                                  LEFT JOIN (SELECT itemIdx, pictureUrl FROM ItemPictures GROUP BY itemIdx) c ON a.idx = c.itemIdx
+                                  LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOfLikes FROM LikeItem WHERE status = "VALID" GROUP BY itemIdx) d ON a.idx = d.itemIdx
+                                  LEFT JOIN (SELECT itemIdx, COUNT(*) AS numOfChats FROM ChatRoom WHERE status = "VALID" GROUP BY itemIdx) e ON a.idx = e.itemIdx
+                                  WHERE category IN (${categoryFilter})
+                                  AND CONCAT(LPAD(UNIX_TIMESTAMP(onTopAt), 15, 0), LPAD(a.idx, 15, 0)) < ${cursor}
+                                  AND a.title LIKE "%${searchWord}%"
+                                  AND a.price >= ${minPrice} AND a.price <= ${maxPrice}
+                                  ${isNoSoldOutQuery}
+                                  ORDER BY a.onTopAt DESC, a.idx DESC
+                                  LIMIT ${numOfPages};
+  
+                `;
+                // 백틱 안에 ${}로 넣은 이유는 기존의 ? 방식에는 따옴표까지 ?자리에 들어가 버리기 때문에
+                // 나중에 블로그에 쓰기
+  const [itemsRows] = await connection.query(selectItemsForListQuery);
+  return itemsRows;
+}
+
 
 // item 등록
 async function insertItem(connection, insertItemInfoParams) {
@@ -296,6 +336,7 @@ async function updateUnSoldItem(connection, itemIdx) {
     selectItemsForList,
     updateSoldItem,
     selectSoldItemIdx,
-    updateUnSoldItem
+    updateUnSoldItem,
+    selectFilteredItems
   };
   

@@ -148,24 +148,44 @@ exports.retrieveItemList = async function (villageIdx, rangeLevel, categories, l
 // }
 
 // 상품 이름으로 검색 + 각종 검색 필터
-exports.getFilteredItemList = async function (searchWord, categories, orderBy, minPrice, maxPrice, villageIdx, rangeLevel, lastItemIdx, numOfPages, isNoSoldout) {
+exports.retrieveFilteredItemList = async function (searchWord, categories, orderBy, minPrice, maxPrice, villageIdx, rangeLevel, lastItemIdx, numOfPages, isNoSoldout) {
   try {
     // villageIdx 의미적 검증
-    const villageRow = await itemProvider.checkVillageIdx(villageIdx);
+    const villageRow = await locationProvider.checkVillageIdx(villageIdx);
     if (villageRow.length < 1)
         return errResponse(baseResponse.VILLAGE_NOT_EXIST);
 
     const connection = await pool.getConnection(async (conn) => conn);
+    
+    // 커서 만들기
     const selectOnTopAtResult = await itemDao.selectOnTopAt(connection, lastItemIdx);
     const lastItemUnixTimestamp = selectOnTopAtResult[0]
     const cursor = util.makeCursor(lastItemUnixTimestamp, lastItemIdx)
 
+    // 카테고리 String으로 만들기
+    const categoryFilter = util.arrayToString(categories)
 
+    // 거래 완료 안보기 변수를 쿼리문으로 바꾸기
+    if (isNoSoldout === "YES") {
+      var isNoSoldOutQuery = `AND a.status <> "SOLDOUT"`
+    } else {
+      var isNoSoldOutQuery = ``
+    }
 
+    // 리스트 가져오기
+    const selectFilteredItemsResult = await itemDao.selectFilteredItems(connection, 
+      searchWord,
+      categoryFilter,
+      minPrice,
+      maxPrice,
+      cursor,
+      numOfPages,
+      isNoSoldOutQuery
+      );
 
-    return response(baseResponse.SUCCESS, )
+    return response(baseResponse.SUCCESS, selectFilteredItemsResult)
   } catch (err) {
-    logger.error(`App - getFilteredItemList Service error\n: ${err.message}`);
+    logger.error(`App - retrieveFilteredItemList Service error\n: ${err.message}`);
     return errResponse(baseResponse.DB_ERROR);
   }
 };
