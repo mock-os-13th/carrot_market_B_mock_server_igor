@@ -176,10 +176,10 @@ exports.createAuthorizedUserLocation = async function (userIdx, villageIdx, user
         if (checkVillageResult.length < 1) 
             return errResponse(baseResponse.VILLAGE_NOT_EXIST);
 
-        // userLocationDongByCoord과 villageIdx가 가리키는 dong이 동일한지 체크
-        const dongByVillageIdx = checkVillageResult[0].dong
-        if (dongByVillageIdx != userLocationDongByCoord)
-            return errResponse(baseResponse.COORD_VILLAGE_IDX_NOT_MATCH);
+        // // userLocationDongByCoord과 villageIdx가 가리키는 dong이 동일한지 체크
+        // const dongByVillageIdx = checkVillageResult[0].dong
+        // if (dongByVillageIdx != userLocationDongByCoord)
+        //     return errResponse(baseResponse.COORD_VILLAGE_IDX_NOT_MATCH);
 
         // userIdx로 userLocation 가져와서 villageIdx와 겹치지는 않는지 검증
         const checkUserLocationsResult = await locationProvider.checkUserLocations(userIdx)
