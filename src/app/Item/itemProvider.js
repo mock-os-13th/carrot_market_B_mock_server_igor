@@ -183,6 +183,7 @@ exports.retrieveFilteredItemList = async function (searchWord, categories, order
       isNoSoldOutQuery
       );
 
+    connection.release();
     return response(baseResponse.SUCCESS, selectFilteredItemsResult)
   } catch (err) {
     logger.error(`App - retrieveFilteredItemList Service error\n: ${err.message}`);
