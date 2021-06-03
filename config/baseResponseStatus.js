@@ -155,6 +155,8 @@ module.exports = {
     CHATROOM_NOT_EXIST : { "isSuccess": false, "code": 3025, "message": "존재하지 않는 채팅방입니다." },
     CHATROOM_NOT_SELLER_NOT_MATCH : { "isSuccess": false, "code": 3026, "message": "채팅방에 등록된 판매자가 아닙니다." },
 
+    SELLER_CANNOT_CREATE_CHATROOM : { "isSuccess": false, "code": 3027, "message": "판매자는 자신의 상품idx로 메시지를 보낼 수 없습니다." },
+
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
     SERVER_ERROR : { "isSuccess": false, "code": 4001, "message": "서버 에러"},

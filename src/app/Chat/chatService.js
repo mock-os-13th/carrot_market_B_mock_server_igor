@@ -17,21 +17,38 @@ const {connect} = require("http2");
 // 채팅방 만들기
     // 38. 채팅 보내기 API
 exports.createChatRoom = async function (userIdx, itemIdx) {
+        let createdChatRoomResult = new Object()
         // userIdx DB에 존재하는지 확인
         const userStatusRows = await userProvider.checkUserStatus(userIdx);
-        if (userStatusRows.length < 1)
-            return errResponse(baseResponse.USER_NOT_EXIST);
+        if (userStatusRows.length < 1) {
+            createdChatRoomResult.newChatRoomIdx = null
+            createdChatRoomResult.errorMessage = errResponse(baseResponse.USER_NOT_EXIST);
+            return createdChatRoomResult
+        } 
 
         // itemIdx DB에 존재하는지 확인
         const checkItemResult = await itemProvider.checkItemIdx(itemIdx)
-        if (checkItemResult.length < 1) 
-            return errResponse(baseResponse.ITEM_NOT_EXIST);
+        if (checkItemResult.length < 1) {
+            createdChatRoomResult.newChatRoomIdx = null
+            createdChatRoomResult.errorMessage = errResponse(baseResponse.ITEM_NOT_EXIST);
+            return createdChatRoomResult
+        }
+
+        // itemIdx에 seller가 user가 아닌지 확인 (판매자는 채팅방을 열 수 없음)
+        const sellerIdxFromItem = checkItemResult[0].userIdx
+        if (sellerIdxFromItem == userIdx) {
+            createdChatRoomResult.newChatRoomIdx = null
+            createdChatRoomResult.errorMessage = errResponse(baseResponse.SELLER_CANNOT_CREATE_CHATROOM);
+            return createdChatRoomResult
+        }
 
         // 이미 존재하는 채팅방이 있는지 확인
         const existingChatRoomRows = await chatProvider.findChatRoom(userIdx, itemIdx)
         if (existingChatRoomRows.length > 0) {
             const existingRoomIdx = existingChatRoomRows[0].chatRoomIdx
-            return existingRoomIdx
+            createdChatRoomResult.newChatRoomIdx = existingRoomIdx
+            createdChatRoomResult.errorMessage = errResponse(baseResponse.SERVER_ERROR);
+            return createdChatRoomResult
         }
 
         // 채팅방 만들기
@@ -40,10 +57,11 @@ exports.createChatRoom = async function (userIdx, itemIdx) {
         const insertChatRoomResult = await chatDao.insertChatRoom(connection, insertChatRoomPrams)         
         connection.release();
         console.log(`추가된 채팅방 : ${insertChatRoomResult[0].insertId}`)
-
         const createdChatRoomIdx = insertChatRoomResult[0].insertId
 
-        return createdChatRoomIdx
+        createdChatRoomResult.newChatRoomIdx = createdChatRoomIdx
+        createdChatRoomResult.errorMessage = errResponse(baseResponse.SERVER_ERROR);
+        return createdChatRoomResult
 };
 
 // 채팅 메시지 만들기

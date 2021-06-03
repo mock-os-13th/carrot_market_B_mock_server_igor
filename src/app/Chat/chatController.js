@@ -99,12 +99,13 @@ const {emit} = require("nodemon");
     if (!itemIdxVerification.isValid) return res.send(errResponse(itemIdxVerification.errorMessage)); 
 
     // 채팅방 만들기
-    const newChatRoomIdx = await chatService.createChatRoom(userIdx, itemIdx)
-        // 이미 채팅방이 있는데 itemIdx로 메시지를 보내는 경우 수정
-    if (!newChatRoomIdx) return res.send(errResponse(baseResponse.CHAT_ROOM_ALREADY_CREATED)); 
+    const createChatRoomResult = await chatService.createChatRoom(userIdx, itemIdx)
+        // 만들어진 채팅방 유효성 검증
+    if (!(createChatRoomResult.newChatRoomIdx)) return res.send(errResponse(createChatRoomResult.errorMessage));
 
     // 그 채팅방으로 문자 보내기
     didWhoSaid = "BUYER"
+    const newChatRoomIdx = createChatRoomResult.newChatRoomIdx
     const createChatMessageResponse = await chatService.createChatMessage(message, newChatRoomIdx, didWhoSaid, userIdx)
 
     return res.send(createChatMessageResponse); 
