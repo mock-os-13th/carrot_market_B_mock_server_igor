@@ -155,7 +155,8 @@ async function selectUserLocations(connection, userIdx) {
                         a.villageIdx,
                         b.dong,
                         a.villageRangeLevel AS rangeLevel,
-                        a.isCurrent
+                        a.isCurrent,
+                        a.isAuthorized
                     FROM UserLocation a
                     INNER JOIN Village b ON a.villageIdx = b.idx
                     WHERE a.userIdx = ?
