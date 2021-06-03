@@ -157,11 +157,14 @@ exports.getMobileCheck = async function (req, res) {
 
     // userLocationIdx 가져오기
     const checkCurrentLocationUserIdxResponse = await locationProvider.checkCurrentLocationUserIdx(userIdx)
-    const userLocationIdx = checkCurrentLocationUserIdxResponse[0].userLocationIdx
-
-    // 기존의 userLocation를 새로 받은 villageIdx로 교체하기
-    await locationService.changeCurrentVillage(userIdx, userLocationIdx, villageIdx)
-
+    if (checkCurrentLocationUserIdxResponse.length < 1) { // 기존에 등록된게 없으면 새로 등록
+        await locationService.createUserLocation(userIdx, villageIdx)
+    } else {
+        const userLocationIdx = checkCurrentLocationUserIdxResponse[0].userLocationIdx
+        // 기존의 userLocation를 새로 받은 villageIdx로 교체하기
+        await locationService.changeCurrentVillage(userIdx, userLocationIdx, villageIdx)
+    }
+    
     // userLocation 명단 가져오기
     const userLocations = await userProvider.getUserLocations(userIdx)
 
