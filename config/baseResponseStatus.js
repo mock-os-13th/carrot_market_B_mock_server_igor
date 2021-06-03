@@ -103,6 +103,12 @@ module.exports = {
     IS_NO_SOLD_OUT_EMPTY : { "isSuccess": false,"code": 2065,"message":"거래 완료 안보기 여부를 입력해주세요." },
     IS_NO_SOLD_OUT_ERROR_TYPE : { "isSuccess": false,"code": 2066,"message":"거래 완료 안보기는 YES 혹은 NO로만 입력해주세요." },
 
+    CHAT_NOT_CHATROOM_AND_ITEM : { "isSuccess": false,"code": 2067,"message":"chatRoomIdx 혹은 itemIdx를 입력해주세요." },
+    CHAT_BOTH_CHATROOM_AND_ITEM : { "isSuccess": false,"code": 2068,"message":"chatRoomIdx 혹은 itemIdx 중 하나만 입력해주세요." },
+
+    CHAT_MESSAGE_EMPTY : { "isSuccess": false,"code": 2069,"message":"채팅 메시지를 입력해주세요." },
+    CHAT_MESSAGE_LENGHTH : { "isSuccess": false,"code": 2070,"message":"채팅 메시지는 200자 이내로 입력해주세요." },
+
     // Response error
     REDUNDANT_MOBILE : { "isSuccess": false, "code": 3001, "message":"이미 가입한 계정입니다. 로그인해주세요." },
     REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },
@@ -145,6 +151,9 @@ module.exports = {
     COORD_DONG_NOT_FOUND : { "isSuccess": false, "code": 3023, "message": "좌표가 가리키는 행정동이 데이터베이스에 없습니다." },
 
     COORD_VILLAGE_IDX_NOT_MATCH : { "isSuccess": false, "code": 3024, "message": "좌표와 villageIdx가 가리키는 동네가 일치하지 않습니다." },
+
+    CHATROOM_NOT_EXIST : { "isSuccess": false, "code": 3025, "message": "존재하지 않는 채팅방입니다." },
+    CHATROOM_NOT_SELLER_NOT_MATCH : { "isSuccess": false, "code": 3026, "message": "채팅방에 등록된 판매자가 아닙니다." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

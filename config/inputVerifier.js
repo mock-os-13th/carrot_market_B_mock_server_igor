@@ -153,6 +153,19 @@ exports.verifyUserLocationIdx = function(userLocationIdx) {
     }
 };
 
+// chatRoomIdx 검증
+exports.verifyChatRoomIdx = function(chatRoomIdx) {
+    // 빈 값
+    if (!chatRoomIdx) {
+        return {isValid: false, errorMessage: baseResponse.USER_LOCATION_IDX_EMPTY}; 
+    // 숫자 여부
+    } else if (!regexNum.test(chatRoomIdx)) {
+        return {isValid: false, errorMessage: baseResponse.USER_LOCATION_IDX_NAN}; 
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
 // rangeLevel 검증
 exports.verifyRangeLevel = function(rangeLevel) {
     // 있는지 검증
@@ -419,6 +432,19 @@ exports.verifyIsNoSoldout = function(isNoSoldout) {
         return {isValid: false, errorMessage: baseResponse.IS_NO_SOLD_OUT_EMPTY};
     } else if (!(isNoSoldout === "YES" || isNoSoldout === "NO")) {
         return {isValid: false, errorMessage: baseResponse.IS_NO_SOLD_OUT_ERROR_TYPE};
+    } else {
+        return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
+    }
+};
+
+// 채팅 메시지 검증
+exports.verifyMessage = function(message) {
+    // 있는지 검증
+    if (!message) {
+        return {isValid: false, errorMessage: baseResponse.CHAT_MESSAGE_EMPTY}; 
+    // 길이가 200 이내
+    } else if (message.length > 200) {
+        return {isValid: false, errorMessage: baseResponse.CHAT_MESSAGE_LENGHTH}; 
     } else {
         return {isValid: true, errorMessage: baseResponse.INPUT_VERIFIER_ERROR};
     }

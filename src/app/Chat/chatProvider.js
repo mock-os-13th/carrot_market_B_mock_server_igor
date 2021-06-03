@@ -35,3 +35,12 @@ exports.retrieveDialogues = async function (chatRoomIdx, lastChatMessageIdx) {
     connection.release();
     return selectChatMessagesResult
   };
+
+// 채팅방에 대한 정보 불러오기
+  // 채팅방 형식적 검증에 사용
+exports.checkChatRoom = async function (chatRoomIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectChatRoomResult = await chatDao.selectChatRoom(connection, chatRoomIdx)
+    connection.release();
+    return selectChatRoomResult
+  };

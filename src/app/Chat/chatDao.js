@@ -23,6 +23,21 @@ async function selectChatRoomInfo(connection, itemIdx) {
     return selectChatRoomInfoRow;
 };
 
+// 채팅방 idx로 VALID한 채팅방 정보 가져오기
+async function selectChatRoom(connection, chatRoomIdx) {
+    const sselectChatRoomQuery = `
+                        SELECT idx, buyerIdx, itemIdx
+                        FROM ChatRoom
+                        WHERE idx = ?
+                            AND status = "VALID";
+                                        `;
+    const [selectChatRoomRow] = await connection.query(
+        sselectChatRoomQuery,
+        chatRoomIdx
+    );
+    return selectChatRoomRow;
+};
+
 // 채팅방 번호 가져오기
     // 37. 채팅으로 거래하기 API
 async function selectChatRoomByUserItem(connection, selectChatRoomByUserItemParms) {
@@ -67,7 +82,7 @@ async function selectChatMessages(connection, selectChatMessagesParams) {
 };
 
 // 새로운 채팅방 만들기
-    // 37. 채팅으로 거래하기 API
+    // 38. 채팅 보내기 API
     async function insertChatRoom(connection, selectChatRoomByUserItemParms) {
         const insertChatRoomQuery = `
                             INSERT INTO ChatRoom(buyerIdx, itemIdx)
@@ -79,11 +94,27 @@ async function selectChatMessages(connection, selectChatMessagesParams) {
         );
         return insertChatRoomRow;
     };
+
+// 새로운 채팅메시지 만들기
+    // 37. 채팅 보내기 API
+async function insertChatMessage(connection, insertChatRoomPrams) {
+    const insertChatMessageQuery = `
+                        INSERT INTO ChatMessage(chatRoomIdx, didWhoSaid, content)
+                        VALUES (?, ?, ?);
+                                        `;
+    const insertChatMessageRow = await connection.query(
+        insertChatMessageQuery,
+        insertChatRoomPrams
+    );
+    return insertChatMessageRow;
+};
     
 
 module.exports = {
     selectChatRoomInfo,
     selectChatRoomByUserItem,
     selectChatMessages,
-    insertChatRoom
+    insertChatRoom,
+    selectChatRoom,
+    insertChatMessage
 };

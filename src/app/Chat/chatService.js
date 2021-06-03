@@ -14,7 +14,8 @@ const jwt = require("jsonwebtoken");
 const {connect} = require("http2");
 
 
-// 관심 상품 등록 / 취소
+// 채팅방 만들기
+    // 38. 채팅 보내기 API
 exports.createChatRoom = async function (userIdx, itemIdx) {
         // userIdx DB에 존재하는지 확인
         const userStatusRows = await userProvider.checkUserStatus(userIdx);
@@ -32,5 +33,18 @@ exports.createChatRoom = async function (userIdx, itemIdx) {
         const insertChatRoomResult = await chatDao.insertChatRoom(connection, insertChatRoomPrams)         
         connection.release();
         console.log(`추가된 채팅방 : ${insertChatRoomResult[0].insertId}`)
-        return
+        return insertChatRoomResult[0].insertId
+};
+
+// 채팅 메시지 만들기
+    // 38. 채팅 보내기 API
+exports.createChatMessage = async function (message, chatRoomIdx, didWhoSaid) {
+
+    // 채팅메시지 만들기
+    const connection = await pool.getConnection(async (conn) => conn);
+    const insertChatRoomPrams = [chatRoomIdx, didWhoSaid, message]
+    const insertChatRoomResult = await chatDao.insertChatMessage(connection, insertChatRoomPrams)         
+    connection.release();
+    console.log(`추가된 채팅메시지 : ${insertChatRoomResult[0].insertId}`)
+    return insertChatRoomResult[0].insertId
 };
