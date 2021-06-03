@@ -81,6 +81,66 @@ async function selectChatMessages(connection, selectChatMessagesParams) {
     return selectChatMessagesRow;
 };
 
+// userIdx로 채팅방 목록 찾기
+    // 37. 채팅으로 거래하기 API (기본 lastChatMessageIdx를 사용함)
+async function selectChatRoomsByUserIdx(connection, userIdx) {
+    const selectChatRoomsByUserIdxQuery = `
+                                SELECT
+                                a.chatRoomIdx AS chatRoomIdx,
+                                CASE
+                                    WHEN a.buyerIdx = ${userIdx} THEN d.nickName
+                                    ELSE c.nickName
+                                    END AS nickName,
+                                CASE
+                                    WHEN a.buyerIdx = ${userIdx} THEN e.currentLocation
+                                    ELSE f.currentLocation
+                                END AS userLocation,
+                                g.content AS recentMessage,
+                                CASE
+                                    WHEN TIMESTAMPDIFF(minute, g.createdAt, NOW()) < 1440 AND DATE_FORMAT(g.createdAt, "%p") = "AM" THEN DATE_FORMAT(g.createdAt, "오전 %h:%i")
+                                    WHEN TIMESTAMPDIFF(minute, g.createdAt, NOW()) < 1440 AND DATE_FORMAT(g.createdAt, "%p") = "PM" THEN DATE_FORMAT(g.createdAt, "오후 %h:%i")
+                                    WHEN TIMESTAMPDIFF(day, g.createdAt, NOW()) < 365 THEN DATE_FORMAT(g.createdAt, "%c월 %e일")
+                                    ELSE DATE_FORMAT(g.createdAt, "%Y년 %c월 %e일") END AS recentMessageTime,
+                                h.pictureUrl
+                            FROM (SELECT
+                                    ChatRoom.idx AS chatRoomIdx,
+                                    ChatRoom.itemIdx,
+                                    ChatRoom.buyerIdx,
+                                    Item.userIdx AS sellerIdx,
+                                    ChatRoom.status
+                                FROM ChatRoom
+                                INNER JOIN Item ON ChatRoom.itemIdx = Item.idx
+                                WHERE Item.userIdx = ${userIdx} OR ChatRoom.buyerIdx = ${userIdx}) a
+                            INNER JOIN Item b ON a.itemIdx = b.idx
+                            INNER JOIN User c ON a.buyerIdx = c.idx
+                            INNER JOIN User d ON a.sellerIdx = d.idx
+                            LEFT JOIN (SELECT
+                                            UserLocation.userIdx,
+                                            CONCAT(Village.siDo, " ", Village.siGunGu) AS currentLocation
+                                        FROM UserLocation
+                                        INNER JOIN Village ON UserLocation.villageIdx = Village.idx
+                                        WHERE UserLocation.status = "VALID"
+                                            AND UserLocation.isCurrent = "YES") e ON a.buyerIdx = e.userIdx
+                            LEFT JOIN (SELECT
+                                            UserLocation.userIdx,
+                                            CONCAT(Village.siDo, " ", Village.siGunGu) AS currentLocation
+                                        FROM UserLocation
+                                        INNER JOIN Village ON UserLocation.villageIdx = Village.idx
+                                        WHERE UserLocation.status = "VALID"
+                                            AND UserLocation.isCurrent = "YES") f ON a.sellerIdx = e.userIdx
+                            LEFT JOIN (SELECT *
+                                FROM ChatMessage
+                                WHERE createdAt in (SELECT max(createdAt) FROM ChatMessage GROUP BY chatRoomIdx)
+                                ) g ON a.chatRoomIdx = g.chatRoomIdx
+                            LEFT JOIN (SELECT itemIdx, pictureUrl FROM ItemPictures GROUP BY itemIdx) h ON a.itemIdx = h.itemIdx;
+                                        `;
+    const [selectChatRoomsByUserIdxRow] = await connection.query(
+        selectChatRoomsByUserIdxQuery,
+        userIdx
+    );
+    return selectChatRoomsByUserIdxRow;
+};
+
 // 새로운 채팅방 만들기
     // 38. 채팅 보내기 API
     async function insertChatRoom(connection, selectChatRoomByUserItemParms) {
@@ -116,5 +176,6 @@ module.exports = {
     selectChatMessages,
     insertChatRoom,
     selectChatRoom,
-    insertChatMessage
+    insertChatMessage,
+    selectChatRoomsByUserIdx
 };

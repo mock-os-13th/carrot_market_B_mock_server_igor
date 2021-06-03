@@ -9,7 +9,7 @@ const itemProvider = require("../Item/itemProvider")
 const userProvider = require('../User/userProvider')
 
 // 채팅방 UI에 표시할 정보들 가져오기 
-    // 37. 채팅으로 거래하기 API
+    // 37. 채팅방 열기 API
 exports.retrieveChatRoomInfo = async function (itemIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const selectChatRoomInfoResult = await chatDao.selectChatRoomInfo(connection, itemIdx)
@@ -18,7 +18,7 @@ exports.retrieveChatRoomInfo = async function (itemIdx) {
   };
 
 // 채팅방 번호 가져오기
-    // 37. 채팅으로 거래하기 API
+    // 37. 채팅방 열기 API
 exports.findChatRoom = async function (userIdx, itemIdx) {
     const selectChatRoomByUserItemParms = [userIdx, itemIdx]
     const connection = await pool.getConnection(async (conn) => conn);
@@ -28,7 +28,7 @@ exports.findChatRoom = async function (userIdx, itemIdx) {
   };
 
 // 특정 채팅방에서 과거 대화 불러오기 (무한 스크롤)
-    // 37. 채팅으로 거래하기 API (기본 lastChatMessageIdx를 사용함)
+    // 37. 채팅방 열기 API (기본 lastChatMessageIdx를 사용함)
 exports.retrieveDialogues = async function (chatRoomIdx, lastChatMessageIdx) {
     selectChatMessagesParams = [chatRoomIdx, lastChatMessageIdx]
     const connection = await pool.getConnection(async (conn) => conn);
@@ -62,5 +62,19 @@ exports.checkChatRoom = async function (chatRoomIdx) {
         return "SELLER"
     }
   };
+
+  // userIdx로 채팅방 목록 찾기
+    // 39. 채팅방 목록 보기 API
+exports.retrieveChatRoomList = async function (userIdx) {
+  // userIdx 형식적 검증
+  const userStatusRows = await userProvider.checkUserStatus(userIdx);
+  if (userStatusRows.length < 1)
+      return errResponse(baseResponse.USER_NOT_EXIST);
+
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectChatRoomsByUserIdxResult = await chatDao.selectChatRoomsByUserIdx(connection, userIdx)
+  connection.release();
+  return response(baseResponse.SUCCESS, selectChatRoomsByUserIdxResult)
+};
 
 

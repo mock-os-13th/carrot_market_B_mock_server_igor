@@ -9,10 +9,10 @@ const {emit} = require("nodemon");
 
 /**
  * API No. 37
- * API Name : 채팅으로 거래하기 API
- * [GET] /app/chats/rooms-by-item
+ * API Name : 채팅방 열기 API
+ * [GET] /app/chats/messages
  */
- exports.getRoomByItem = async function (req, res) {
+ exports.getMessages = async function (req, res) {
 
     /**
      * query string: itemIdx
@@ -124,4 +124,27 @@ const {emit} = require("nodemon");
 
         return res.send(createChatMessageResponse); 
     }
+};
+
+/**
+ * API No. 39
+ * API Name : 채팅목록 보기 API
+ * [GET] /app/chats/rooms
+ */
+ exports.getRoomList = async function (req, res) {
+
+    /**
+     * header: jwt token
+     */
+
+    const userIdx = req.verifiedToken.userIdx;
+
+    // userIdx 형식적 검증
+    const idxVerification = inputverifier.verifyUserIdx(userIdx);
+    if (!idxVerification.isValid) return res.send(errResponse(idxVerification.errorMessage));
+
+    // 채팅방 목록 가져오기
+    const retrieveChatRoomListResponse = await chatProvider.retrieveChatRoomList(userIdx);
+
+    return res.send(retrieveChatRoomListResponse)
 };
