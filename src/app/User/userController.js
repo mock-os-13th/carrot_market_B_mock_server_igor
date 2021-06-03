@@ -1,10 +1,13 @@
 const jwtMiddleware = require("../../../config/jwtMiddleware");
 const userProvider = require("../../app/User/userProvider");
 const userService = require("../../app/User/userService");
+const locationProvider = require("../Location/locationProvider")
+const locationService = require("../Location/locationService")
 const baseResponse = require("../../../config/baseResponseStatus");
 const inputverifier = require("../../../config/inputVerifier");
 const {response, errResponse} = require("../../../config/response");
 
+const jwt = require("jsonwebtoken");
 const {emit} = require("nodemon");
 
 
@@ -129,10 +132,10 @@ exports.getMobileCheck = async function (req, res) {
  exports.login = async function (req, res) {
 
     /**
-     * Body: mobile, verificationCode
+     * Body: mobile, verificationCode, villageIdx
      */
 
-    const { mobile, verificationCode } = req.body;
+    const { mobile, verificationCode, villageIdx } = req.body;
 
     // 휴대폰 번호 형식적 검증
     const mobileVerification = inputverifier.verifyMobile(mobile);
@@ -142,13 +145,41 @@ exports.getMobileCheck = async function (req, res) {
     const verificationCodeVerification = inputverifier.verifyCode(verificationCode);
     if (!verificationCodeVerification.isValid) return res.send(errResponse(verificationCodeVerification.errorMessage));
 
+    // villageIdx 형식적 검증
+    const villageIdxVerification = inputverifier.verifyVillageIdx(villageIdx);
+    if (!villageIdxVerification.isValid) return res.send(errResponse(villageIdxVerification.errorMessage));
+
     // 인증번호 일치여부 확인
     if (verificationCode != "1234") return res.send(errResponse(baseResponse.VERIFICATION_CODE_NOT_MATCH))
 
-    // DB에서 userIdx 확인하고 jwt 토큰 및 회원 위치 반환
-    const getUserResponse = await userProvider.getUser(mobile);
+    // userIdx 구해오기
+    const userIdx = await userProvider.getUserIdx(mobile);
 
-    return res.send(getUserResponse);
+    // userLocationIdx 가져오기
+    const checkCurrentLocationUserIdxResponse = await locationProvider.checkCurrentLocationUserIdx(userIdx)
+    const userLocationIdx = checkCurrentLocationUserIdxResponse[0].userLocationIdx
+
+    // 기존의 userLocation를 새로 받은 villageIdx로 교체하기
+    await locationService.changeCurrentVillage(userIdx, userLocationIdx, villageIdx)
+
+    // userLocation 명단 가져오기
+    const userLocations = await userProvider.getUserLocations(userIdx)
+
+    // jwt로 바꾸고 저장하기
+    let token = await jwt.sign(
+        {
+            userIdx: userIdx
+        }, // 토큰의 내용(payload)
+        process.env.JWT_SECRET_KEY, // 비밀키
+        {
+            expiresIn: "365d",
+            subject: "userInfo",
+        } // 유효 기간 365일
+        );
+
+    const loginResult = { "jwt": token, "userLocations": userLocations }
+
+    return res.send(response(baseResponse.SUCCESS, loginResult));
 };
 
 /**
@@ -211,7 +242,7 @@ exports.getMobileCheck = async function (req, res) {
 
     const getUserLocationsResponse = await userProvider.getUserLocations(userIdx);
 
-    return res.send(getUserLocationsResponse);
+    return res.send(response(baseResponse.SUCCESS, getUserLocationsResponse));
 };
 
 /**

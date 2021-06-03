@@ -116,6 +116,23 @@ async function selectUserLocation(connection, userIdx) {
     return selectUserLocationsRow;
 };
 
+// userIdx를 받아서 isCurrent인 userLocationIdx 반환하기
+async function selectCurrentUserLocationIdx(connection, userIdx) {
+    const selectCurrentUserLocationIdxQuery = `
+                SELECT idx AS userLocationIdx
+                FROM UserLocation
+                WHERE userIdx = ?
+                    AND status = "VALID"
+                    AND isCurrent = "YES"
+        `;
+    const [selectCurrentUserLocationIdxRow] = await connection.query(
+        selectCurrentUserLocationIdxQuery,
+        userIdx
+    );
+    return selectCurrentUserLocationIdxRow;
+};
+
+
 // userLocationIdx의 의미적 검증 + userLocation의 userIdx와 입력된 userIdx 비교 + 현재 선택된 것인지
 async function selectUserIdxByIdx(connection, userLocationIdx) {
     const selectUserIdxQuery = `
@@ -327,5 +344,6 @@ module.exports = {
     insertAuthorizedUserLocation,
     updateRangeLevel,
     selectVillageWithinRangeOne,
-    selectVillageRangeLevel
+    selectVillageRangeLevel,
+    selectCurrentUserLocationIdx
 };

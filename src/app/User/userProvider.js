@@ -39,7 +39,7 @@ exports.checkUserStatus = async function (userIdx) {
 };
 
 // 휴대폰 번호로 userIdx 가져오기
-exports.getUser = async function (mobile) {
+exports.getUserIdx = async function (mobile) {
   const connection = await pool.getConnection(async (conn) => conn);
   
   try {
@@ -55,26 +55,11 @@ exports.getUser = async function (mobile) {
   
     // jwt 토큰 생성
     const userIdx = getUserResult[0].idx
-    
-    let token = await jwt.sign(
-      {
-          userIdx: userIdx
-      }, // 토큰의 내용(payload)
-      process.env.JWT_SECRET_KEY, // 비밀키
-      {
-          expiresIn: "365d",
-          subject: "userInfo",
-      } // 유효 기간 365일
-      );
-  
-    // 반환할 회원 위치 조회 (idx, villageIdx, dong, villageRangeLevel, isAuthorized)
-    const userLocations = await userDao.selectUserLocation(connection, userIdx);
-    const loginResult = {"jwt": token, "userLocations": userLocations}
-    
-    return response(baseResponse.SUCCESS, loginResult)
-  
+
+    return (userIdx)
+
   } catch(error) {
-    logger.error(`App - getUser Service error\n: ${error.message}`);
+    logger.error(`App - getUser Provider error\n: ${error.message}`);
     return errResponse(baseResponse.DB_ERROR);
   } finally {
     connection.release();
@@ -122,7 +107,7 @@ exports.getUserLocations = async function (userIdx) {
     
     // 반환할 회원 위치 조회 (idx, villageIdx, dong, villageRangeLevel, isAuthorized)
     const userLocations = await userDao.selectUserLocation(connection, userIdx);    
-    return response(baseResponse.SUCCESS, userLocations)
+    return userLocations
   
   } catch(error) {
     logger.error(`App - getUser Service error\n: ${error.message}`);

@@ -84,7 +84,7 @@ exports.getMyVillages = async function (req, res) {
 
 /**
  * API No. 28
- * API Name : 내 동네 설정 페이지 API
+ * API Name : 내 동네 설정 API
  * [POST] /app/locations/my-villages
 */
 

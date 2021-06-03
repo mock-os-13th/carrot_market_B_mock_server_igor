@@ -34,6 +34,16 @@ exports.checkUserLocationIdx = async function (userLocationIdx) {
     return selectUserIdxResult
   };
 
+  // 사용자의 현재 위치 1개 반환 (자동로그인용)
+  exports.checkCurrentLocationUserIdx = async function (userIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectCurrentUserLocationIdxResult = await locationDao.selectCurrentUserLocationIdx(connection, userIdx);
+    connection.release();
+
+    return selectCurrentUserLocationIdxResult
+  };
+
+
 
 // 검색어로 동네 DB에서 검색
 exports.retrieveLocationSearchList = async function (searchWord) {
