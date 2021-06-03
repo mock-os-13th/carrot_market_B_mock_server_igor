@@ -100,6 +100,8 @@ const {emit} = require("nodemon");
 
     // 채팅방 만들기
     const newChatRoomIdx = await chatService.createChatRoom(userIdx, itemIdx)
+        // 이미 채팅방이 있는데 itemIdx로 메시지를 보내는 경우 수정
+    if (!newChatRoomIdx) return res.send(errResponse(baseResponse.CHAT_ROOM_ALREADY_CREATED)); 
 
     // 그 채팅방으로 문자 보내기
     didWhoSaid = "BUYER"
