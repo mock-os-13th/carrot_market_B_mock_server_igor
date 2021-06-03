@@ -29,8 +29,10 @@ exports.createChatRoom = async function (userIdx, itemIdx) {
 
         // 이미 존재하는 채팅방이 있는지 확인
         const existingChatRoomRows = await chatProvider.findChatRoom(userIdx, itemIdx)
-        if (existingChatRoomRows.length > 0)
-            return false
+        if (existingChatRoomRows.length > 0) {
+            const existingRoomIdx = existingChatRoomRows[0].chatRoomIdx
+            return existingRoomIdx
+        }
 
         // 채팅방 만들기
         const connection = await pool.getConnection(async (conn) => conn);
