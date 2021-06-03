@@ -24,6 +24,7 @@ module.exports = function () {
     require('../src/app/Deal/dealRoute')(app);
     require('../src/dev/Database/datebaseRoute')(app);
     require('../src/app/Location/locationRoute')(app);
+    require('../src/app/Chat/chatRoute')(app);
     // require('../src/app/Board/boardRoute')(app);
 
     return app;
