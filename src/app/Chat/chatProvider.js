@@ -3,6 +3,7 @@ const { logger } = require("../../../config/winston");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
+const chatProvider = require("./chatProvider")
 const chatDao = require("./chatDao");
 const itemProvider = require("../Item/itemProvider")
 const userProvider = require('../User/userProvider')
@@ -44,3 +45,22 @@ exports.checkChatRoom = async function (chatRoomIdx) {
     connection.release();
     return selectChatRoomResult
   };
+
+  // 입력된 채팅방 번호와 userIdx로 didWhoSaid를 결정함
+  exports.decideDidWhoSaid = async function (userIdx, chatRoomIdx) {
+    // chatRoom 의미적 검증
+    const chatRoomRows = await chatProvider.checkChatRoom(chatRoomIdx);
+    if (chatRoomRows.length < 1)
+        return errResponse(baseResponse.CHATROOM_NOT_EXIST);
+
+    // 채팅방에 있는 buyerIdx와 비교하기
+    const buyerIdxFromChatRoom = chatRoomRows[0].buyerIdx
+    // userIdx = buyerId라면
+    if (buyerIdxFromChatRoom == userIdx) {
+        return "BUYER"
+    } else {            
+        return "SELLER"
+    }
+  };
+
+

@@ -72,7 +72,7 @@ async function selectChatMessages(connection, selectChatMessagesParams) {
                                     WHERE chatRoomIdx = ?
                                         AND idx < ?
                                     ORDER BY createdAt ASC
-                                    LIMIT 5
+                                    LIMIT 10
                                         `;
     const [selectChatMessagesRow] = await connection.query(
         selectChatMessagesQuery,

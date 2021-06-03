@@ -41,8 +41,8 @@ const {emit} = require("nodemon");
         // 처음에는 그냥 if 절안에 var로 선언했는데 보니까 그렇게 하면 완전 전역 변수가 되어서
         // exports 밖까지 영향을 미친다. 조심!!!
 
-    // 채팅방 있으면 과거 대화 불러오고 없으면 채팅방 만든다.
-    if (findChatRoomResult.length > 1) {
+    // 채팅방 있으면 과거 대화 불러오고 없으면 기본 값 반환
+    if (findChatRoomResult.length > 0) {
         chatRoomIdx = findChatRoomResult[0].chatRoomIdx;
         const lastChatMessageIdx = 999999999999999
         recentDialogues = await chatProvider.retrieveDialogues(chatRoomIdx, lastChatMessageIdx); // 함수
@@ -74,7 +74,7 @@ const {emit} = require("nodemon");
     const chatRoomIdx = req.body.chatRoomIdx;
     const message = req.body.message;
     const userIdx = req.verifiedToken.userIdx;
-    console.log("보내는 사람: ", userIdx)
+
     // 양자 택일 입력값 점검
         // 둘 다 오지 않은 경우
     if ((!itemIdx)&&(!chatRoomIdx)) return res.send(errResponse(baseResponse.CHAT_NOT_CHATROOM_AND_ITEM));
@@ -89,7 +89,7 @@ const {emit} = require("nodemon");
     const messageVerification = inputverifier.verifyMessage(message);
     if (!messageVerification.isValid) return res.send(errResponse(messageVerification.errorMessage));
 
-    // 여기서 부터 뒤로 다 보내기!
+    // 송신자 설정
     let didWhoSaid = ""
 
     // itemIdx로 메시지를 보내는 경우 (첫 메시지를 보내는 구매자)
@@ -103,11 +103,9 @@ const {emit} = require("nodemon");
 
     // 그 채팅방으로 문자 보내기
     didWhoSaid = "BUYER"
-    const createChatMessageResult = await chatService.createChatMessage(message, newChatRoomIdx, didWhoSaid)
+    const createChatMessageResponse = await chatService.createChatMessage(message, newChatRoomIdx, didWhoSaid, userIdx)
 
-    const newChatRoomIdxResult = { "chatRoomIdx": newChatRoomIdx }
-
-    return res.send(response(baseResponse.SUCCESS, newChatRoomIdxResult)); 
+    return res.send(createChatMessageResponse); 
 
     // chatRoomIdx로 메시지를 보내는 경우 (판매자 혹은 2번째 이상의 메시지를 보내는 구매자)
     } else {
@@ -115,27 +113,12 @@ const {emit} = require("nodemon");
         const chatRoomIdxVerification = inputverifier.verifyChatRoomIdx(chatRoomIdx);
         if (!chatRoomIdxVerification.isValid) return res.send(errResponse(chatRoomIdxVerification.errorMessage)); 
 
-        // chatRoom 의미적 검증 (나중에 정돈할 때 뒤로 다 넣기)
-        const chatRoomRows = await chatProvider.checkChatRoom(chatRoomIdx);
-        if (chatRoomRows.length < 1)
-            return errResponse(baseResponse.CHATROOM_NOT_EXIST);
-
         // BUYER인지 SELLER인지 구분하기
-        const buyerIdxFromChatRoom = chatRoomRows[0].buyerIdx
-        if (buyerIdxFromChatRoom == userIdx) {
-            didWhoSaid = "BUYER"
-        } else {
-            // chatRoom에 등록된 item의 주인인지 검증해야 함.
-            const itemIdxFromChatRoom = chatRoomRows[0].itemIdx
-            const sellerIdxFromItemIdx = (await itemProvider.checkItemIdx(itemIdxFromChatRoom))[0].userIdx            
-            if (sellerIdxFromItemIdx != userIdx) 
-                return errResponse(baseResponse.CHATROOM_NOT_SELLER_NOT_MATCH);
-            didWhoSaid = "SELLER"
-        }
-
+        didWhoSaid = await chatProvider.decideDidWhoSaid(userIdx, chatRoomIdx)
+        
         // 채팅방에 문자 보내기
-        const createChatMessageResult = await chatService.createChatMessage(message, chatRoomIdx, didWhoSaid)
+        const createChatMessageResponse = await chatService.createChatMessage(message, chatRoomIdx, didWhoSaid, userIdx)
 
-        return res.send(response(baseResponse.SUCCESS)); 
+        return res.send(createChatMessageResponse); 
     }
 };
